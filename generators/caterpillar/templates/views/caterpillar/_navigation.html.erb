@@ -1,0 +1,33 @@
+<div class="caterpillar_navigation">
+  <% categories = @caterpillar_navigation.keys -%>
+  <% @caterpillar_navigation.each_pair do |category,portlets| -%>
+    <% cat = category.gsub(' ','_') -%>
+    <span id="<%=cat-%>" class="cp_category">
+      <%= link_to_function( category,
+        "cp_toggle_category('%s',null);" % cat
+    )
+    -%>
+    </span>
+  <% end -%>
+
+  <% @caterpillar_navigation.each_pair do |category,portlets| -%>
+    <div id="<%=category.gsub(' ','_')-%>_portlets" class="cp_portlets" style="display: none;">
+      <ul>
+      <% portlets.each do |portlet| -%>
+        <% begin -%>
+          <li><%= link_to( portlet[:title], portlet[:reqs] ) -%></li>
+
+        <% rescue
+             vars = {}
+             portlet[:vars].each {|var| vars.update( var => 0 )}
+        -%>
+          <li>
+            <b><%= link_to( portlet[:title], portlet[:reqs]+vars ) -%></b>
+            <i>needs variables</i> <b><%= portlet[:vars].inspect -%></b>
+          </li>
+        <% end -%>
+      <% end -%>
+      </ul>
+    </div>
+  <% end -%>
+</div>

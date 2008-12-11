@@ -1,0 +1,4 @@
+Caterpillar helps you with building Rails applications to be used in Java
+JSR286 portlets. This is possible with the help of Rails-portlet.
+
+See the rdoc documentation and caterpillar --describe for the feature list.
