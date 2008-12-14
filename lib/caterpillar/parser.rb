@@ -94,7 +94,10 @@ module Caterpillar
         portlet.update( :category => @config.category ) unless portlet[:category]
 
         ### title
-        portlet.update( :title => portlet[:name].to_s.gsub('_',' ').capitalize ) unless portlet[:title]
+        _title = portlet[:title] || portlet[:name].to_s.gsub('_',' ').capitalize
+        # strip illegal characters
+        title = _title.gsub(/ä/,'a').gsub(/ö/,'o').gsub(/Ä/,'A').gsub(/Ö/,'O')
+        portlet.update( :title => title )
 
         ### javascripts
         portlet.update( :javascripts => @config.javascripts ) unless portlet[:javascripts]
