@@ -1,4 +1,5 @@
 <div class="caterpillar_navigation">
+  <%# CATEGORIES -%>
   <% categories = @caterpillar_navigation.keys -%>
   <% @caterpillar_navigation.each_pair do |category,portlets| -%>
     <% cat = category.gsub(' ','_') -%>
@@ -10,16 +11,27 @@
     </span>
   <% end -%>
 
+  <%# PORTLET LINKS -%>
   <% @caterpillar_navigation.each_pair do |category,portlets| -%>
     <div id="<%=category.gsub(' ','_')-%>_portlets" class="cp_portlets" style="display: none;">
       <ul>
       <% portlets.each do |portlet| -%>
         <% begin -%>
+          <%# check required variables -%>
+          <% portlet[:vars].each do |var|
+              raise if params[var].nil?
+             end -%>
+
           <li><%= link_to( portlet[:title], portlet[:reqs] ) -%></li>
 
         <% rescue
              vars = {}
-             portlet[:vars].each {|var| vars.update( var => 0 )}
+             portlet[:vars].each do |var|
+               unless params[var]
+                 val = @caterpillar_navigation_defaults[var] || 0
+                 vars.update( var => val )
+               end
+             end
         -%>
           <li>
             <b><%= link_to( portlet[:title], portlet[:reqs]+vars ) -%></b>
