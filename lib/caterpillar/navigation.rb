@@ -14,6 +14,10 @@ module Caterpillar
   #
   #   def caterpillar # :nodoc:
   #     @caterpillar_navigation = Caterpillar::Navigation.rails
+  #     @caterpillar_navigation_defaults = {
+  #       :uid => 13904,
+  #       :gid => 13912
+  #     }
   #   end
   #
   # This will go the body of your layout:
