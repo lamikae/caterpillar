@@ -17,7 +17,7 @@ require 'action_controller'
 # Rake task.  Allows defining multiple configurations inside the same
 # Rakefile by using different task names.
 # ++
-module Caterpillar # :nodoc:
+module Caterpillar
   class << self
     attr_writer :project_application
     def project_application
