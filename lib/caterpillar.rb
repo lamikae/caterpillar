@@ -5,24 +5,6 @@
 #++
 
 
-# Caterpillar helps you with building Rails applications to be used in Java
-# JSR286 portlets. This is possible with the help of +Rails-portlet+.
-#
-# Rails portlets have been used on Liferay and the helpers offer specialized methods to support better Liferay integration.
-#
-# This package offers these functionalities:
-#
-#  - processes the portlet XML configuration in accordance with the named routes
-# See Config
-#
-#  - provides a navigation view in development (you will have to enable it manually)
-# See Navigation
-#
-#  - offers a set of migrations to help with Liferay integration
-#
-#  - provides a Rake task 'extract_fixtures', which imports live data
-#    from the production database for testing
-#
 module Caterpillar
 end
 
