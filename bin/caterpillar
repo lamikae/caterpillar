@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 #
 #--
-# (c) Copyright 2008 Mikael Lammentausta
+# (c) Copyright 2008 Mikael Lammentausta, Cel'Amanzi Ltd
 #
 # Constructed heavily upon Warbler's structure.
 # Thanks to Nick Sieger!
@@ -31,9 +31,9 @@ application.standard_exception_handling do
   application.init
 
   # Load the main tasks - choose the namespace
-  Caterpillar::Task.new(ARGV[0] ? ARGV[0].gsub(/:.*/,'') : :jsr)
+  Caterpillar::Task.new(ARGV[0] ? ARGV[0].gsub(/:.*/,'') : :usage)
 
-  task :default => :jsr
+  task :default => :usage
 
   application.top_level
 end

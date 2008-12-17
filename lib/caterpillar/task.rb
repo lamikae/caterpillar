@@ -39,10 +39,9 @@ module Caterpillar
     # The main task.
     # Reads the configuration file and launches appropriate tasks.
     # Defines the rake task prefix 'jsr'.
-    def initialize(name = :jsr, config = nil, tasks = :define_tasks)
+    def initialize(name = :usage, config = nil, tasks = :define_tasks)
       @name   = name
       @config = Util.eval_configuration(config)
-
       yield self if block_given?
       send tasks
     end
@@ -51,6 +50,8 @@ module Caterpillar
 
     def define_tasks
       define_main_task
+      define_usage_task
+      define_pluginize_task
       define_environment_task
       define_portletxml_task
       define_liferayportletappxml_task
@@ -73,6 +74,30 @@ module Caterpillar
       end
       tasks << "portlets" # finally print produced portlets
       task :jsr => tasks
+    end
+
+    def define_usage_task
+      task :usage do
+        Usage.show
+      end
+    end
+
+    def define_pluginize_task
+      desc "Unpack Caterpillar as a plugin in your Rails application"
+      task :pluginize do
+        if !Dir["vendor/plugins/caterpillar*"].empty?
+          puts "I found an old nest in vendor/plugins; please trash it so I can make a new one"
+          puts "(directory vendor/plugins/caterpillar* exists)"
+        elsif !File.directory?("vendor/plugins")
+          puts "I can't find a place to build my nest"
+          puts "(directory 'vendor/plugins' is missing)"
+        else
+          Dir.chdir("vendor/plugins") do
+            ruby "-S", "gem", "unpack", "caterpillar"
+          end
+          ruby "./script/generate caterpillar"
+        end
+      end
     end
 
     # navigation debugging task
@@ -130,6 +155,7 @@ module Caterpillar
 
     # Writes the portlet.xml file
     def define_portletxml_task
+      @name = :jsr
       # set the output filename
       if @config.container.kind_of? Liferay
         file = 'portlet-ext.xml'
@@ -150,6 +176,7 @@ module Caterpillar
 
     # Writes liferay-portlet-ext.xml
     def define_liferayportletappxml_task
+      @name = :jsr
       file = 'liferay-portlet-ext.xml'
       with_namespace_and_config do |name, config|
         desc 'Create Liferay portlet XML'
@@ -165,6 +192,7 @@ module Caterpillar
 
     # Writes liferay-display.xml
     def define_liferaydisplayxml_task
+      @name = :jsr
       file = 'liferay-display.xml'
       with_namespace_and_config do |name, config|
         desc "Create Liferay display XML"
@@ -179,6 +207,7 @@ module Caterpillar
     end
 
     def define_liferayportlets_task
+      @name = :jsr
       with_namespace_and_config do |name, config|
         desc 'Analyses native Liferay portlets XML'
         task "portlets" do
@@ -190,6 +219,7 @@ module Caterpillar
 
 
     def define_migrate_task
+      @name = :db
       with_namespace_and_config do |name, config|
         desc "Migrates Caterpillar database tables"
         task :migrate => :environment do
