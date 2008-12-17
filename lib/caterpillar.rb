@@ -6,6 +6,7 @@
 
 
 module Caterpillar
+  VERSION='0.9.1'
 end
 
 file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__

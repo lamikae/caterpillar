@@ -2,13 +2,14 @@ require 'rubygems'
 require 'rake'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
+require 'lib/caterpillar'
 
 Gem::Specification.new do |s|
   s.name = %q{caterpillar}
   s.authors = ["Mikael Lammentausta"]
   s.email = %q{mikael.lammentausta@gmail.com}
   s.homepage = %q{http://rails-portlet.rubyforge.org}
-  s.version = "0.9.0"
+  s.version = Caterpillar::VERSION
 
   s.add_dependency("lportal", ">= 1.0.4")
 
