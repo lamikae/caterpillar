@@ -26,16 +26,16 @@
 
         <% rescue
              vars = {}
-             undef_vars = []
              portlet[:vars].each do |var|
-               val = @caterpillar_navigation_defaults[var] || 0
-               vars.update( var => val )
-               undef_vars << var unless params[var]
+               unless params[var]
+                 val = @caterpillar_navigation_defaults[var] || 0
+                 vars.update( var => val )
+               end
              end
         -%>
           <li>
             <b><%= link_to( portlet[:title], portlet[:reqs]+vars ) -%></b>
-            <i>needs variables</i> <b><%= vars.keys.inspect -%></b>
+            <i>needs variables</i> <b><%= portlet[:vars].inspect -%></b>
           </li>
         <% end -%>
       <% end -%>

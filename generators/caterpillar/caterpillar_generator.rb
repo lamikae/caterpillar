@@ -8,7 +8,7 @@ class CaterpillarGenerator < Rails::Generator::Base
     this_dir = File.dirname(File.expand_path(file))
     tmpl = this_dir+'/templates'
 
-    STDOUT.puts ' * Installing config, migrations, stylesheets, images and views'
+    STDOUT.puts ' * Installing config, stylesheets and images'
 
     record do |m|
 
@@ -18,24 +18,6 @@ class CaterpillarGenerator < Rails::Generator::Base
       m.file('config/'+file, 'config/'+file)
       ####################################
 
-      ### migrations ###
-      m.directory('db/migrate')
-      Find.find(tmpl+'/migrations') do |file|
-        if FileTest.directory?(file)
-          if File.basename(file) == "deprecated"
-            Find.prune # Don't look any further into this directory.
-          else
-            next
-          end
-        else
-          if file[/.rb$/]
-            # copy the file to the main application
-            migration = File.basename(file)
-            m.file('migrations/'+migration, 'db/migrate/'+migration)
-          end
-        end
-      end
-      ####################################
 
       ### stylesheet ###
       target = 'public/stylesheets/caterpillar'
@@ -58,13 +40,13 @@ class CaterpillarGenerator < Rails::Generator::Base
       m.file('images/caterpillar/'+file, target+'/'+file)
       ####################################
 
-      ### views ###
-      target = 'app/views/caterpillar'
-      m.directory(target)
-      file = '_navigation.html.erb'
-      m.file('views/caterpillar/'+file, target+'/'+file)
-      ####################################
-
+#       ### views ###
+#       target = 'app/views/caterpillar'
+#       m.directory(target)
+#       file = '_navigation.html.erb'
+#       m.file('views/caterpillar/'+file, target+'/'+file)
+#       ####################################
+# 
     end
   end
 end
