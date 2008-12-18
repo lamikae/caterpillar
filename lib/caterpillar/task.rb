@@ -211,7 +211,7 @@ module Caterpillar
     def define_liferayportlets_task
       @name = :liferay
       with_namespace_and_config do |name, config|
-        desc 'Analyses native Liferay portlets XML'
+        desc 'Analyses native Liferay portlet-display XML'
         task :portlets do
           @portlets = config.container.analyze(:native)
           print_portlets(@portlets)
