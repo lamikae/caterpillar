@@ -4,13 +4,12 @@
 # software license details.
 #++
 
-
 module Caterpillar
   VERSION='0.9.1'
 end
 
-file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
-this_dir = File.dirname(File.expand_path(file))
+this_file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+this_dir = File.dirname(File.expand_path(this_file))
 
 CATERPILLAR_LIBS=this_dir
 
@@ -25,6 +24,7 @@ Find.find(this_dir) do |file|
       next
     end
   else
-    require file if file[/.rb$/]
+    # do not require this file twice
+    require file if file[/.rb$/] and File.basename(file) != File.basename(this_file)
   end
 end
