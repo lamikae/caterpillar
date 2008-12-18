@@ -61,10 +61,6 @@ module Caterpillar
             routes.delete(r)
           end
         end
-        # fix path variables to be replaced by rails-portlet at runtime
-        path.gsub!(/:uid/,'%UID%')
-        path.gsub!(/:gid/,'%GID%')
-        # TODO: notify user of unsupported variables
         portlet.update( :path => path )
 
         ### javascripts
@@ -101,6 +97,13 @@ module Caterpillar
 
         ### javascripts
         portlet.update( :javascripts => @config.javascripts ) unless portlet[:javascripts]
+
+        # fix path variables to be replaced by rails-portlet at runtime
+        path = portlet[:path]
+        path.gsub!(/:uid/,'%UID%')
+        path.gsub!(/:gid/,'%GID%')
+        # TODO: notify user of unsupported variables
+        portlet.update( :path => path )
       end
 
       return portlets
