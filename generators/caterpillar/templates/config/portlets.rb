@@ -6,11 +6,15 @@ Caterpillar::Config.new do |portlet|
   portlet.container = Liferay
   # portlet.container.version = '5.1.1'
 
-  # Dince liferay-display-ext.xml does not exist, all portlets are categorized in
-  # liferay-display.xml. If you intend to keep other portlets still intact,
-  # you need to specify the location of WEB-INF.
-  # No changes are made to any of the files in this directory.
-  portlet.container.WEB_INF = '/usr/local/liferay/webapps/ROOT/WEB-INF/'
+  # If you want to install the Rails-portlet JAR into the container, the container
+  # WEB-INF will be used.
+  #
+  # Since liferay-display-ext.xml does not exist, all portlets are categorized in
+  # liferay-display.xml. Caterpillar parses this file and appends Rails portlets.
+  #
+  # No changes are made to any of the files in this directory while making XML,
+  # only the deploy and install tasks make any changes.
+  portlet.container.root = '/usr/local/liferay/'
 
   # The hostname and port.
   # By default the values are taken from the request.

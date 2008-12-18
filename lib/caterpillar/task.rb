@@ -38,7 +38,6 @@ module Caterpillar
 
     # The main task.
     # Reads the configuration file and launches appropriate tasks.
-    # Defines the rake task prefix 'jsr'.
     def initialize(name = :usage, config = nil, tasks = :define_tasks)
       @name   = name
       @config = Util.eval_configuration(config)
@@ -62,18 +61,21 @@ module Caterpillar
       define_liferayportlets_task
       define_migrate_task
       define_rollback_task
+      define_jar_install_task
+      define_jar_uninstall_task
+      define_jar_version_task
     end
 
     # the main XML generator task
     def define_main_task
       desc 'Create all XML files according to configuration'
-      tasks = [:parse,"#{@name}:portletxml"]
+      tasks = [:parse,"#{@name}:portlet"]
       if @config.container.kind_of? Liferay
-        tasks << "#{@name}:liferayportletappxml"
-        tasks << "#{@name}:liferaydisplayxml"
+        tasks << "#{@name}:liferayportletapp"
+        tasks << "#{@name}:liferaydisplay"
       end
       tasks << "portlets" # finally print produced portlets
-      task :jsr => tasks
+      task :xml => tasks
     end
 
     def define_usage_task
@@ -155,7 +157,7 @@ module Caterpillar
 
     # Writes the portlet.xml file
     def define_portletxml_task
-      @name = :jsr
+      @name = :xml
       # set the output filename
       if @config.container.kind_of? Liferay
         file = 'portlet-ext.xml'
@@ -163,8 +165,8 @@ module Caterpillar
         file = 'portlet.xml'
       end
       with_namespace_and_config do |name, config|
-        desc "Create JSR286 portlet XML"
-        task "portletxml" do
+        desc 'Create JSR286 portlet XML'
+        task :portlet do
           system('touch %s' % file)
           f=File.open(file,'w')
           f.write Portlet.xml(@portlets)
@@ -176,11 +178,11 @@ module Caterpillar
 
     # Writes liferay-portlet-ext.xml
     def define_liferayportletappxml_task
-      @name = :jsr
+      @name = :xml
       file = 'liferay-portlet-ext.xml'
       with_namespace_and_config do |name, config|
         desc 'Create Liferay portlet XML'
-        task "liferayportletappxml" do
+        task :liferayportletapp do
           system('touch %s' % file)
           f=File.open(file,'w')
           f.write config.container.portletapp_xml(@portlets)
@@ -192,11 +194,11 @@ module Caterpillar
 
     # Writes liferay-display.xml
     def define_liferaydisplayxml_task
-      @name = :jsr
+      @name = :xml
       file = 'liferay-display.xml'
       with_namespace_and_config do |name, config|
-        desc "Create Liferay display XML"
-        task "liferaydisplayxml" do
+        desc 'Create Liferay display XML'
+        task :liferaydisplay do
           system('touch %s' % file)
           f=File.open(file,'w')
           f.write config.container.display_xml(@portlets)
@@ -207,10 +209,10 @@ module Caterpillar
     end
 
     def define_liferayportlets_task
-      @name = :jsr
+      @name = :liferay
       with_namespace_and_config do |name, config|
         desc 'Analyses native Liferay portlets XML'
-        task "portlets" do
+        task :portlets do
           @portlets = config.container.analyze(:native)
           print_portlets(@portlets)
         end
@@ -241,6 +243,7 @@ module Caterpillar
     end
 
     def define_rollback_task
+      @name = :db
       with_namespace_and_config do |name, config|
         desc "Wipes out Caterpillar database tables"
         task :rollback => :environment do
@@ -250,6 +253,100 @@ module Caterpillar
             File.expand_path(
               File.dirname(__FILE__) + "/../../db/migrate"), version)
   #         Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+        end
+      end
+    end
+
+    def define_jar_install_task
+      @name = :jar
+      with_namespace_and_config do |name, config|
+        desc 'Installs Rails-portlet JAR into the portlet container'
+        task :install do
+          raise 'Only Liferay is supported' unless @config.container.kind_of? Liferay
+          require 'find'
+
+          portlet_jar = nil
+          old_jar = nil
+          version = nil
+          source = File.join(CATERPILLAR_LIBS,'java')
+          target = File.join(@config.container.WEB_INF,'lib')
+
+          Find.find(source) do |file|
+            if File.basename(file) =~ /rails-portlet/
+              portlet_jar = file
+              version = file[/(\d.\d.\d).jar/,1]
+            end
+          end
+
+          # check for previous installs..
+          Find.find(target) do |file|
+            if File.basename(file) =~ /rails-portlet/
+              old_version = file[/(\d.\d.\d).jar/,1]
+              # check if there's an update available
+              if version.gsub(/\./,'').to_i > old_version.gsub(/\./,'').to_i
+                info 'Rails-portlet version %s is found, but an update is available.' % old_version
+                old_jar = file
+              else
+                info 'Rails-portlet version %s is already installed.' % old_version
+                exit 0
+              end
+            end
+          end
+
+          info 'Installing Rails-portlet version %s to %s' % [version, target]
+          system('cp %s %s' % [portlet_jar,target])
+          if old_jar
+            info 'Removing old version'
+            system('rm -f %s' % old_jar)
+          end
+
+        end
+      end
+    end
+
+    def define_jar_uninstall_task
+      @name = :jar
+      with_namespace_and_config do |name, config|
+        desc 'Uninstalls Rails-portlet JAR from the portlet container'
+        task :uninstall do
+          raise 'Only Liferay is supported' unless @config.container.kind_of? Liferay
+          require 'find'
+          target = File.join(@config.container.WEB_INF,'lib')
+
+          Find.find(target) do |file|
+            if File.basename(file) =~ /rails-portlet/
+              version = file[/(\d.\d.\d).jar/,1]
+              info 'Uninstalling Rails-portlet version %s from %s' % [version, target]
+              system('rm -f %s' % file)
+              exit 0
+            end
+          end
+
+          info 'Rails-portlet was not found in %s' % target
+          exit 1
+        end
+      end
+    end
+
+    def define_jar_version_task
+      @name = :jar
+      with_namespace_and_config do |name, config|
+        desc 'Checks the installed Rails-portlet version'
+        task :version do
+          raise 'Only Liferay is supported' unless @config.container.kind_of? Liferay
+          require 'find'
+          target = File.join(@config.container.WEB_INF,'lib')
+
+          Find.find(target) do |file|
+            if File.basename(file) =~ /rails-portlet/
+              version = file[/(\d.\d.\d).jar/,1]
+              info 'Rails-portlet version %s found in %s' % [version, target]
+              exit 0
+            end
+          end
+
+          info 'Rails-portlet was not found in %s' % target
+          exit 1
         end
       end
     end
@@ -277,6 +374,10 @@ module Caterpillar
           puts "\t"+ portlet[:title] +spaces+ portlet[field].inspect
         end
       end
+    end
+
+    def info(msg)
+      STDOUT.puts ' * ' + msg
     end
 
 

@@ -12,15 +12,21 @@ module Caterpillar
     # Liferay version
     attr_accessor :version
 
-    # The location of Liferay's WEB-INF folder for XML analyzation
-    attr_accessor :WEB_INF
+    # the installation directory
+    attr_accessor :root
 
     def initialize(version='5.1.1')
       @version = version
     end
 
+    # The location of Liferay's WEB-INF folder for XML analyzation.
+    # This is relative to installation directory (self.root)
+    def WEB_INF
+      raise 'Configure container root folder' unless self.root
+      File.join(self.root,'webapps','ROOT','WEB-INF')
+    end
+
     def analyze(type)
-      raise 'Configure WEB-INF' unless self.WEB_INF
       require 'hpricot'
       return nil unless type==:native
 

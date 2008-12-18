@@ -12,6 +12,8 @@ end
 file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
 this_dir = File.dirname(File.expand_path(file))
 
+CATERPILLAR_LIBS=this_dir
+
 require 'find'
 
 # include all ruby files
