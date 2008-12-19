@@ -42,13 +42,14 @@ module Caterpillar
       @name   = name
       @config = Util.eval_configuration(config)
       yield self if block_given?
+      @xml_files = []
       send tasks
     end
 
     private
 
     def define_tasks
-      define_main_task
+      define_xml_task
       define_usage_task
       define_pluginize_task
       define_environment_task
@@ -64,10 +65,15 @@ module Caterpillar
       define_jar_install_task
       define_jar_uninstall_task
       define_jar_version_task
+      define_warble_task
+      define_deploy_task
+      define_deploy_xml_task
+      define_deploy_war_task
     end
 
     # the main XML generator task
-    def define_main_task
+    def define_xml_task
+      @name = :xml
       desc 'Create all XML files according to configuration'
       tasks = [:parse,"#{@name}:portlet"]
       if @config.container.kind_of? Liferay
@@ -164,6 +170,7 @@ module Caterpillar
       else
         file = 'portlet.xml'
       end
+      @xml_files << file
       with_namespace_and_config do |name, config|
         desc 'Create JSR286 portlet XML'
         task :portlet do
@@ -180,6 +187,7 @@ module Caterpillar
     def define_liferayportletappxml_task
       @name = :xml
       file = 'liferay-portlet-ext.xml'
+      @xml_files << file
       with_namespace_and_config do |name, config|
         desc 'Create Liferay portlet XML'
         task :liferayportletapp do
@@ -196,6 +204,7 @@ module Caterpillar
     def define_liferaydisplayxml_task
       @name = :xml
       file = 'liferay-display.xml'
+      @xml_files << file
       with_namespace_and_config do |name, config|
         desc 'Create Liferay display XML'
         task :liferaydisplay do
@@ -350,6 +359,79 @@ module Caterpillar
         end
       end
     end
+
+
+
+    def define_warble_task
+      desc 'Create a WAR package with Warbler'
+      task :warble do
+        unless system('which warble')
+          info 'Warbler was not found in PATH, exiting'
+          exit 1
+        end
+        unless File.exists?(@config.warbler_conf)
+          info 'Warbler configuration file %s was not found, exiting' % @config.warbler_conf
+          exit 1
+        end
+        info 'building WAR package'
+
+        system('ruby -S warble war')
+
+        unless File.exists?(@config.servlet+'.war')
+          info 'cannot find the WAR file, exiting'
+          exit 1
+        end
+      end
+    end
+
+    def define_deploy_task
+      desc 'Deploy XML files and WAR package to the portlet container'
+
+      raise 'Only deployment to Liferay on Tomcat is supported' unless @config.container.kind_of? Liferay
+      tasks = [:xml, :warble, 'deploy:xml', 'deploy:war']
+      task :deploy => tasks
+    end
+
+    def define_deploy_xml_task
+      @name = :deploy
+      with_namespace_and_config do |name, config|
+        desc 'Deploys the XML files'
+        task :xml do
+          info 'deploying XML files'
+          target = @config.container.WEB_INF
+
+          @xml_files.each do |file|
+            system('cp %s %s' % [file,target])
+            info 'copied %s into %s' % [file,target]
+          end
+        end
+      end
+    end
+    def define_deploy_war_task
+      @name = :deploy
+      with_namespace_and_config do |name, config|
+        desc 'Deploys the WAR file'
+        task :war do
+          info 'deploying WAR package'
+
+          file = @config.servlet+'.war'
+          unless File.exists?(file)
+            info 'cannot find the WAR file %s, exiting' % file
+            exit 1
+          end
+
+          target = File.join(@config.container.root,'webapps')
+          info 'removing previous installs'
+          system('rm -rf %s' % File.join(target,@config.servlet+'*'))
+          system('cp %s %s' % [file,target])
+          info 'copied %s into %s' % [file,target]
+
+        end
+      end
+    end
+
+
+
 
     def with_namespace_and_config
       name, config = @name, @config

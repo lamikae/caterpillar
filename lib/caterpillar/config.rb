@@ -28,6 +28,8 @@ module Caterpillar
 
     attr_accessor :routes
 
+    attr_accessor :warbler_conf
+
     # Sets sane defaults that are overridden in the config file.
     def initialize
       @rails_root  = File.expand_path(defined?(RAILS_ROOT) ? RAILS_ROOT : Dir.getwd)
@@ -36,6 +38,7 @@ module Caterpillar
       @instances = []
       @javascripts = []
       @include_all_named_routes = true
+      @warbler_conf = File.join(@rails_root,'config','warble.rb')
 
       yield self if block_given?
     end
