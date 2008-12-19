@@ -1,15 +1,17 @@
 <div class="caterpillar_navigation">
   <%# CATEGORIES -%>
-  <% categories = @caterpillar_navigation.keys -%>
-  <% @caterpillar_navigation.each_pair do |category,portlets| -%>
-    <% cat = category.gsub(' ','_') -%>
-    <span id="<%=cat-%>" class="cp_category">
-      <%= link_to_function( category,
-        "cp_toggle_category('%s',null);" % cat
-    )
-    -%>
-    </span>
-  <% end -%>
+  <%# categories = @caterpillar_navigation.keys -%>
+  <div id="caterpillar_categories">
+    <% @caterpillar_navigation.each_pair do |category,portlets| -%>
+      <% cat = category.gsub(' ','_') -%>
+      <span id="<%=cat-%>" class="cp_category">
+        <%= link_to_function( category,
+          "cp_toggle_category('%s',null);" % cat
+      )
+      -%>
+      </span>
+    <% end -%>
+  </div>
 
   <%# PORTLET LINKS -%>
   <% @caterpillar_navigation.each_pair do |category,portlets| -%>
@@ -34,7 +36,7 @@
              end
         -%>
           <li>
-            <b><%= link_to( portlet[:title], portlet[:reqs]+vars ) -%></b>
+            <b><%= link_to( portlet[:title], portlet[:reqs].merge(vars) ) -%></b>
             <i>needs variables</i> <b><%= vars.keys.inspect -%></b>
           </li>
         <% end -%>

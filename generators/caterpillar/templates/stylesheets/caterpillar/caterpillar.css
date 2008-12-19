@@ -11,6 +11,13 @@ filter:alpha(opacity=81);-moz-opacity:.81;opacity:.81;
 
 .caterpillar_navigation ul {
 list-style-type: none;
+margin: 4px;
+padding: 4px;
+}
+
+#caterpillar_categories {
+width: 100%;
+overflow: auto;
 }
 
 .cp_category {
@@ -26,9 +33,9 @@ background: white;
 .cp_portlets {
 float: break;
 overflow: hidden;
-margin: 0 40px 10px 40px;
+margin: 0 40px 10px 0px;
 border: 3px double green;
-padding: 5px;
+/* padding: 5px; */
 }
 
 .navlink {
