@@ -274,16 +274,17 @@ module Caterpillar
           raise 'Only Liferay is supported' unless @config.container.kind_of? Liferay
           require 'find'
 
+          version = '0.5.2'
+          #version = '0.6.0'
+
           portlet_jar = nil
           old_jar = nil
-          version = nil
           source = File.join(CATERPILLAR_LIBS,'java')
           target = File.join(@config.container.WEB_INF,'lib')
 
           Find.find(source) do |file|
-            if File.basename(file) =~ /rails-portlet/
+            if File.basename(file) =~ /rails-portlet-#{version}/
               portlet_jar = file
-              version = file[/(\d.\d.\d).jar/,1]
             end
           end
 
