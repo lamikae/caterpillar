@@ -361,10 +361,20 @@ module Caterpillar
     end
 
 
-
+    # Using JRuby to build the WAR file is necessary, as MRI Ruby can build broken files, even with the same set of rubygems.
+    # Especially gettext seems to be a problem.
     def define_warble_task
       desc 'Create a WAR package with Warbler'
       task :warble do
+        unless ENV['JRUBY_HOME']
+          info 'Environment variable JRUBY_HOME is not set, exiting'
+          exit 1
+        end
+        jruby = File.join(ENV['JRUBY_HOME'],'bin','jruby')
+        unless File.exists?(jruby)
+          info 'JRuby executable was not found in %s, exiting' % jruby
+          exit 1
+        end
         unless system('which warble')
           info 'Warbler was not found in PATH, exiting'
           exit 1
@@ -373,14 +383,9 @@ module Caterpillar
           info 'Warbler configuration file %s was not found, exiting' % @config.warbler_conf
           exit 1
         end
-        info 'building WAR package'
+        info 'building WAR package using JRuby (%s)' % jruby
+        system(jruby+' -S warble war')
 
-        system('ruby -S warble war')
-
-        unless File.exists?(@config.servlet+'.war')
-          info 'cannot find the WAR file, exiting'
-          exit 1
-        end
       end
     end
 
