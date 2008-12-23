@@ -274,8 +274,8 @@ module Caterpillar
           raise 'Only Liferay is supported' unless @config.container.kind_of? Liferay
           require 'find'
 
-          version = '0.5.2'
-          #version = '0.6.0'
+          #version = '0.5.2'
+          version = '0.6.0'
 
           portlet_jar = nil
           old_jar = nil
