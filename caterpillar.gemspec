@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.has_rdoc = true
   s.extra_rdoc_files = ["README", "LICENSES.txt"]
   s.rdoc_options = ["--main", "README"]
-  s.rdoc_options << '--line-numbers' << '--inline-source' << '-U'
+  s.rdoc_options << '--line-numbers' << '--inline-source'
   s.rubyforge_project = %q{rails-portlet}
   s.rubygems_version = %q{1.2.0}
   s.summary = %q{Caterpillar helps building Rails applications for JSR286 portlets.}
