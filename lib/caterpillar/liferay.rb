@@ -167,7 +167,7 @@ module Caterpillar
     # tables that are skipped when creating fixtures
     def skip_fixture_tables
       [
-        "country","cyrususer","cyrusvirtual",
+        "cyrususer","cyrusvirtual",
         "documentlibrary_fsentry","documentlibrary_binval","documentlibrary_node","documentlibrary_prop","documentlibrary_refs",
         "expandocolumn",
         "expandorow",
@@ -177,10 +177,6 @@ module Caterpillar
         "chat_entry",
         "chat_status",
         "journalcontentsearch",
-        "journalfeed",
-        "journalstructure",
-        "journaltemplate",
-        "listtype",
         "mbban",
         "mbmessageflag",
         "mbstatsuser",
@@ -190,9 +186,6 @@ module Caterpillar
         "passwordpolicy",
         "passwordtracker",
         "pluginsetting",
-        "pollschoice",
-        "pollsquestion",
-        "pollsvote",
         "quartz_blob_triggers",
         "quartz_calendars",
         "quartz_cron_triggers",
