@@ -1,3 +1,8 @@
+= 0.9.4
+  - Web::PortletNames migrations + model
+  - random small fixes
+
+
 = 0.9.2
   - fixed a problem with navigation; enhanced css
   - deployment task
