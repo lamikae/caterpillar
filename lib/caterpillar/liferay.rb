@@ -33,6 +33,10 @@ module Caterpillar
       portlets = []
 
       f=File.open(self.WEB_INF+'/portlet-custom.xml','r')
+      custom_xml = Hpricot.XML(f.read)
+      f.close
+
+      f=File.open(self.WEB_INF+'/liferay-portlet.xml','r')
       portlet_xml = Hpricot.XML(f.read)
       f.close
 
@@ -40,15 +44,20 @@ module Caterpillar
       display_xml = Hpricot.XML(f.read)
       f.close
 
-      (portlet_xml/'portlet').each do |portlet|
+      (custom_xml/'portlet').each do |portlet|
         _p = {
-          :name  => (portlet/'portlet-name').innerHTML,
+          :id    => (portlet/'portlet-name').innerHTML,
           :title => (portlet/'display-name').innerHTML
         }
 
-        # horribly ineffective
+        # search the name
+        portlet_xml.search("//portlet-name").each do |p|
+          _p.update(:name => (p/"../struts-path").text) if p.innerHTML==_p[:id]
+        end
+
+        # search the category - horribly ineffective
         display_xml.search("//category").each do |c|
-          _p.update(:category => c['name'] ) if (c/"//portlet[@id='#{_p[:name]}']").any?
+          _p.update(:category => c['name'] ) if (c/"//portlet[@id='#{_p[:id]}']").any?
         end
 
         portlets << _p

@@ -4,38 +4,41 @@ module Helpers
 #     include ActionView::Helpers::UrlHelper
 #     include ActionView::Helpers::TagHelper
 
-    # formulates a link to Liferay.
-    # the obj is an instance of a model.
-    # the classnameid identifies the resource's type (ie. User). See the classname_ table.
+    # Formulates a link to Liferay.
+    # Parameters:
+    #  - obj is an instance of a model from the lportal library.
+    #  - options
     def link_to_liferay(obj,options={})
       options.update(:use_large_igpreview => false) unless options[:use_large_igpreview]
 
-      # todellista redirectiä ei saada yhteysportletista. kierretään se javaskriptillä.
+      # Rails-portlet cannot pass the actual redirect parameter.
+      # Workaround with JavaScript.
       redirect = 'javascript: history.go(-1)'
 
-      title = "n/a"
+      title = 'n/a' # link title
       begin
+        STDERR.puts 'This method is DEPRECATED - use obj.path instead'
         logger.debug "Formulating Liferay link for #{obj}"
         case obj.liferay_class
 
         ### group
         when 'com.liferay.portal.model.Group'
-          title = (obj.name.empty? ? obj.owner.fullname : obj.name)
-          urls = LiferayUrl.new(obj,nil,nil).static_url
-          logger.debug urls
-          if options[:private]
-            label = _('yksityiset sivut')
-            urls[:private] ?
-              link_to_exit_portlet( label, urls[:private] ) :
-              link_to_function(
-                label, "alert('%s')" % _('Yhteisöllä ei ole yksityisiä sivuja'))
-          else
-            label = _('julkiset sivut')
-            urls[:public] ?
-              link_to_exit_portlet( label, urls[:public] ) :
-              link_to_function(
-                label, "alert('%s')" % _('Yhteisöllä ei ole julkisia sivuja'))
-          end
+#           title = (obj.name.empty? ? obj.owner.fullname : obj.name)
+#           urls = LiferayUrl.new(obj,nil,nil).static_url
+#           logger.debug urls
+#           if options[:private]
+#             label = _('yksityiset sivut')
+#             urls[:private] ?
+#               link_to_exit_portlet( label, urls[:private] ) :
+#               link_to_function(
+#                 label, "alert('%s')" % _('Yhteisöllä ei ole yksityisiä sivuja'))
+#           else
+#             label = _('julkiset sivut')
+#             urls[:public] ?
+#               link_to_exit_portlet( label, urls[:public] ) :
+#               link_to_function(
+#                 label, "alert('%s')" % _('Yhteisöllä ei ole julkisia sivuja'))
+#           end
 
 
 # siirretty malliin
@@ -46,22 +49,22 @@ module Helpers
 
         ### user
         when 'com.liferay.portal.model.User'
-          urls = LiferayUrl.new(obj,nil,nil).static_url
-          #logger.debug urls
-          if options[:private]
-            label = options[:label]
-            label ||= _('yksityiset sivut')
-            urls[:private] ?
-              link_to_exit_portlet( label, urls[:private] ) :
-              link_to_function(
-                label, "alert('%s')" % _('Tunnuksella ei ole yksityisiä sivuja'))
-          else
-            label = options[:label] || _('julkiset sivut')
-            urls[:public] ?
-              link_to_exit_portlet( label, urls[:public] ) :
-              link_to_function(
-                label, "alert('%s')" % _('Tunnuksella ei ole julkisia sivuja'))
-          end
+#           urls = LiferayUrl.new(obj,nil,nil).static_url
+#           #logger.debug urls
+#           if options[:private]
+#             label = options[:label]
+#             label ||= _('yksityiset sivut')
+#             urls[:private] ?
+#               link_to_exit_portlet( label, urls[:private] ) :
+#               link_to_function(
+#                 label, "alert('%s')" % _('Tunnuksella ei ole yksityisiä sivuja'))
+#           else
+#             label = options[:label] || _('julkiset sivut')
+#             urls[:public] ?
+#               link_to_exit_portlet( label, urls[:public] ) :
+#               link_to_function(
+#                 label, "alert('%s')" % _('Tunnuksella ei ole julkisia sivuja'))
+#           end
 
 
         ### blog
@@ -118,8 +121,8 @@ module Helpers
           link_to_exit_portlet( _('Lue koko artikkeli "%s"') % obj.asset.title, url )
 
         when 'com.liferay.portlet.messageboards.model.MBCategory'
-          url = LiferayUrl.new(obj,@user,redirect).static_url
-          link_to_exit_portlet( obj.name, url )
+#           url = LiferayUrl.new(obj,@user,redirect).static_url
+#           link_to_exit_portlet( obj.name, url )
 
 
         when 'com.liferay.portlet.messageboards.model.MBMessage'
