@@ -4,6 +4,8 @@ class LportalSequences < ActiveRecord::Migration
   @@tables = [
     Account,
     Address,
+    Announcement::Delivery,
+    Announcement::Entry,
     Asset,
     Contact,
     Group,
