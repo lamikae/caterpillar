@@ -238,13 +238,15 @@ module Caterpillar
           ActiveRecord::Migrator.migrate(
             File.expand_path(
               File.dirname(__FILE__) + "/../../db/migrate"))
-  #         Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+          STDOUT.puts 'Now, run rake db:schema:dump'
+          #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
 
           @portlets = config.container.analyze(:native)
           @portlets.each do |portlet|
-            LiferayPortlet.create(
-              :name => portlet[:name],
-              :title => portlet[:title]
+            Web::PortletName.create(
+              :portletid => portlet[:id],
+              :name      => portlet[:name],
+              :title     => portlet[:title]
             )
           end
         end
@@ -261,7 +263,8 @@ module Caterpillar
           ActiveRecord::Migrator.migrate(
             File.expand_path(
               File.dirname(__FILE__) + "/../../db/migrate"), version)
-  #         Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+          STDOUT.puts 'Now, run rake db:schema:dump'
+          #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
         end
       end
     end
