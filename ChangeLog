@@ -1,3 +1,7 @@
+= 0.9.5
+  - Fixed the portlet_names migration
+
+
 = 0.9.4
   - Web::PortletNames migrations + model
   - random small fixes
