@@ -1,8 +1,8 @@
 module Caterpillar
 module Helpers
   module Liferay
-#     include ActionView::Helpers::UrlHelper
-#     include ActionView::Helpers::TagHelper
+    include ActionView::Helpers::UrlHelper
+    include ActionView::Helpers::TagHelper
 
     # Formulates a link to Liferay.
     # Parameters:
@@ -69,9 +69,9 @@ module Helpers
 
         ### blog
         when 'com.liferay.portlet.blogs.model.BlogsEntry'
-          title = _('Linkki blogimerkintään "%s"') % obj.title
-          url = LiferayUrl.new(obj,@user,redirect).instance_url
-          link_to_exit_portlet( title, url )
+#           title = _('Linkki blogimerkintään "%s"') % obj.title
+#           url = LiferayUrl.new(obj,@user,redirect).instance_url
+#           link_to_exit_portlet( title, url )
 
 
         ### document library file
@@ -175,6 +175,7 @@ module Helpers
 
     # formulates a link that the rails286-portlet will leave unparsed.
     def link_to_exit_portlet(label, url)
+      raise 'No url given' if url.nil?
       link_to label, url_to_exit_portlet(url)
     end
 
