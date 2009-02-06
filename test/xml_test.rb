@@ -10,15 +10,23 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
   end
 
   def test_liferay_display_xml
-    xml = Caterpillar::Liferay.new(@config).display_xml(@portlets)
+    xml = @config.container.display_xml(@portlets)
     assert_not_nil xml
     assert !xml.empty?
   end
 
   def test_liferay_portlet_xml
-    xml = Caterpillar::Liferay.new(@config).portletapp_xml(@portlets)
-    assert_not_nil xml
-    assert !xml.empty?
+    { '5.1.1' => '5.1.0',
+      '5.2.0' => '5.2.0' }.each_pair do |version,tld|
+
+      @config.container.version = version
+      xml = @config.container.portletapp_xml(@portlets)
+      assert_not_nil xml
+      assert !xml.empty?
+      assert_not_nil xml[/liferay-portlet-app.*#{tld}/], 'Failed to create DTD with proper version; liferay %s' % version
+    end
   end
+
+
 
 end

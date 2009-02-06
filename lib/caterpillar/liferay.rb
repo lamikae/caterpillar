@@ -1,5 +1,5 @@
 #--
-# (c) Copyright 2008 Mikael Lammentausta
+# (c) Copyright 2008,2009 Mikael Lammentausta
 # See the file LICENSES.txt included with the distribution for
 # software license details.
 #++
@@ -114,14 +114,17 @@ module Caterpillar
       xml << "\n"
       xml << '<!DOCTYPE %s PUBLIC' % doctype
       case doctype
+
       when 'liferay-portlet-app'
         xml << '  "-//Liferay//DTD Portlet Application %s//EN"' % version
         xml << '  "http://www.liferay.com/dtd/%s_%s.dtd">' % [
         doctype, version.gsub('.','_') ]
+
       when 'display'
         xml << '  "-//Liferay//DTD Display %s//EN"' % version
         xml << '  "http://www.liferay.com/dtd/liferay-%s_%s.dtd">' % [
         doctype, version.gsub('.','_') ]
+
       end
       xml << "\n\n"
       xml << '<%s>' % doctype
@@ -138,9 +141,17 @@ module Caterpillar
     def dtd_version(type)
       case type
       when 'liferay-portlet-app'
-        '5.1.0'
+        if @version[/5.1/]
+          '5.1.0'
+        elsif @version[/5.2/]
+          '5.2.0'
+        end
       when 'display'
-        '5.1.0'
+        if @version[/5.1/]
+          '5.1.0'
+        elsif @version[/5.2/]
+          '5.2.0'
+        end
       end
     end
 
