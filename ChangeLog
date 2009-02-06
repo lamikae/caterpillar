@@ -1,5 +1,11 @@
 = 0.9.5
+  - portlet xml definition to Liferay 5.2.0 standards
+  - liferay xml files are tagged by selection based on the configured version
+  - portlet jar installation based on Liferay version
+  - Upgrade to rails-portlet 0.6.1 for Liferay 5.2.x
   - Fixed the sequences migration
+  - include ActionView helpers, raise an error if given exit_portlet url is nil
+  - fixed a small bug with inline JS parsing
 
 
 = 0.9.4
