@@ -37,16 +37,18 @@ module Caterpillar
 
     protected
 
+    # JSR 286 portlet XML header. Opens portlet-app.
     def header
-      xml =  '<?xml version="1.0" encoding="UTF-8"?>'
-      xml << "\n"
+      xml =  '<?xml version="1.0" encoding="UTF-8"?>' +"\n"
       xml << '<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">'
+             xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+             version="2.0">'
       xml << "\n\n"
       return xml
     end
 
+    # Closes portlet-app.
     def footer
       '</portlet-app>' + "\n"
     end
