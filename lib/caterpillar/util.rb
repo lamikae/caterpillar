@@ -11,8 +11,9 @@ module Caterpillar
 
     # Reads the configuration
     def eval_configuration(config=nil)
-      if config.nil? && File.exists?(Config::FILE)
-        config = eval(File.open(Config::FILE) {|f| f.read})
+      cf = File.join([RAILS_ROOT,Caterpillar::Config::FILE])
+      if config.nil? && File.exists?(cf)
+        config = eval(File.open(cf) {|f| f.read})
       end
       config ||= Config.new
       unless config.kind_of? Config
