@@ -43,6 +43,10 @@ module Caterpillar
       @config = Util.eval_configuration(config)
       yield self if block_given?
       @xml_files = []
+      info 'Caterpillar v.%s' % Caterpillar::VERSION
+      info 'Configured to use %s version %s' % [
+        @config.container.class.to_s.sub('Caterpillar::',''), @config.container.version
+      ]
       send tasks
     end
 
@@ -80,7 +84,10 @@ module Caterpillar
         tasks << "#{@name}:liferayportletapp"
         tasks << "#{@name}:liferaydisplay"
       end
-      tasks << "portlets" # finally print produced portlets
+ 
+      # print produced portlets
+      tasks << :portlets
+
       task :xml => tasks
     end
 
@@ -112,6 +119,7 @@ module Caterpillar
     def define_portlets_task
       desc 'Prints portlet configuration'
       task :portlets => :parse do
+        info 'Portlet configuration ***********************'
         print_portlets(@portlets)
       end
     end
@@ -166,9 +174,9 @@ module Caterpillar
       @name = :xml
       # set the output filename
       if @config.container.kind_of? Liferay
-        file = 'portlet-ext.xml'
+        file = File.join('tmp','portlet-ext.xml')
       else
-        file = 'portlet.xml'
+        file = File.join('tmp','portlet.xml')
       end
       @xml_files << file
       with_namespace_and_config do |name, config|
@@ -178,7 +186,7 @@ module Caterpillar
           f=File.open(file,'w')
           f.write Portlet.xml(@portlets)
           f.close
-          STDOUT.puts 'Created %s' % file
+          info '-> %s' % file
         end
       end
     end
@@ -186,7 +194,7 @@ module Caterpillar
     # Writes liferay-portlet-ext.xml
     def define_liferayportletappxml_task
       @name = :xml
-      file = 'liferay-portlet-ext.xml'
+      file = File.join('tmp','liferay-portlet-ext.xml')
       @xml_files << file
       with_namespace_and_config do |name, config|
         desc 'Create Liferay portlet XML'
@@ -195,7 +203,7 @@ module Caterpillar
           f=File.open(file,'w')
           f.write config.container.portletapp_xml(@portlets)
           f.close
-          STDOUT.puts 'Created %s' % file
+          info '-> %s' % file
         end
       end
     end
@@ -203,8 +211,10 @@ module Caterpillar
     # Writes liferay-display.xml
     def define_liferaydisplayxml_task
       @name = :xml
-      file = 'liferay-display.xml'
+      file = File.join('tmp','liferay-display.xml')
       @xml_files << file
+      raise 'This version of Liferay is broken!' if @config.container.version == '5.1.2'
+
       with_namespace_and_config do |name, config|
         desc 'Create Liferay display XML'
         task :liferaydisplay do
@@ -212,7 +222,7 @@ module Caterpillar
           f=File.open(file,'w')
           f.write config.container.display_xml(@portlets)
           f.close
-          STDOUT.puts 'Created %s' % file
+          info '-> %s' % file
         end
       end
     end
@@ -277,8 +287,13 @@ module Caterpillar
           raise 'Only Liferay is supported' unless @config.container.kind_of? Liferay
           require 'find'
 
-          #version = '0.5.2'
-          version = '0.6.0'
+          version = (
+            if @config.container.version[/^5.2/]
+              '0.6.1'
+            else
+              version = '0.5.2' # think of a way to branch properly
+            end
+          )
 
           portlet_jar = nil
           old_jar = nil
@@ -306,11 +321,11 @@ module Caterpillar
             end
           end
 
-          info 'Installing Rails-portlet version %s to %s' % [version, target]
           system('cp %s %s' % [portlet_jar,target])
+          info 'installed Rails-portlet version %s to %s' % [version, target]
           if old_jar
-            info 'Removing old version'
             system('rm -f %s' % old_jar)
+            info '..removed the old version %s' % old_jar
           end
 
         end
@@ -371,30 +386,41 @@ module Caterpillar
       desc 'Create a WAR package with Warbler'
       task :warble do
         unless ENV['JRUBY_HOME']
-          info 'Environment variable JRUBY_HOME is not set, exiting'
+          info ''
+          info 'Environment variable JRUBY_HOME is not set, exiting -'
+          info 'You should `export JRUBY_HOME="/usr/local/jruby"` and `sudo -E caterpillar %s`' % ARGV[0]
+          info ''
           exit 1
         end
         jruby = File.join(ENV['JRUBY_HOME'],'bin','jruby')
         unless File.exists?(jruby)
+          info ''
           info 'JRuby executable was not found in %s, exiting' % jruby
           exit 1
         end
-        unless system('which warble')
-          info 'Warbler was not found in PATH, exiting'
+        begin
+          require 'warbler'
+        rescue
+          info ''
+          info 'Warbler module was not found, exiting. Install Warbler for JRuby.'
           exit 1
         end
         unless File.exists?(@config.warbler_conf)
+          info ''
           info 'Warbler configuration file %s was not found, exiting' % @config.warbler_conf
           exit 1
         end
-        info 'building WAR package using JRuby (%s)' % jruby
+        info ''
+        info 'Building WAR using Warbler on JRuby (%s)' % jruby
+        info ''
         system(jruby+' -S warble war')
 
       end
     end
 
     def define_deploy_task
-      desc 'Deploy XML files and WAR package to the portlet container'
+      desc 'Deploy XML files and the application WAR to the portlet container'
+      #info 'Deploying XML files and the application WAR'
 
       raise 'Only deployment to Liferay on Tomcat is supported' unless @config.container.kind_of? Liferay
       tasks = [:xml, :warble, 'deploy:xml', 'deploy:war']
@@ -406,12 +432,12 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Deploys the XML files'
         task :xml do
-          info 'deploying XML files'
           target = @config.container.WEB_INF
+          info 'deploying XML files to %s' % target
 
           @xml_files.each do |file|
             system('cp %s %s' % [file,target])
-            info 'copied %s into %s' % [file,target]
+            info ' %s' % [file]
           end
         end
       end
