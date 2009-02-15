@@ -1,3 +1,9 @@
+= 0.9.6
+  - added some tables and a notice to sequence migrations
+  - no longer installs css and javascript files, everything is cramped inline into the view
+  - upgrade lportal dependency to version 1.0.9
+
+
 = 0.9.5
   - portlet xml definition to Liferay 5.2.0 standards
   - liferay xml files are tagged by selection based on the configured version

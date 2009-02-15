@@ -7,15 +7,11 @@
 module Caterpillar
   class Usage
     def self.show
-puts 'Caterpillar v.%s (c) Copyright 2008 Mikael Lammentausta' % VERSION
-puts 'Caterpillar is provided under the terms of the MIT license.'
-puts
-puts 'Usage:'
-puts '  See "%s --describe" for an overview of the tasks.' % $0
-puts
-puts '  cd to Rails root, and run the "%s pluginize" task' % $0
-# puts '  Run "%s" in Rails root' % $0
-# puts '  See 
+      STDOUT.puts 'Usage:'
+      STDOUT.puts '  See "%s --describe" for an overview of the tasks.' % $0
+      STDOUT.puts
+      STDOUT.puts '  cd to Rails root, and run the "%s pluginize" task' % $0
+      STDOUT.puts
     end
   end
 end

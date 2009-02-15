@@ -1,5 +1,5 @@
 #--
-# (c) Copyright 2008 Mikael Lammentausta
+# (c) Copyright 2008,2009 Mikael Lammentausta
 #
 # Thanks to Nick Sieger for the rake structure!
 #
@@ -43,10 +43,10 @@ module Caterpillar
       @config = Util.eval_configuration(config)
       yield self if block_given?
       @xml_files = []
-      info 'Caterpillar v.%s' % Caterpillar::VERSION
-      info 'Configured to use %s version %s' % [
-        @config.container.class.to_s.sub('Caterpillar::',''), @config.container.version
-      ]
+      STDOUT.puts 'Caterpillar v.%s (c) Copyright 2008 Mikael Lammentausta' % VERSION
+      #STDOUT.puts 'Caterpillar v.%s' % Caterpillar::VERSION
+      STDOUT.puts 'Provided under the terms of the MIT license.'
+      STDOUT.puts
       send tasks
     end
 
@@ -84,7 +84,7 @@ module Caterpillar
         tasks << "#{@name}:liferayportletapp"
         tasks << "#{@name}:liferaydisplay"
       end
- 
+
       # print produced portlets
       tasks << :portlets
 
@@ -182,6 +182,10 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Create JSR286 portlet XML'
         task :portlet do
+          info 'Configured to use %s version %s' % [
+            @config.container.class.to_s.sub('Caterpillar::',''), @config.container.version
+          ]
+
           system('touch %s' % file)
           f=File.open(file,'w')
           f.write Portlet.xml(@portlets)
@@ -389,7 +393,6 @@ module Caterpillar
           info ''
           info 'Environment variable JRUBY_HOME is not set, exiting -'
           info 'You should `export JRUBY_HOME="/usr/local/jruby"` and `sudo -E caterpillar %s`' % ARGV[0]
-          info ''
           exit 1
         end
         jruby = File.join(ENV['JRUBY_HOME'],'bin','jruby')
@@ -411,10 +414,10 @@ module Caterpillar
           exit 1
         end
         info ''
-        info 'Building WAR using Warbler on JRuby (%s)' % jruby
+        info 'Building WAR using Warbler %s on JRuby (%s)' % [
+          Warbler::VERSION, jruby]
         info ''
         system(jruby+' -S warble war')
-
       end
     end
 
@@ -447,8 +450,6 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Deploys the WAR file'
         task :war do
-          info 'deploying WAR package'
-
           file = @config.servlet+'.war'
           unless File.exists?(file)
             info 'cannot find the WAR file %s, exiting' % file
@@ -456,10 +457,12 @@ module Caterpillar
           end
 
           target = File.join(@config.container.root,'webapps')
-          info 'removing previous installs'
+
+          info '..removing previous installs..'
           system('rm -rf %s' % File.join(target,@config.servlet+'*'))
+
+          info 'deploying the WAR package to %s' % target
           system('cp %s %s' % [file,target])
-          info 'copied %s into %s' % [file,target]
 
         end
       end
