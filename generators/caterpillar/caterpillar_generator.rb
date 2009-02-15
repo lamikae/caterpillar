@@ -8,45 +8,39 @@ class CaterpillarGenerator < Rails::Generator::Base
     this_dir = File.dirname(File.expand_path(file))
     tmpl = this_dir+'/templates'
 
-    STDOUT.puts ' * Installing config, stylesheets and images'
+    STDOUT.puts ' * Installing config and images'
 
     record do |m|
 
-      ### migrations ###
+      ### config ###
       m.directory('config')
       file = 'portlets.rb'
       m.file('config/'+file, 'config/'+file)
       ####################################
 
 
-      ### stylesheet ###
-      target = 'public/stylesheets/caterpillar'
-      m.directory(target)
-      file = 'caterpillar.css'
-      m.file('stylesheets/caterpillar/'+file, target+'/'+file)
-      ####################################
-
-      ### javascript ###
-      target = 'public/javascripts/caterpillar'
-      m.directory(target)
-      file = 'caterpillar.js'
-      m.file('javascripts/caterpillar/'+file, target+'/'+file)
-      ####################################
+# these are now cramped inline to the view partial
+#       ### stylesheet ###
+#       target = 'public/stylesheets/caterpillar'
+#       m.directory(target)
+#       file = 'caterpillar.css'
+#       m.file('stylesheets/caterpillar/'+file, target+'/'+file)
+#       ####################################
+# 
+#       ### javascript ###
+#       target = 'public/javascripts/caterpillar'
+#       m.directory(target)
+#       file = 'caterpillar.js'
+#       m.file('javascripts/caterpillar/'+file, target+'/'+file)
+#       ####################################
 
       ### images ###
-      target = 'public/images/caterpillar'
+      target = 'public/images'
       m.directory(target)
       file = 'caterpillar.gif'
       m.file('images/caterpillar/'+file, target+'/'+file)
       ####################################
 
-#       ### views ###
-#       target = 'app/views/caterpillar'
-#       m.directory(target)
-#       file = '_navigation.html.erb'
-#       m.file('views/caterpillar/'+file, target+'/'+file)
-#       ####################################
-# 
     end
   end
 end

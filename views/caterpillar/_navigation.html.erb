@@ -1,3 +1,74 @@
+<%# everything is cramped together to prevent the installation of separate css and js files -%>
+
+<script type="text/javascript">
+
+  function cp_toggle_category(c,categories) {
+    c_el = document.getElementById(c);
+    p_el = document.getElementById(c+'_portlets');
+
+    if (p_el.style.display=='none') {
+      p_el.style.display='block';
+      c_el.style.background='yellow';
+    }
+    else {
+      p_el.style.display='none';
+      c_el.style.background='white';
+    }
+  }
+
+</script>
+
+<style type="text/css">
+  .caterpillar_navigation {
+  background: url('/images/caterpillar.gif') no-repeat;
+  padding: 10px 0 0 50px;
+  margin-left: 10px;
+  min-height: 50px;
+  filter:alpha(opacity=81);-moz-opacity:.81;opacity:.81;
+  /* css3 tags, works on Firefox and Safari */
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  }
+
+  .caterpillar_navigation ul {
+  list-style-type: none;
+  }
+
+  .cp_category {
+  float: left;
+  border: 3px double blue;
+  margin: 0 14px 5px 14px;
+  padding: 5px;
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+  background: white;
+  }
+
+  .cp_portlets {
+  float: break;
+  overflow: hidden;
+  margin: 0 40px 10px 40px;
+  border: 3px double green;
+  padding: 5px;
+  }
+
+  .navlink {
+  margin: 5px 14px 5px 14px;
+  padding: 5px;
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+  }
+
+  .navlink a {
+  text-decoration: none;
+  }
+
+  .navlink a:hover {
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  }
+</style>
+
 <div class="caterpillar_navigation">
   <%# CATEGORIES -%>
   <%# categories = @caterpillar_navigation.keys -%>
