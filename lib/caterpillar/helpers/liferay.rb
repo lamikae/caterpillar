@@ -174,9 +174,8 @@ module Helpers
 
 
     # formulates a link that the rails286-portlet will leave unparsed.
-    def link_to_exit_portlet(label, url)
-      raise 'No url given' if url.nil?
-      link_to label, url_to_exit_portlet(url)
+    def link_to_exit_portlet(name, options = {}, html_options = {})
+      link_to(name, url_to_exit_portlet(options), html_options)
     end
 
   end
