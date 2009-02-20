@@ -22,12 +22,12 @@
   .caterpillar_navigation {
   background: url('/images/caterpillar.gif') no-repeat;
   padding: 10px 0 0 50px;
-  margin-left: 10px;
-  min-height: 50px;
+  min-height: 55px;
   filter:alpha(opacity=81);-moz-opacity:.81;opacity:.81;
   /* css3 tags, works on Firefox and Safari */
   -moz-border-radius: 15px;
   -webkit-border-radius: 15px;
+  border-bottom: 1px dotted green;
   }
 
   .caterpillar_navigation ul {
@@ -66,6 +66,14 @@
   .navlink a:hover {
   -moz-border-radius: 8px;
   -webkit-border-radius: 8px;
+  }
+
+  #cp_version {
+  font-style: italic;
+  font-size: 9px;
+  position: absolute;
+  left: 10px;
+  top: 55px;
   }
 </style>
 
@@ -115,4 +123,7 @@
       </ul>
     </div>
   <% end -%>
+  <div id="cp_version">
+    Caterpillar v<%= Caterpillar::VERSION -%>
+  </div>
 </div>
