@@ -43,7 +43,7 @@ module Caterpillar
       @config = Util.eval_configuration(config)
       yield self if block_given?
       @xml_files = []
-      STDOUT.puts 'Caterpillar v.%s (c) Copyright 2008 Mikael Lammentausta' % VERSION
+      STDOUT.puts 'Caterpillar v.%s (c) Copyright 2008,2009 Mikael Lammentausta' % VERSION
       #STDOUT.puts 'Caterpillar v.%s' % Caterpillar::VERSION
       STDOUT.puts 'Provided under the terms of the MIT license.'
       STDOUT.puts
@@ -481,17 +481,28 @@ module Caterpillar
     protected
 
     def print_portlets(hash)
-      Util.categorize(hash).each_pair do |category,portlets|
-        puts category
+      # organize
+      _sorted = Util.categorize(hash)
+
+      # calculate the longest title
+      longest_title = 0
+      _sorted.each_pair do |category,portlets|
+        x = portlets.sort_by{|p| p[:title].size}.last[:title]
+        longest_title = x.size if x.size > longest_title
+      end
+
+      _sorted.each_pair do |category,portlets|
+        STDOUT.puts category
         portlets.each do |portlet|
           # spaces
           spaces = ''
-          0.upto(50-portlet[:title].size+1) do
+          0.upto((longest_title + 5)-portlet[:title].size) do
             spaces << ' '
           end
 
-          field = :path
-          puts "\t"+ portlet[:title] +spaces+ portlet[field].inspect
+          #field = :path
+          #fields = [:name, :id]
+          STDOUT.puts "\t" + portlet[:title] +spaces+ portlet[:id].inspect + "\t" + portlet[:name].inspect
         end
       end
     end

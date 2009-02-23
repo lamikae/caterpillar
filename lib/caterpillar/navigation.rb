@@ -22,8 +22,6 @@ module Caterpillar
   #
   # This will go the body of your layout:
   #   <% if @caterpillar_navigation -%>
-  #     <%= stylesheet_link_tag 'caterpillar/caterpillar' %>
-  #     <%= javascript_include_tag 'caterpillar/caterpillar' %>
   #     <%= render :partial => "caterpillar/navigation" %>
   #   <% end -%>
   #
