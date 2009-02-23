@@ -1,5 +1,5 @@
 #--
-# (c) Copyright 2008 Mikael Lammentausta
+# (c) Copyright 2008,2009 Mikael Lammentausta
 # See the file LICENSES.txt included with the distribution for
 # software license details.
 #++
@@ -56,25 +56,34 @@ module Caterpillar
     #  {'Category 1' => [portlets], 'Category 2' => [portlets]}
     def categorize(portlets)
       ret = {}
-# STDERR.puts portlets.first.inspect
 
-      # organize into categories
-      categories = portlets.collect{|p| p[:category]}.uniq.each do |category|
+      # organize into main categories
+      categories = portlets.collect{|p| p[:category]}
+      categories << portlets.collect{|p| p[:categories].first if p[:categories]}
+      categories.flatten!.uniq!
+
+      categories.each do |category|
+        next if category.nil? # skip nil categories
+
+        # does this category have subcategories?
+        # skip them. TODO: parse internal categories
+        if (portlets.map{|p| (
+          !p[:categories].nil? && \
+          p[:categories].first==category)} & [true] ).any?
+          STDERR.puts '%s has subcategories, skipping' % category.inspect
+          next
+        end
+
         # select the portlets in this category
-        _portlets = portlets.select{|p| p[:category]==category}
+        _portlets = portlets.select do |p|
+          p[:category]==category or (!p[:categories].nil? and p[:categories].include?(category))
+        end
+
         ret.update(category => _portlets)
       end
 
-# puts ret.inspect
-
-
-#       {'Zcore' => [], 'Foo' => []}
-
       return ret
     end
-
-
-
 
     end # static
   end

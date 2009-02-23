@@ -26,7 +26,8 @@ module Caterpillar
       File.join(self.root,'webapps','ROOT','WEB-INF')
     end
 
-    def analyze(type)
+    # Reads Liferay portlet descriptor XML files and parses them with Hpricot.
+    def analyze(type=:native)
       require 'hpricot'
       return nil unless type==:native
 
@@ -55,9 +56,28 @@ module Caterpillar
           _p.update(:name => (p/"../struts-path").text) if p.innerHTML==_p[:id]
         end
 
-        # search the category - horribly ineffective
-        display_xml.search("//category").each do |c|
-          _p.update(:category => c['name'] ) if (c/"//portlet[@id='#{_p[:id]}']").any?
+        # search the category - horribly ineffective.
+        # the categories is an Array where each raising index is a new subcategory
+        display_xml.search("display/category").each do |c|
+          if (c/"//portlet[@id='#{_p[:id]}']").any?
+            # the portlet is in this category
+            categories = [c['name']]
+
+            # child categories
+            c.search("category").each do |child|
+              categories << child['name']
+            end
+
+            if categories.size > 1
+              _p.update(:categories => categories)
+            else
+              _p.update(:category => categories.first)
+            end
+            # debug
+            #puts _p.inspect
+            #portlets << _p
+
+          end
         end
 
         portlets << _p
@@ -81,12 +101,13 @@ module Caterpillar
       xml = self.xml_header('display')
 
       categories = []
+      # process Rails portlets
       Util.categorize(portlets).each_pair do |category,portlets|
         categories << category
         xml << self.display_template(category,portlets)
       end
 
-      # include other native Liferay categories
+      # include other native Liferay portlets and categories
       if self.WEB_INF
         require 'hpricot'
 
@@ -94,7 +115,7 @@ module Caterpillar
         f=File.open(filename,'r')
         doc = Hpricot.XML(f.read)
         f.close
-        (doc/:category).each do |el|
+        (doc/"display/category").each do |el|
           unless categories.include?(el.attributes['name'])
             xml << '  ' + el.to_original_html + "\n"
           end
