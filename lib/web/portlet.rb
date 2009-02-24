@@ -22,6 +22,11 @@ module Web
       @@caterpillar_portlets = portlets
     end
 
+    def self.find_caterpillar_portlet(name)
+      self.caterpillar_portlets.select{
+        |p| p.name=='%s' % name }.first # find_by_name
+    end
+
     def title
       p = Web::PortletName.find_by_portletid(self.portletid)
       p ? p.title : nil
