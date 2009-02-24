@@ -1,4 +1,10 @@
-  - version to navigation view
+= 0.9.8
+  - fix problem with subcategories in liferay-display.xml
+  - model Rails portlets as Web::Portlets
+
+
+= 0.9.7
+  - display version in navigation view
   - comply link_to_exit_portlet with link_to api
 
 
