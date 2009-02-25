@@ -249,13 +249,22 @@ module Caterpillar
         desc "Migrates Caterpillar database tables"
         task :migrate => :environment do
           require 'active_record'
+          
+          # first run lportal sequence migrations
+          info('running lportal migrations')
+#           ActiveRecord::Migrator.migrate(LPORTAL_MIGRATIONS)
+
+          # then run own migrations
+          info('running Caterpillar migrations')
           ActiveRecord::Migrator.migrate(
             File.expand_path(
-              File.dirname(__FILE__) + "/../../db/migrate"))
-          STDOUT.puts 'Now, run rake db:schema:dump'
-          #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+              File.join(CATERPILLAR_LIBS,'..','db','migrate')))
 
+          info 'analyzing portlet XML configuration'
           @portlets = config.container.analyze(:native)
+          
+          info 'updating database'
+          Web::PortletName.all.each(&:destroy)
           @portlets.each do |portlet|
             Web::PortletName.create(
               :portletid => portlet[:id],
@@ -263,6 +272,9 @@ module Caterpillar
               :title     => portlet[:title]
             )
           end
+        
+          #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+          info 'Now, run rake db:schema:dump'
         end
       end
     end
