@@ -43,19 +43,19 @@ Caterpillar::Config.new do |portlet|
   #  - :name        -- named route
   #  - :category    -- portlet category (Liferay only)
   #  - :title       -- the title in portlet container's category (Liferay only)
-  #  - :javascripts -- portlet-specific javascripts that are not in the HTML head section (Liferay only)
-  #  - :host
-  #  - :servlet
+  #  - :javascripts -- portlet-specific javascripts that are included at
+  #                    the head of master HTML, such as body onload functions (Liferay only)
+  #  - :host        -- hostname:port of the deployment server
+  #  - :servlet     -- by default, the name of the Rails app (= name of the WAR package)
   #  - :path        -- unless you're using named routes, you can define the path here
 
-  # example:
-  #   portlet.instances << {
-  #     :name     => 'rails286_test',
-  #     :title    => 'Rails-portlet testing application',
-  #     :category => 'Testing',
-  #     :servlet  => 'RailsTestBench',
-  #     :path     => '/'
-  #   }
+  # Rails-portlet testing application:
+  portlet.instances << {
+    :name     => 'test',
+    :title    => 'Rails-portlet testing application',
+    :category => 'Caterpillar',
+    :path     => '/RailsTestBench'
+  }
 
   # this will include all named routes without further configuration
   portlet.include_all_named_routes = true
