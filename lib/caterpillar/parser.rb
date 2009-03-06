@@ -81,13 +81,13 @@ module Caterpillar
       # sanity check
       portlets.each do |portlet|
         ### hostname
-        portlet.update( :host => @config.host ) unless portlet[:host]
+        portlet[:host] ||= @config.host
 
         ### servlet
-        portlet.update( :servlet => @config.servlet ) unless portlet[:servlet]
+        portlet[:servlet] ||= @config.servlet
 
         ### category
-        portlet.update( :category => @config.category ) unless portlet[:category]
+        portlet[:category] ||= @config.category
 
         ### title
         _title = portlet[:title] || portlet[:name].to_s.gsub('_',' ').capitalize
@@ -95,8 +95,8 @@ module Caterpillar
         title = _title.gsub(/ä/,'a').gsub(/ö/,'o').gsub(/Ä/,'A').gsub(/Ö/,'O')
         portlet.update( :title => title )
 
-        ### javascripts
-        portlet.update( :javascripts => @config.javascripts ) unless portlet[:javascripts]
+        ### unless defined, use default javascripts
+        portlet[:javascripts] ||= @config.javascripts
 
         # fix path variables to be replaced by rails-portlet at runtime
         path = portlet[:path]
