@@ -12,6 +12,8 @@ module Caterpillar
     # Reads the configuration
     def eval_configuration(config=nil)
       cf = File.join([RAILS_ROOT,Caterpillar::Config::FILE])
+      STDERR.puts 'Caterpillar configuration file could not be found' unless File.exists?(cf)
+
       if config.nil? && File.exists?(cf)
         config = eval(File.open(cf) {|f| f.read})
       end
