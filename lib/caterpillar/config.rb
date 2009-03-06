@@ -39,15 +39,16 @@ module Caterpillar
       @javascripts = []
       @include_all_named_routes = true
       @warbler_conf = File.join(@rails_root,'config','warble.rb')
+      STDERR.puts 'Warbler configuration file could not be found' unless File.exists?(@warbler_conf)
 
       yield self if block_given?
     end
 
     # The container class is used for parsing XML files.
     #
-    # Possible values: Liferay
+    # Possible values: Liferay (default)
     def container
-      self._container
+      self._container || Caterpillar::Liferay.new
     end
 
     # Accepts the configuration option, and instantates the container class.
