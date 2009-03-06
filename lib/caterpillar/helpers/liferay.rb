@@ -1,5 +1,10 @@
+require 'rubygems'
+require 'action_controller'
+
 module Caterpillar
 module Helpers
+  # This module contains Rails helpers that provide methods to deal with various aspects
+  # of portlet functionality in Liferay.
   module Liferay
     include ActionView::Helpers::UrlHelper
     include ActionView::Helpers::TagHelper
@@ -9,7 +14,6 @@ module Helpers
     #  - obj is an instance of a model from the lportal library.
     #  - options
     def link_to_liferay(obj,options={})
-      options.update(:use_large_igpreview => false) unless options[:use_large_igpreview]
 
       # Rails-portlet cannot pass the actual redirect parameter.
       # Workaround with JavaScript.
@@ -17,68 +21,33 @@ module Helpers
 
       title = 'n/a' # link title
       begin
-        STDERR.puts 'This method is DEPRECATED - use obj.path instead'
         logger.debug "Formulating Liferay link for #{obj}"
         case obj.liferay_class
 
         ### group
         when 'com.liferay.portal.model.Group'
-#           title = (obj.name.empty? ? obj.owner.fullname : obj.name)
-#           urls = LiferayUrl.new(obj,nil,nil).static_url
-#           logger.debug urls
-#           if options[:private]
-#             label = _('yksityiset sivut')
-#             urls[:private] ?
-#               link_to_exit_portlet( label, urls[:private] ) :
-#               link_to_function(
-#                 label, "alert('%s')" % _('Yhteisöllä ei ole yksityisiä sivuja'))
-#           else
-#             label = _('julkiset sivut')
-#             urls[:public] ?
-#               link_to_exit_portlet( label, urls[:public] ) :
-#               link_to_function(
-#                 label, "alert('%s')" % _('Yhteisöllä ei ole julkisia sivuja'))
-#           end
+          STDERR.puts 'Called DEPRECATED method - use %s.path instead' % obj
 
 
-# siirretty malliin
-#         when 'com.liferay.portal.model.Layout'
-#           url = LiferayUrl.new(obj).static_url
-#           return url_to_exit_portlet(url)
+        when 'com.liferay.portal.model.Layout'
+          STDERR.puts 'Called DEPRECATED method - use %s.path instead' % obj
 
 
         ### user
         when 'com.liferay.portal.model.User'
-#           urls = LiferayUrl.new(obj,nil,nil).static_url
-#           #logger.debug urls
-#           if options[:private]
-#             label = options[:label]
-#             label ||= _('yksityiset sivut')
-#             urls[:private] ?
-#               link_to_exit_portlet( label, urls[:private] ) :
-#               link_to_function(
-#                 label, "alert('%s')" % _('Tunnuksella ei ole yksityisiä sivuja'))
-#           else
-#             label = options[:label] || _('julkiset sivut')
-#             urls[:public] ?
-#               link_to_exit_portlet( label, urls[:public] ) :
-#               link_to_function(
-#                 label, "alert('%s')" % _('Tunnuksella ei ole julkisia sivuja'))
-#           end
+          STDERR.puts 'Called DEPRECATED method - use %s.path instead' % obj
 
 
         ### blog
         when 'com.liferay.portlet.blogs.model.BlogsEntry'
-#           title = _('Linkki blogimerkintään "%s"') % obj.title
-#           url = LiferayUrl.new(obj,@user,redirect).instance_url
-#           link_to_exit_portlet( title, url )
-
+          STDERR.puts 'FIXME: %s.path' % obj
 
         ### document library file
         #
         # tämä toimii hiukan eri logiikalla kuin toiset, koska
         # sama malli joutuu mallintamaan myös tyyppinsä tiedostopäätteestä
         when 'com.liferay.portlet.documentlibrary.model.DLFileEntry'
+          STDERR.puts 'Called DEPRECATED method - use %s.path instead' % obj
           redirect_link=request.env["PATH_INFO"] # ei toimi portletissa
 
           label = 'Tiedostotyyppiä %s ei vielä tueta' % obj.type[:name]
@@ -105,7 +74,9 @@ module Helpers
 
         ### galleriakuva
         when 'com.liferay.portlet.imagegallery.model.IGImage'
+          STDERR.puts 'FIXME: %s.path' % obj
           base_url = "#{$LIFERAY_SERVER}/image/image_gallery"
+          options.update(:use_large_igpreview => false) unless options[:use_large_igpreview]
           img_id = (options[:use_large_igpreview] == true ? obj.large.id : obj.small.id)
 
           img = link_to_exit_portlet(
@@ -117,39 +88,35 @@ module Helpers
 
 
         when 'com.liferay.portlet.journal.model.JournalArticle'
+          STDERR.puts 'FIXME: %s.path' % obj
           url = LiferayUrl.new(obj,@user,redirect).instance_url
           link_to_exit_portlet( _('Lue koko artikkeli "%s"') % obj.asset.title, url )
 
         when 'com.liferay.portlet.messageboards.model.MBCategory'
-#           url = LiferayUrl.new(obj,@user,redirect).static_url
-#           link_to_exit_portlet( obj.name, url )
+          STDERR.puts 'Called DEPRECATED method - use %s.path instead' % obj
 
 
         when 'com.liferay.portlet.messageboards.model.MBMessage'
+          STDERR.puts 'FIXME: %s.path' % obj
           url = LiferayUrl.new(obj,@user,redirect).instance_url
           link_to_exit_portlet( _('Lue viesti "%s"') % obj.asset.title, url )
 
   #       when 'com.liferay.portlet.messageboards.model.MBThread'
 
-        when 'com.liferay.portlet.wiki.model.WikiNode'
-          logger.debug "WikiNode"
-  #         url = LiferayUrl.new(obj,@user,redirect).instance_url
-  #         link_to_exit_portlet( _('Lue sivu "%s"') % obj.asset.title, url )
-
         when 'com.liferay.portlet.wiki.model.WikiPage'
-          logger.debug "WikiPage"
+          STDERR.puts 'FIXME: %s.path' % obj
           url = LiferayUrl.new(obj,@user,redirect).instance_url
           link_to_exit_portlet( _('Lue sivu "%s"') % obj.asset.title, url )
 
         else
-          logger.debug obj.liferay_class
-          raise _('Tämän tyyppistä linkkiä ei vielä hallita')
+          STDERR.puts 'Called DEPRECATED method, but no method can handle %s' % obj
+          raise _('This type of link cannot be handled.')
 
         end
 
       rescue Exception => err
         logger.error '*** ERROR ***: %s' % err.message
-        link_to_function( _('Kohteeseen ei voi linkittää.'), "alert('#{err.message}')" )
+        link_to_function( _('Cannot link to resource.'), "alert('#{err.message}')" )
       end
     end
 
