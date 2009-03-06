@@ -217,11 +217,12 @@ module Caterpillar
       @name = :xml
       file = File.join('tmp','liferay-display.xml')
       @xml_files << file
-      raise 'This version of Liferay is broken!' if @config.container.version == '5.1.2'
 
       with_namespace_and_config do |name, config|
         desc 'Create Liferay display XML'
         task :liferaydisplay do
+          raise 'Version 5.1.2 of Liferay is broken!' if config.container.version == '5.1.2'
+
           system('touch %s' % file)
           f=File.open(file,'w')
           f.write config.container.display_xml(@portlets)
@@ -307,7 +308,7 @@ module Caterpillar
             if @config.container.version[/^5.2/]
               '0.6.1'
             else
-              version = '0.5.2' # think of a way to branch properly
+              '0.5.2' # think of a way to branch properly
             end
           )
 
@@ -315,6 +316,12 @@ module Caterpillar
           old_jar = nil
           source = File.join(CATERPILLAR_LIBS,'java')
           target = File.join(@config.container.WEB_INF,'lib')
+
+          # check that target exists
+          unless File.exists?(target)
+            info 'JAR directory %s does not exist' % target
+            exit 1
+          end
 
           Find.find(source) do |file|
             if File.basename(file) =~ /rails-portlet-#{version}/
@@ -337,10 +344,10 @@ module Caterpillar
             end
           end
 
-          system('cp %s %s' % [portlet_jar,target])
+          exit 1 unless system('cp %s %s' % [portlet_jar,target])
           info 'installed Rails-portlet version %s to %s' % [version, target]
           if old_jar
-            system('rm -f %s' % old_jar)
+            exit 1 unless system('rm -f %s' % old_jar)
             info '..removed the old version %s' % old_jar
           end
 
@@ -357,11 +364,17 @@ module Caterpillar
           require 'find'
           target = File.join(@config.container.WEB_INF,'lib')
 
+          # check that target exists
+          unless File.exists?(target)
+            info 'JAR directory %s does not exist' % target
+            exit 1
+          end
+
           Find.find(target) do |file|
             if File.basename(file) =~ /rails-portlet/
               version = file[/(\d.\d.\d).jar/,1]
               info 'Uninstalling Rails-portlet version %s from %s' % [version, target]
-              system('rm -f %s' % file)
+              exit 1 unless system('rm -f %s' % file)
               exit 0
             end
           end
