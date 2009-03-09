@@ -74,26 +74,14 @@ module Caterpillar
       define_deploy_war_task
     end
 
-    # the main XML generator task
-    def define_xml_task
-      @name = :xml
-      desc 'Create all XML files according to configuration'
-      tasks = [:parse,"#{@name}:portlet"]
-      if @config.container.kind_of? Liferay
-        tasks << "#{@name}:liferayportletapp"
-        tasks << "#{@name}:liferaydisplay"
-      end
-
-      # print produced portlets
-      tasks << :portlets
-
-      task :xml => tasks
-    end
-
     def define_usage_task
       task :usage do
         Usage.show
       end
+    end
+
+    def define_config_task
+    #TODO
     end
 
     def define_pluginize_task
@@ -114,7 +102,26 @@ module Caterpillar
       end
     end
 
-    # navigation debugging task
+
+    ### MAIN TASKS
+
+    # Main XML generator task
+    def define_xml_task
+      @name = :xml
+      desc 'Create all XML files according to configuration'
+      tasks = [:parse,"#{@name}:portlet"]
+      if @config.container.kind_of? Liferay
+        tasks << "#{@name}:liferayportletapp"
+        tasks << "#{@name}:liferaydisplay"
+      end
+
+      # print produced portlets
+      tasks << :portlets
+
+      task :xml => tasks
+    end
+
+    # Prints the list of portlets.
     def define_portlets_task
       desc 'Prints portlet configuration'
       task :portlets => :parse do
@@ -123,32 +130,33 @@ module Caterpillar
       end
     end
 
-  def define_fixtures_task
-    desc 'Creates YAML fixtures from live data for testing.'
-    task :fixtures => :environment do
-      require 'active_record'
+    # Creates live fixtures from the RAILS_ENV database for testing.
+    def define_fixtures_task
+      desc 'Creates YAML fixtures from live data for testing.'
+      task :fixtures => :environment do
+        require 'active_record'
 
-      sql = "SELECT * from %s"
+        sql = "SELECT * from %s"
 
-      skip_tables = []
-      begin
-        skip_tables = @config.container.skip_fixture_tables
-      end
+        skip_tables = []
+        begin
+          skip_tables = @config.container.skip_fixture_tables
+        end
 
-      ActiveRecord::Base.establish_connection
-      (ActiveRecord::Base.connection.tables - skip_tables).each do |table|
-        i = "000"
-        File.open("#{RAILS_ROOT}/test/fixtures/#{table}.yml", 'w') do |file|
-          puts "* %s" % file.inspect
-          data = ActiveRecord::Base.connection.select_all(sql % table)
-          file.write data.inject({}) { |hash, record|
-            hash["#{table}_#{i.succ!}"] = record
-            hash
-          }.to_yaml
+        ActiveRecord::Base.establish_connection
+        (ActiveRecord::Base.connection.tables - skip_tables).each do |table|
+          i = "000"
+          File.open("#{RAILS_ROOT}/test/fixtures/#{table}.yml", 'w') do |file|
+            puts "* %s" % file.inspect
+            data = ActiveRecord::Base.connection.select_all(sql % table)
+            file.write data.inject({}) { |hash, record|
+              hash["#{table}_#{i.succ!}"] = record
+              hash
+            }.to_yaml
+          end
         end
       end
     end
-  end
 
     ### SUB-TASKS
 
@@ -243,16 +251,19 @@ module Caterpillar
     end
 
 
+    ### MIGRATIONS AND JAR-INSTALL
+
     def define_migrate_task
       @name = :db
       with_namespace_and_config do |name, config|
         desc "Migrates Caterpillar database tables"
         task :migrate => :environment do
+          require 'rubygems'
           require 'active_record'
-          
-          # first run lportal sequence migrations
-          info('running lportal migrations')
-#           ActiveRecord::Migrator.migrate(LPORTAL_MIGRATIONS)
+
+          # first run lportal sequence migrations (TODO)
+          #info('running lportal migrations')
+          #ActiveRecord::Migrator.migrate(LPORTAL_MIGRATIONS)
 
           # then run own migrations
           info('running Caterpillar migrations')
@@ -262,17 +273,15 @@ module Caterpillar
 
           info 'analyzing portlet XML configuration'
           @portlets = config.container.analyze(:native)
-          
+
           info 'updating database'
-          Web::PortletName.all.each(&:destroy)
+          Web::PortletProperties.all.each(&:destroy)
           @portlets.each do |portlet|
-            Web::PortletName.create(
-              :portletid => portlet[:id],
-              :name      => portlet[:name],
-              :title     => portlet[:title]
-            )
+            params = portlet.dup
+            params[:portletid] = params.delete(:id)
+            Web::PortletProperties.create(params)
           end
-        
+
           #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
           info 'Now, run rake db:schema:dump'
         end
@@ -288,19 +297,27 @@ module Caterpillar
           version = ENV['VERSION'].to_i || 0
           ActiveRecord::Migrator.migrate(
             File.expand_path(
-              File.dirname(__FILE__) + "/../../db/migrate"), version)
+              File.join(CATERPILLAR_LIBS,'..','db','migrate')), version)
           STDOUT.puts 'Now, run rake db:schema:dump'
           #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
         end
       end
     end
 
+    # Install the Rails-portlet JAR
     def define_jar_install_task
       @name = :jar
       with_namespace_and_config do |name, config|
         desc 'Installs Rails-portlet JAR into the portlet container'
         task :install do
-          raise 'Only Liferay is supported' unless @config.container.kind_of? Liferay
+          source = File.join(CATERPILLAR_LIBS,'java')
+
+          unless @config.container.kind_of? Liferay
+            info 'Installation of the JAR is supported for Liferay.'
+            info 'Copy the JAR from this directory into the CLASSPATH of the portlet container.'
+            info source
+            exit 1
+          end
           require 'find'
 
           version = (
@@ -313,7 +330,6 @@ module Caterpillar
 
           portlet_jar = nil
           old_jar = nil
-          source = File.join(CATERPILLAR_LIBS,'java')
           target = File.join(@config.container.WEB_INF,'lib')
 
           # check that target exists
