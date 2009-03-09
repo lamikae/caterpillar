@@ -1,7 +1,13 @@
+require 'rubygems'
 require 'active_record'
 
-module Web
+module Web # :nodoc:
   class Portlet < ActiveRecord::Base
+
+    # Various static properties of the portlet instance.
+    def properties
+      Web::PortletProperties.find_by_portletid self.portletid.to_s
+    end
 
     @@caterpillar_portlets = nil
 
@@ -29,14 +35,13 @@ module Web
 
     # read-only
     def title
-      p = Web::PortletName.find_by_portletid(self.portletid)
+      p = Web::PortletProperties.find_by_portletid(self.portletid)
       p ? p.title : nil
     end
 
     # Is the portlet instanceable? This is defined in the XML configuration.
-    # TODO: parse to database.
+    # This method is overridden by Caterpillar.
     def instanceable?
-      return false if self.portletid=='58' # login
       true
     end
 
@@ -49,24 +54,25 @@ module Web
     # searches both Liferay and Caterpillar portlets
     def self.find_by_name(name)
       begin
-        pn = Web::PortletName.find_by_name(name)
-        if pn
-          p = self.find_by_portletid pn.portletid
+        pp = Web::PortletProperties.find_by_name(name)
+        if pp
+          p = self.find_by_portletid pp.portletid
           return p if p
         end
-        
-        pn = find_caterpillar_portlet(name) unless pn
-        
-        unless pn
+
+        pp = find_caterpillar_portlet(name) unless pp
+
+        unless pp
           raise ActiveRecord::RecordNotFound
         else
           return self.create(
-            :portletid => pn.portletid
+            :portletid => pp.portletid
           )
         end
       rescue
-        STDERR.puts 'portlet by name %s could not be found -- try "caterpillar db:migrate"' % name
-        raise $!
+        STDERR.puts 'Portlet by name "%s" could not be found -- try "caterpillar db:migrate"' % name
+        logger.debug $!.message
+        return nil
       end
     end
 
