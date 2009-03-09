@@ -51,9 +51,15 @@ module Caterpillar
           :title => (portlet/'display-name').innerHTML
         }
 
-        # search the name
+        # search portlet metadata
         portlet_xml.search("//portlet-name").each do |p|
-          _p.update(:name => (p/"../struts-path").text) if p.innerHTML==_p[:id]
+          if p.innerHTML==_p[:id]
+            _p.update(:name => (p/"../struts-path").text)
+
+            # is the portlet instanceable?
+            # it seems that if undefined, the default is "false"
+            _p.update(:instanceable => (p/"../instanceable").text=='true')
+          end
         end
 
         # search the category - horribly ineffective.
