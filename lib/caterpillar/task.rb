@@ -277,9 +277,12 @@ module Caterpillar
           info 'updating database'
           Web::PortletProperties.all.each(&:destroy)
           @portlets.each do |portlet|
-            params = portlet.dup
-            params[:portletid] = params.delete(:id)
-            Web::PortletProperties.create(params)
+            Web::PortletProperties.create(
+              :portletid    => portlet[:id],
+              :name         => portlet[:name],
+              :title        => portlet[:title],
+              :instanceable => portlet[:instanceable]
+            )
           end
 
           #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
@@ -324,7 +327,7 @@ module Caterpillar
             if @config.container.version[/^5.2/]
               '0.6.1'
             else
-              '0.5.2' # think of a way to branch properly
+              '0.6.0' #'0.5.2' # think of a way to branch properly
             end
           )
 
