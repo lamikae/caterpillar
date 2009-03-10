@@ -19,6 +19,10 @@ module Caterpillar
       @version = version
     end
 
+    def name
+      'Liferay'
+    end
+
     # The location of Liferay's WEB-INF folder for XML analyzation.
     # This is relative to installation directory (self.root)
     def WEB_INF

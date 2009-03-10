@@ -46,6 +46,7 @@ module Caterpillar
       @config = Util.eval_configuration(config)
       yield self if block_given?
       @xml_files = []
+
       send tasks
     end
 
@@ -126,6 +127,7 @@ module Caterpillar
     def define_portlets_task
       desc 'Prints portlet configuration'
       task :portlets => :parse do
+        portal_info
         info 'Portlet configuration ***********************'
         print_portlets(@portlets)
       end
@@ -145,10 +147,14 @@ module Caterpillar
         end
 
         ActiveRecord::Base.establish_connection
+        info 'Creating YAML fixtures from %s database' % RAILS_ENV
+
         (ActiveRecord::Base.connection.tables - skip_tables).each do |table|
           i = "000"
-          File.open("#{RAILS_ROOT}/test/fixtures/#{table}.yml", 'w') do |file|
-            puts "* %s" % file.inspect
+          File.open(
+            File.join(RAILS_ROOT,'test','fixtures',table+'.yml'), 'w'
+          ) do |file|
+            info file.inspect
             data = ActiveRecord::Base.connection.select_all(sql % table)
             file.write data.inject({}) { |hash, record|
               hash["#{table}_#{i.succ!}"] = record
@@ -190,9 +196,7 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Create JSR286 portlet XML'
         task :portlet do
-          info 'Configured to use %s version %s' % [
-            @config.container.class.to_s.sub('Caterpillar::',''), @config.container.version
-          ]
+          portal_info
 
           exit 1 unless system('touch %s' % file)
           f=File.open(file,'w')
@@ -308,6 +312,7 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Updates the portletproperties table'
         task :update => :environment do
+          portal_info
           # require 'rubygems'
           # require 'active_record'
           # require 'lportal'
@@ -335,6 +340,7 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Installs Rails-portlet JAR into the portlet container'
         task :install do
+          portal_info
           source = File.join(CATERPILLAR_LIBS,'java')
 
           unless @config.container.kind_of? Liferay
@@ -343,7 +349,6 @@ module Caterpillar
             info source
             exit 1
           end
-          require 'find'
 
           version = (
             if @config.container.version[/^5.2/]
@@ -363,6 +368,7 @@ module Caterpillar
             exit 1
           end
 
+          require 'find'
           Find.find(source) do |file|
             if File.basename(file) =~ /rails-portlet-#{version}/
               portlet_jar = file
@@ -401,7 +407,6 @@ module Caterpillar
         desc 'Uninstalls Rails-portlet JAR from the portlet container'
         task :uninstall do
           raise 'Only Liferay is supported' unless @config.container.kind_of? Liferay
-          require 'find'
           target = File.join(@config.container.WEB_INF,'lib')
 
           # check that target exists
@@ -410,6 +415,7 @@ module Caterpillar
             exit 1
           end
 
+          require 'find'
           Find.find(target) do |file|
             if File.basename(file) =~ /rails-portlet/
               version = file[/(\d.\d.\d).jar/,1]
@@ -454,31 +460,29 @@ module Caterpillar
     def define_warble_task
       desc 'Create a WAR package with Warbler'
       task :warble do
-        unless ENV['JRUBY_HOME']
-          info ''
-          info 'Environment variable JRUBY_HOME is not set, exiting -'
-          info 'You should `export JRUBY_HOME="/usr/local/jruby"` and `sudo -E caterpillar %s`' % ARGV[0]
+        jruby_home = (ENV['JRUBY_HOME'] || @config.class::JRUBY_HOME)
+        unless jruby_home
+          info 'JRUBY_HOME is not set.'
+          info 'First preference is the environment variable JRUBY_HOME.'
+          info ' `export JRUBY_HOME="/usr/local/jruby"` and `sudo -E caterpillar %s`' % ARGV[0]
+          info 'Another option is to define portlet.class::JRUBY_HOME in %s.' % @config.class::FILE
           exit 1
         end
-        jruby = File.join(ENV['JRUBY_HOME'],'bin','jruby')
+        jruby = File.join(jruby_home,'bin','jruby')
         unless File.exists?(jruby)
-          info ''
           info 'JRuby executable was not found in %s, exiting' % jruby
           exit 1
         end
         begin
           require 'warbler'
         rescue
-          info ''
           info 'Warbler module was not found, exiting. Install Warbler for JRuby.'
           exit 1
         end
         unless File.exists?(@config.warbler_conf)
-          info ''
           info 'Warbler configuration file %s was not found, exiting' % @config.warbler_conf
           exit 1
         end
-        info ''
         info 'Building WAR using Warbler %s on JRuby %i (%s)' % [
           Warbler::VERSION, JRUBY_VERSION, jruby]
         info ''
@@ -490,7 +494,7 @@ module Caterpillar
     def define_deploy_task
       desc 'Deploy XML files and the application WAR to the portlet container'
 
-      tasks = [:xml, :warble, 'deploy:xml', 'deploy:war']
+      tasks = ['db:update', :xml, :warble, 'deploy:xml', 'deploy:war']
       task :deploy => tasks
     end
 
@@ -575,6 +579,14 @@ module Caterpillar
 
     def info(msg)
       STDOUT.puts ' * ' + msg
+    end
+
+    def portal_info(config=@config)
+      STDOUT.puts '%s v%s @ %s' % [
+        config.container.name,
+        config.container.version,
+        config.container.root
+      ]
     end
 
 

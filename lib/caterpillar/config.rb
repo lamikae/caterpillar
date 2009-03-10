@@ -7,7 +7,8 @@
 module Caterpillar
   # Portlet configuration. The config file 'config/portlets.rb' should be installed in your Rails application. See the comments in the configuration file for more specific information about each option.
   class Config
-    FILE = "config/portlets.rb"
+    FILE = File.join('config','portlets.rb')
+    JRUBY_HOME = nil # override in the config file if necessary
 
     # Are all named routes used, or only the ones specifically defined in the config FILE?
     attr_accessor :include_all_named_routes

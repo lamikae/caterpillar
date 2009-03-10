@@ -1,5 +1,8 @@
 Caterpillar::Config.new do |portlet|
 
+  # JRUBY_HOME can be set here, unless the environment variable can be used.
+  # portlet.class::JRUBY_HOME = '/usr/local/jruby'
+
   # The portlet container.
   # By default only portlet.xml is created.
   # Currently only Liferay is supported. You may optionally define the version.
