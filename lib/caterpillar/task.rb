@@ -63,8 +63,9 @@ module Caterpillar
       define_portlets_task
       define_fixtures_task
       define_liferayportlets_task
-      define_migrate_task
-      define_rollback_task
+      define_db_migrate_task
+      define_db_rollback_task
+      define_db_update_task
       define_jar_install_task
       define_jar_uninstall_task
       define_jar_version_task
@@ -193,7 +194,7 @@ module Caterpillar
             @config.container.class.to_s.sub('Caterpillar::',''), @config.container.version
           ]
 
-          system('touch %s' % file)
+          exit 1 unless system('touch %s' % file)
           f=File.open(file,'w')
           f.write Portlet.xml(@portlets)
           f.close
@@ -210,7 +211,7 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Create Liferay portlet XML'
         task :liferayportletapp do
-          system('touch %s' % file)
+          exit 1 unless system('touch %s' % file)
           f=File.open(file,'w')
           f.write config.container.portletapp_xml(@portlets)
           f.close
@@ -230,7 +231,7 @@ module Caterpillar
         task :liferaydisplay do
           raise 'Version 5.1.2 of Liferay is broken!' if config.container.version == '5.1.2'
 
-          system('touch %s' % file)
+          exit 1 unless system('touch %s' % file)
           f=File.open(file,'w')
           f.write config.container.display_xml(@portlets)
           f.close
@@ -253,23 +254,63 @@ module Caterpillar
 
     ### MIGRATIONS AND JAR-INSTALL
 
-    def define_migrate_task
+    def define_db_migrate_task
       @name = :db
       with_namespace_and_config do |name, config|
-        desc "Migrates Caterpillar database tables"
+        desc "Migrates lportal and Caterpillar database tables"
         task :migrate => :environment do
-          require 'rubygems'
-          require 'active_record'
+          # require 'rubygems'
+          # require 'active_record'
+          # require 'lportal'
 
           # first run lportal sequence migrations (TODO)
-          #info('running lportal migrations')
-          #ActiveRecord::Migrator.migrate(LPORTAL_MIGRATIONS)
+          info('Running lportal migrations')
+          ActiveRecord::Migrator.migrate(LPORTAL_MIGRATIONS)
 
-          # then run own migrations
-          info('running Caterpillar migrations')
-          ActiveRecord::Migrator.migrate(
-            File.expand_path(
-              File.join(CATERPILLAR_LIBS,'..','db','migrate')))
+          # info('running Caterpillar migrations')
+          # ActiveRecord::Migrator.migrate(
+          #   File.expand_path(
+          #     File.join(CATERPILLAR_LIBS,'..','db','migrate')))
+
+          #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+          info 'Now, run rake db:schema:dump'
+        end
+      end
+    end
+
+    def define_db_rollback_task
+      @name = :db
+      with_namespace_and_config do |name, config|
+        desc "Wipes out Caterpillar database tables"
+        task :rollback => :environment do
+          # require 'rubygems'
+          # require 'active_record'
+          # require 'lportal'
+
+          version = ENV['VERSION'].to_i || 0
+
+          info('Reverting lportal migrations')
+          ActiveRecord::Migrator.migrate(LPORTAL_MIGRATIONS, version)
+
+          # info('Reverting Caterpillar migrations')
+          # ActiveRecord::Migrator.migrate(
+          #   File.expand_path(
+          #     File.join(CATERPILLAR_LIBS,'..','db','migrate')), version)
+
+          #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+          info 'Now, run rake db:schema:dump'
+        end
+      end
+    end
+
+    def define_db_update_task
+      @name = :db
+      with_namespace_and_config do |name, config|
+        desc 'Updates the portletproperties table'
+        task :update => :environment do
+          # require 'rubygems'
+          # require 'active_record'
+          # require 'lportal'
 
           info 'analyzing portlet XML configuration'
           @portlets = config.container.analyze(:native)
@@ -284,25 +325,6 @@ module Caterpillar
               :instanceable => portlet[:instanceable]
             )
           end
-
-          #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
-          info 'Now, run rake db:schema:dump'
-        end
-      end
-    end
-
-    def define_rollback_task
-      @name = :db
-      with_namespace_and_config do |name, config|
-        desc "Wipes out Caterpillar database tables"
-        task :rollback => :environment do
-          require 'active_record'
-          version = ENV['VERSION'].to_i || 0
-          ActiveRecord::Migrator.migrate(
-            File.expand_path(
-              File.join(CATERPILLAR_LIBS,'..','db','migrate')), version)
-          STDOUT.puts 'Now, run rake db:schema:dump'
-          #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
         end
       end
     end
@@ -316,7 +338,7 @@ module Caterpillar
           source = File.join(CATERPILLAR_LIBS,'java')
 
           unless @config.container.kind_of? Liferay
-            info 'Installation of the JAR is supported for Liferay.'
+            info 'Installation of the JAR is only supported on Liferay. Patches are welcome.'
             info 'Copy the JAR from this directory into the CLASSPATH of the portlet container.'
             info source
             exit 1
@@ -327,7 +349,7 @@ module Caterpillar
             if @config.container.version[/^5.2/]
               '0.6.1'
             else
-              '0.6.0' #'0.5.2' # think of a way to branch properly
+              '0.6.0' #'0.5.2' # FIXME: branch properly
             end
           )
 
@@ -457,18 +479,17 @@ module Caterpillar
           exit 1
         end
         info ''
-        info 'Building WAR using Warbler %s on JRuby (%s)' % [
-          Warbler::VERSION, jruby]
+        info 'Building WAR using Warbler %s on JRuby %i (%s)' % [
+          Warbler::VERSION, JRUBY_VERSION, jruby]
         info ''
-        system(jruby+' -S warble war')
+        exit 1 unless system(jruby+' -S warble war')
+        info 'Warbler finished successfully'
       end
     end
 
     def define_deploy_task
       desc 'Deploy XML files and the application WAR to the portlet container'
-      #info 'Deploying XML files and the application WAR'
 
-      raise 'Only deployment to Liferay on Tomcat is supported' unless @config.container.kind_of? Liferay
       tasks = [:xml, :warble, 'deploy:xml', 'deploy:war']
       task :deploy => tasks
     end
@@ -478,11 +499,12 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Deploys the XML files'
         task :xml do
+          raise 'Only deployment to Liferay on Tomcat is supported' unless @config.container.kind_of? Liferay
           target = @config.container.WEB_INF
           info 'deploying XML files to %s' % target
 
           @xml_files.each do |file|
-            system('cp %s %s' % [file,target])
+            exit 1 unless system('cp %s %s' % [file,target])
             info ' %s' % [file]
           end
         end
@@ -493,6 +515,7 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Deploys the WAR file'
         task :war do
+          raise 'Only deployment to Liferay on Tomcat is supported' unless @config.container.kind_of? Liferay
           file = @config.servlet+'.war'
           unless File.exists?(file)
             info 'cannot find the WAR file %s, exiting' % file
@@ -502,10 +525,10 @@ module Caterpillar
           target = File.join(@config.container.root,'webapps')
 
           info '..removing previous installs..'
-          system('rm -rf %s' % File.join(target,@config.servlet+'*'))
+          exit 1 unless system('rm -rf %s' % File.join(target,@config.servlet+'*'))
 
           info 'deploying the WAR package to %s' % target
-          system('cp %s %s' % [file,target])
+          exit 1 unless system('cp %s %s' % [file,target])
 
         end
       end
