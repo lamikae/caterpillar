@@ -5,11 +5,23 @@ module Caterpillar
 module Helpers
   # This module contains Rails helpers that provide methods to deal with various aspects
   # of portlet functionality in Liferay.
+  #
+  # Currently this consists of things that were constructed whenever needed during development,
+  # and concidered general enough to be included here.
+  #
+  # link_to_liferay is deprecated, and is clearly a wrong way to solve the problem in question.
+  # A better way has been constructed, but it is not perfect due to its dependency on a specific portlet.
   module Liferay
     include ActionView::Helpers::UrlHelper
     include ActionView::Helpers::TagHelper
 
-    # Formulates a link to Liferay.
+    # Link that the rails-portlet will leave unparsed.
+    def link_to_exit_portlet(name, options = {}, html_options = {})
+      link_to(name, url_to_exit_portlet(options), html_options)
+    end
+
+    # Formulates a link to Liferay. DEPRECATED.
+    #
     # Parameters:
     #  - obj is an instance of a model from the lportal library.
     #  - options
@@ -121,11 +133,14 @@ module Helpers
     end
 
 
+    # Appends parameters "exit_portlet=true" into the url.
+    # Url might be either Hash or String.
     def url_to_exit_portlet(url)
-      directive = { :exit_portlet => 'true' }
+      parameters = { :exit_portlet => 'true' }
 
+      # append parameters to the url
       if url.is_a? Hash
-        url.update directive
+        url.update parameters
 
       elsif url.is_a? String
         if url[/\?[\w]*\=/]     # url has parameters
@@ -133,16 +148,10 @@ module Helpers
         else                    # no parameters
           delimiter = '?'
         end
-        url += "#{delimiter}#{directive.keys.first}=#{directive.values.first}"
+        url += "#{delimiter}#{parameters.keys.first}=#{parameters.values.first}"
 
       end
       return url
-    end
-
-
-    # formulates a link that the rails286-portlet will leave unparsed.
-    def link_to_exit_portlet(name, options = {}, html_options = {})
-      link_to(name, url_to_exit_portlet(options), html_options)
     end
 
   end
