@@ -2,12 +2,8 @@ require 'rubygems'
 require 'active_record'
 
 module Web # :nodoc:
+  # Adds Caterpillar portlets to available portlets.
   class Portlet < ActiveRecord::Base
-
-    # Various static properties of the portlet instance.
-    def properties
-      Web::PortletProperties.find_by_portletid self.portletid.to_s
-    end
 
     @@caterpillar_portlets = nil
 
@@ -31,18 +27,6 @@ module Web # :nodoc:
     def self.find_caterpillar_portlet(name)
       self.caterpillar_portlets.select{
         |p| p.name=='%s' % name }.first # find_by_name
-    end
-
-    # read-only
-    def title
-      p = Web::PortletProperties.find_by_portletid(self.portletid)
-      p ? p.title : nil
-    end
-
-    # Is the portlet instanceable? This is defined in the XML configuration.
-    # This method is overridden by Caterpillar.
-    def instanceable?
-      true
     end
 
 #     def self.find_by_portletid(*args)
