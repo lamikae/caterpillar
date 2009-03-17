@@ -277,7 +277,9 @@ module Caterpillar
           #     File.join(CATERPILLAR_LIBS,'..','db','migrate')))
 
           #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
-          info 'Now, run rake db:schema:dump'
+          info 'You need to manually run rake db:schema:dump'
+
+          Rake::Task['db:update'].invoke
         end
       end
     end
@@ -302,7 +304,7 @@ module Caterpillar
           #     File.join(CATERPILLAR_LIBS,'..','db','migrate')), version)
 
           #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
-          info 'Now, run rake db:schema:dump'
+          info 'You need to manually run rake db:schema:dump'
         end
       end
     end
