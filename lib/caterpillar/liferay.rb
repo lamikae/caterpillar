@@ -15,10 +15,15 @@ module Caterpillar
     # the installation directory
     attr_accessor :root
 
-    def initialize(version='5.1.1')
+    # Liferay version is given as a String, eg. '5.2.2'.
+    # Unless given, the latest buildnumber value in the release_ table is used to decipher the version.
+    def initialize(version=nil)
+      
       @version = version
+      @root    = '/usr/local/liferay'
     end
 
+    # The name of the portal. Used in STDOUT messages.
     def name
       'Liferay'
     end

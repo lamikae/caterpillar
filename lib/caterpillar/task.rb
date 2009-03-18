@@ -44,6 +44,8 @@ module Caterpillar
       STDOUT.puts
       @name   = name
       @config = Util.eval_configuration(config)
+      @logger = @config.logger
+
       yield self if block_given?
       @xml_files = []
 
@@ -55,6 +57,7 @@ module Caterpillar
     def define_tasks
       define_xml_task
       define_usage_task
+      define_config_task
       define_pluginize_task
       define_environment_task
       define_portletxml_task
@@ -82,8 +85,11 @@ module Caterpillar
       end
     end
 
+    # TODO: copy and diff config file
     def define_config_task
-    #TODO
+      task :config do
+        STDOUT.puts 'TODO'
+      end
     end
 
     def define_pluginize_task
@@ -137,7 +143,6 @@ module Caterpillar
     def define_fixtures_task
       desc 'Creates YAML fixtures from live data for testing.'
       task :fixtures => :environment do
-        require 'active_record'
 
         sql = "SELECT * from %s"
 
@@ -172,6 +177,10 @@ module Caterpillar
       task :default => :test
       task :environment do
         require(File.join(@config.rails_root, 'config', 'environment'))
+        if @config.container.is_a?(Caterpillar::Liferay)
+          @config.container.version ||= Lportal::Schema.version
+          portal_info
+        end
       end
     end
 
@@ -263,9 +272,6 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc "Migrates lportal and Caterpillar database tables"
         task :migrate => :environment do
-          # require 'rubygems'
-          # require 'active_record'
-          # require 'lportal'
 
           # first run lportal sequence migrations (TODO)
           info('Running lportal migrations')
@@ -289,9 +295,6 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc "Wipes out Caterpillar database tables"
         task :rollback => :environment do
-          # require 'rubygems'
-          # require 'active_record'
-          # require 'lportal'
 
           version = ENV['VERSION'].to_i || 0
 
@@ -314,10 +317,6 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Updates the portletproperties table'
         task :update => :environment do
-          portal_info
-          # require 'rubygems'
-          # require 'active_record'
-          # require 'lportal'
 
           info 'analyzing portlet XML configuration'
           @portlets = config.container.analyze(:native)
@@ -341,8 +340,7 @@ module Caterpillar
       @name = :jar
       with_namespace_and_config do |name, config|
         desc 'Installs Rails-portlet JAR into the portlet container'
-        task :install do
-          portal_info
+        task :install => :environment do
           source = File.join(CATERPILLAR_LIBS,'java')
 
           unless @config.container.kind_of? Liferay
@@ -352,11 +350,17 @@ module Caterpillar
             exit 1
           end
 
+          container_v = @config.container.version
+
+          unless container_v
+            info 'Unable to detect the version of the portlet container. Installing the latest version.'
+          end
+
           version = (
-            if @config.container.version[/^5.2/]
-              '0.6.1'
-            else
+            if container_v and container_v[/^5.1/]
               '0.6.0' #'0.5.2' # FIXME: branch properly
+            else
+              '0.6.1'
             end
           )
 
@@ -584,11 +588,10 @@ module Caterpillar
     end
 
     def portal_info(config=@config)
-      STDOUT.puts '%s v%s @ %s' % [
-        config.container.name,
-        config.container.version,
-        config.container.root
+      msg = 'Caterpillar configured for %s version %s at %s' % [
+        config.container.name, config.container.version, config.container.root
       ]
+      @logger ? @logger.info(msg) : STDOUT.puts(msg)
     end
 
 
