@@ -24,7 +24,7 @@
   padding: 10px 0 0 50px;
   min-height: 55px;
   overflow: auto;
-  
+
   filter:alpha(opacity=81);-moz-opacity:.81;opacity:.81;
   /* css3 tags, works on Firefox and Safari */
   -moz-border-radius: 15px;
@@ -34,6 +34,11 @@
 
   .caterpillar_navigation ul {
   list-style-type: none;
+  }
+
+  #caterpillar_categories {
+  width: 99%;
+  overflow: auto;
   }
 
   .cp_category {
@@ -102,12 +107,17 @@
         <% begin -%>
           <%# check required variables -%>
           <% portlet[:vars].each do |var|
-              raise if params[var].nil?
+              #puts params.inspect
+               raise if params[var].nil?
              end -%>
 
-          <li><%= link_to( portlet[:title], portlet[:reqs] ) -%></li>
+          <li>
+            <%= link_to( portlet[:title], self.send('%s_url' % portlet[:name]) ) %>
+            <%#= link_to( portlet[:title], portlet[:reqs] ) -%>
+          </li>
 
         <% rescue
+             logger.error $!.message
              vars = {}
              undef_vars = []
              portlet[:vars].each do |var|
