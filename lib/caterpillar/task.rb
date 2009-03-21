@@ -578,7 +578,7 @@ module Caterpillar
 
           #field = :path
           #fields = [:name, :id]
-          STDOUT.puts "\t" + portlet[:title] +spaces+ portlet[:id].inspect + "\t" + portlet[:name].inspect
+          STDOUT.puts "\t" + portlet[:title] +spaces+ portlet[:name].inspect + "\t" + portlet[:vars].inspect
         end
       end
     end
