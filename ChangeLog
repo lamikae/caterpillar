@@ -1,3 +1,26 @@
+
+
+= 0.9.15
+	- use rails-portlet 0.6.0 in Liferay 5.1.1
+	- moved all migrations to lportal, now executes lportal migrations
+	- db:rollback and db:migrate required!!
+	- detect the version of Liferay from Lportal::Schema
+	- option to set JRUBY_HOME in the config file
+	- collect data whether portlet is instanceable
+	- exit on error when installing the JAR
+	- notify if the config file does not exist
+	- use Liferay as the default container
+	- load helpers only in Rails environment
+	- Web::Portlet.find_caterpillar_portlet
+	- moved some portlet methods to lportal
+
+
+= 0.9.11
+  - fixed a gem loading bug with Ruby 1.8.5
+  - load helpers only in Rails environment
+  - small random fixes
+
+
 = 0.9.8
   - fix problem with subcategories in liferay-display.xml
   - model Rails portlets as Web::Portlets
@@ -42,3 +65,5 @@ Released at 2008-12-18
 = 0.9.0
 Released at 2008-12-17
   - the initial release
+
+
