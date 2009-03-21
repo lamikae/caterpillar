@@ -8,6 +8,8 @@ module Caterpillar
   # Portlet configuration and route parser.
   class Parser
 
+#     include ActionController::Assertions::RoutingAssertions
+
     def initialize(config)
       @config = config
       @routes = config.routes
@@ -30,10 +32,16 @@ module Caterpillar
           # parse the requirements - controller & action
           # ( this is too difficult -- no navigation for user-given paths )
           #
-          # builder = ActionController::Routing::RouteBuilder.new
-          # req_path = builder.segments_for_route_path(path)
-          # r = ActionController::Routing::Routes.recognize_path(req_path, { :method => :get })
-          # puts r.inspect
+#           begin
+#             #recognized_request_for(path)
+#             #builder = ActionController::Routing::RouteBuilder.new
+#             #r = ActionController::Routing::Routes.recognize_path(path, { :method => :get })
+#             #puts r.inspect
+#             #req_path = builder.segments_for_route_path(r)
+#             #STDERR.puts req_path.inspect
+#           rescue
+#             STDERR.puts $!.message
+#           end
 
           portlet.update( :reqs => {} )
           portlet.update( :vars => [] )
@@ -54,7 +62,13 @@ module Caterpillar
           portlet.update( :reqs => _r.first[:reqs] )
 
           ### variables
-          portlet.update( :vars => _r.first[:vars] )
+          # take just the ones that are required in the path!
+          vars = []
+          _r.first[:vars].each do |var|
+            # variables that are not defined in reqs are required to be inserted by the rails-portlet
+            vars << var unless _r.first[:reqs][var]
+          end
+          portlet.update( :vars => vars )
 
           # delete the route from routes
           _r.each do |r|
