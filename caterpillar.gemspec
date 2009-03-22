@@ -20,10 +20,10 @@ Gem::Specification.new do |s|
   s.executables = ["caterpillar"]
   s.default_executable = %q{caterpillar}
 
-  s.files = FileList["Rakefile", "ChangeLog", "*.rb", "lib/**/*", "generators/**/*", "db/**/*", "views/**/*"].to_a
+  s.files = FileList["Rakefile", "*.rb", "lib/**/*", "generators/**/*", "db/**/*", "views/**/*"].to_a
 
   s.has_rdoc = true
-  s.extra_rdoc_files = ["README", "LICENSES.txt"]
+  s.extra_rdoc_files = ["README","MIT-LICENSE","ChangeLog"]
   s.rdoc_options = ["--main", "README"]
   s.rdoc_options << '--line-numbers' << '--inline-source'
   s.rubyforge_project = %q{rails-portlet}

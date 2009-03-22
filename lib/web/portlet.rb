@@ -36,6 +36,7 @@ module Web # :nodoc:
 #     end
 
     # searches both Liferay and Caterpillar portlets
+    # TODO: DRY up with super
     def self.find_by_name(name)
       begin
         pp = Web::PortletProperties.find_by_name(name)
