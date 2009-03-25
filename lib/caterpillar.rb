@@ -13,6 +13,8 @@ this_dir = File.dirname(File.expand_path(this_file))
 
 CATERPILLAR_LIBS=this_dir unless defined?(CATERPILLAR_LIBS)
 
+RAILS_ROOT = Dir.pwd unless defined? RAILS_ROOT
+
 require 'find'
 
 # include all ruby files
