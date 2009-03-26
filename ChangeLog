@@ -1,3 +1,8 @@
+
+= 0.9.16
+	- fixed undefined RAILS_ROOT bug
+	- cleaned out unused JARs; the gem is now smaller
+
 = 0.9.15
 	- use rails-portlet 0.6.0 in Liferay 5.1.1
 	- moved all migrations to lportal, now executes lportal migrations
