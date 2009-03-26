@@ -10,6 +10,9 @@
 require 'rake'
 require 'rake/tasklib'
 
+# these are required for Caterpillar to work on Ruby 1.8.5.
+# you shouldn't have more than one Rails installed at a time, or you should
+# use the latest with Caterpillar.
 require 'actionpack'
 require 'action_controller'
 

@@ -1,5 +1,9 @@
-require 'rubygems'
-require 'active_record'
+unless defined?(RAILS_ENV)
+  # this should load an appropriate version, there are problems when using an older Rails
+  # than the latest stable.
+  require 'rubygems'
+  require 'active_record'
+end
 
 module Web # :nodoc:
   # Adds Caterpillar portlets to available portlets.
