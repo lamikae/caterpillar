@@ -127,7 +127,7 @@ module Caterpillar
       end
 
       # print produced portlets
-      tasks << :portlets
+      #tasks << :portlets
 
       task :xml => tasks
     end
@@ -136,7 +136,7 @@ module Caterpillar
     def define_portlets_task
       desc 'Prints portlet configuration'
       task :portlets => :parse do
-        portal_info
+        #portal_info
         info 'Portlet configuration ***********************'
         print_portlets(@portlets)
       end
@@ -208,7 +208,7 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Create JSR286 portlet XML'
         task :portlet do
-          portal_info
+          #portal_info
 
           exit 1 unless system('touch %s' % file)
           f=File.open(file,'w')

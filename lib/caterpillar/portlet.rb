@@ -55,6 +55,10 @@ module Caterpillar
 
     # portlet.xml template.
     def template(portlet)
+      # add roles
+      # TODO: move into portlet hash
+      # administrator, power-user, user
+      roles = %w{ administrator }
       xml =  "  <!-- %s -->\n" % portlet[:title]
 
       xml << "  <portlet>\n"
@@ -74,6 +78,11 @@ module Caterpillar
       xml << "    <portlet-info>\n"
       xml << "      <title>%s</title>\n" % portlet[:title]
       xml << "    </portlet-info>\n"
+      roles.each do |role|
+        xml << "    <security-role-ref>\n"
+        xml << "      <role-name>#{role}</role-name>\n"
+        xml << "    </security-role-ref>\n"
+      end
       xml << "  </portlet>\n\n"
 
       ### portlet filters

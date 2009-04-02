@@ -7,6 +7,33 @@
 module Caterpillar
   # Creates liferay-portlet XML and liferay-display XML.
   # The latter optionally combines your production portlet display configuration.
+  #
+  # See http://www.liferay.com/web/guest/community/wiki/-/wiki/Main/Liferay-portlet.xml
+  #
+  # Supported portlet.xml tags:
+  # (*) stands for non-configurable
+  #
+  #     <portlet-name>
+  #     <icon> (*)
+  #     <instanceable> (*; always true)
+  #
+  # 5.1.x -specific:
+  #     <header-portal-javascript>
+  #
+  # 5.2.0 -specific:
+  #     <footer-portal-javascript>
+  #     <control-panel-entry-category>
+  #     <control-panel-entry-weight> (*; always 99.0)
+  #
+  # TODO:
+  #     <footer-portlet-javascript>
+  #     <header-portlet-css>
+  #     <use-default-template>
+  #     <private-request-attributes>
+  #     <private-session-attributes>
+  #     <render-weight>
+  #     <restore-current-view>
+  #
   class Liferay
 
     # Liferay version
@@ -16,9 +43,8 @@ module Caterpillar
     attr_accessor :root
 
     # Liferay version is given as a String, eg. '5.2.2'.
-    # Unless given, the latest buildnumber value in the release_ table is used to decipher the version.
+    # Defaults to +Lportal::Schema.version+.
     def initialize(version=nil)
-      
       @version = version
       @root    = '/usr/local/liferay'
     end
@@ -103,12 +129,12 @@ module Caterpillar
     # liferay-portlet XML
     def portletapp_xml(portlets)
       doctype = 'liferay-portlet-app'
-      xml = self.xml_header(doctype)
+      xml = xml_header(doctype)
       portlets.each do |p|
-        xml << self.portletapp_template(p)
+        xml << portletapp_template(p)
       end
-      xml << self.portlet_xml_footer(doctype)
-      return xml
+      xml << roles
+      xml << portlet_xml_footer(doctype)
     end
 
     # liferay-display XML
@@ -181,41 +207,71 @@ module Caterpillar
           '5.1.0'
         elsif @version[/5.2/]
           '5.2.0'
+        else
+          @version
         end
       when 'display'
         if @version[/5.1/]
           '5.1.0'
         elsif @version[/5.2/]
           '5.2.0'
+        else
+          @version
         end
       end
     end
 
+    # the actual portlet definition
     def portletapp_template(portlet)
       xml =  "  <portlet>\n"
       xml << "    <portlet-name>%s</portlet-name>\n" % portlet[:name]
-      xml << "    <icon>/%s/images/icon.png</icon>\n" % portlet[:servlet]
+      xml << "    <icon>/%s/favicon.ico</icon>\n" % portlet[:servlet]
       # can there be several portlet instances on the same page?
       xml << "    <instanceable>true</instanceable>\n"
+      # define the control panel category for 5.2 and newer
+      unless @version[/5.1/]
+        xml << "    <control-panel-entry-category>#{portlet[:category]}</control-panel-entry-category>\n"
+        xml << "    <control-panel-entry-weight>99.0</control-panel-entry-weight>\n"
+      end
       # include javascripts?
+      js_tag = (@version[/5.1/] ? 'header' : 'footer') + '-portal-javascript'
       portlet[:javascripts].each do |js|
-        xml << "    <header-portal-javascript>"
-        xml << "/%s/javascripts/%s" % [portlet[:servlet],js]
-        xml << "</header-portal-javascript>\n"
+        xml << "    <#{js_tag}>"
+        xml << "/#{portlet[:servlet]}/javascripts/#{js}"
+        xml << "</#{js_tag}>\n"
       end
       xml << "  </portlet>\n\n"
     end
 
     def display_template(category,portlets)
       xml = '  <category name="%s">' % category +"\n"
-
       portlets.each do |p|
-        xml << '    <portlet id="%s" />' % p[:name]
-        xml << "\n"
+        xml << '    <portlet id="%s" />' % p[:name] + "\n"
       end
       xml << "  </category>\n\n"
+    end
 
-      return xml
+    private
+
+    # XML role-mapper.
+    # Has to be duplicated in -ext.xml
+    def roles
+      xml =  "  <role-mapper>\n"
+      xml << "    <role-name>administrator</role-name>\n"
+      xml << "    <role-link>Administrator</role-link>\n"
+      xml << "  </role-mapper>\n"
+      xml << "  <role-mapper>\n"
+      xml << "    <role-name>guest</role-name>\n"
+      xml << "    <role-link>Guest</role-link>\n"
+      xml << "  </role-mapper>\n"
+      xml << "  <role-mapper>\n"
+      xml << "    <role-name>power-user</role-name>\n"
+      xml << "    <role-link>Power User</role-link>\n"
+      xml << "  </role-mapper>\n"
+      xml << "  <role-mapper>\n"
+      xml << "    <role-name>user</role-name>\n"
+      xml << "    <role-link>User</role-link>\n"
+      xml << "  </role-mapper>\n"
     end
 
     public
