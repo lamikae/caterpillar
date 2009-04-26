@@ -1,0 +1,52 @@
+<p class="info">
+  This is a public page.
+  <% if @user -%>
+    You are currently logged in as <b><%= @user -%></b>.
+  <% else -%>
+    You are not logged in.
+  <% end -%>
+</p>
+
+<% if flash[:notice] -%>
+  <p class="notice">
+    <%= flash[:notice] %>
+  </p>
+<% end -%>
+
+<p>
+  <% unless @user -%>
+    <%= form_tag :action => "login" %>
+      <p>
+        <span>Username:</span>
+        <%= text_field_tag :username, "user1", :size => 10 %>
+      </p>
+  
+      <p>
+        <span>Password:</span>
+        <%= password_field_tag :password, "test", :size => 10 %>
+      </p>
+  
+      <p id="submit_tags">
+        <%= submit_tag "Login" %>
+      </p>
+    </form>
+  <% else -%>
+    <%= form_tag :action => "logout" %>
+    <p id="submit_tags">
+      <%= submit_tag "Logout" %>
+    </p>
+  <% end -%>
+</p>
+
+
+<p class="login_link">
+  <%= link_to 'Protected user page',
+      :controller => :user, :action => :home  -%>
+</p>
+
+<p class="login_link">
+  <%= link_to 'Protected admin page',
+      :controller => :user, :action => :home  -%>
+</p>
+
+<hr />

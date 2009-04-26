@@ -1,0 +1,13 @@
+<p class="info">
+  The following images are served under $RAILS_ROOT/public/images, and are routed (by default) to url (/images/).
+</p>
+<% @images.each do |img| -%>
+  <div class="resource_image_box">
+    <div class="resource_image_description">
+      <%= img[:description] -%>
+    </div>
+    <div class="resource_image_tag">
+      <%= image_tag img[:file] -%>
+    </div>
+  </div>
+<% end -%>

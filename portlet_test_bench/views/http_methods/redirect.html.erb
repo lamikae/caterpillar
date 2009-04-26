@@ -1,0 +1,4 @@
+<%= link_to "Click to visit an action that redirects back to this page", url_for(:action => :redirect_action) -%><br />
+
+<%= flash[:info] if flash[:info] -%><br />
+<%= 'Redirected: ' + params[:x] if params[:x] -%>

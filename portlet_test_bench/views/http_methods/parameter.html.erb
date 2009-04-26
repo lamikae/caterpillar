@@ -1,0 +1,21 @@
+<h1>URL parameters</h1>
+
+<p style="border: 2px dashed gray; background: #FFFBB4; margin: 20px; width: 40%;">
+  <%= @params.inspect -%><br />
+  <hr />
+  Interpreted as:<br />
+  foo:   <%= @params[:foo] -%><br />
+  count: <%= @params[:count] -%><br />
+</p>
+
+<ul>
+<li>
+  <%= link_to 'Send parameters "foo=bar" and "count=3"', 
+    url_for( :action => 'parameter', :foo => 'bar', :count => 3 ) -%>
+</li>
+
+<li>
+  <%= link_to 'Clear parameters', 
+    url_for( :action => 'parameter' ) -%>
+</li>
+</ul>

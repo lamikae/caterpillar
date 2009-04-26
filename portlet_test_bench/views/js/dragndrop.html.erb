@@ -1,0 +1,40 @@
+<h1>Drag and drop test</h1>
+
+
+<div id="draggables" class="dragdrop">
+  <span class="dragdrop_id">Draggables</span>
+  <div id="java">
+    <%= image_tag 'java.png', :id => :java_handle, :class => :draggable -%>
+  </div>
+  <%= image_tag 'ruby.gif', :id => :ruby, :class => :draggable -%>
+</div>
+
+<%= draggable_element :java, :revert => true, :handle => "'java_handle'" -%>
+<%= draggable_element 'ruby', :revert => true -%>
+
+
+<div id="droppables" class="dragdrop">
+  <span class="dragdrop_id">Droppables</span>
+  <span id="drop_status" style="display: none;"></span>
+</div>
+
+
+<%#= drop_receiving_element( :droppables, :hoverclass => 'hover', :accept => 'draggable',
+  :onHover => "function(draggable, droppable, overlap){
+$('hover_notice').update('you drag');
+}"
+ ) -%>
+
+<%#= drop_receiving_element( :droppables, :hoverclass => 'hover', 
+:onHover => "function(){ $('hover_notice').update('Hovering!'); }"
+ ) -%>
+
+<%#= drop_receiving_element( :droppables, :onHover => "function(){ alert('Hovering!'); }") -%>
+
+<%= drop_receiving_element( :droppables, :url => { :action => :receive_drop }) -%>
+
+<%#= javascript_tag "Droppables.add('droppables'){onHover:function(){ alert('Hovering!'); }}" %>
+
+
+<span id="hover_notice"></span>
+

@@ -1,0 +1,43 @@
+<div id="http_post">
+  <h1>POST test</h1>
+
+  <div id="http_postform">
+    <%= form_tag :action => "post" %>
+      <p>
+        <span>Input text:</span>
+        <%= text_field_tag "msg", "The Java language was created by James Gosling in June 1991", :size => 42 %>
+      </p>
+
+      <p>
+        <span>Input checkbox:</span>
+        <input type="checkbox" name="checkbox" value="yay" true />
+      </p>
+
+      <p id="submit_tags">
+        <input type="submit" value="Submit values" />
+        <input type="reset" value="Reset to defaults" />
+      </p>
+    </form>
+  </div>
+
+
+  <h2>Message from last POST:</h2>
+  <span id="post_msg">
+    <%= @msg -%>
+  </span>
+  <br />
+  <span id="post_info">
+    <% if @checkbox -%>
+      Checkbox was checked
+    <% else -%>
+      <% if @checkbox == false %>
+<!--
+        Checkbox was unchecked
+-->
+      <% end %>
+    <% end -%>
+  </span>
+
+
+
+</div>

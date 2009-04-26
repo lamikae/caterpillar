@@ -1,0 +1,19 @@
+<div id="highlight_test">
+  <%= link_to_remote("Highlight test", :url => { :action => 'highlight_test' }) -%>
+</div>
+
+<div>
+  <%= link_to_remote("Appear test", :url => { :action => 'appear_test' }) -%>
+  <div id="appear_test" style="display: none;">
+    Appear works
+  </div>
+</div>
+
+
+<div>
+  <%= link_to_remote("Toggle test", :url => { :action => 'toggle_blind_test' }) -%>
+  <div id="toggle_blind_test" style="display: none;">
+    Toggle works
+  </div>
+</div>
+
