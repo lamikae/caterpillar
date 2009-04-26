@@ -1,3 +1,6 @@
+	- included portlet test bench
+
+= 0.9.17
 	- add role definitions; all portlets are only addable by admin
 	- define control panel category in Liferay 5.2
 	
