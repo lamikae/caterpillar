@@ -1,5 +1,4 @@
 class Caterpillar::JsController < Caterpillar::ApplicationController
-  layout 'basic'
 
   def simple
     @javascripts = false

@@ -1,5 +1,4 @@
 class Caterpillar::LoginController < Caterpillar::ApplicationController
-  layout 'basic'
 
   before_filter :authorize, :except => [ :login, :index, :logout ]
 

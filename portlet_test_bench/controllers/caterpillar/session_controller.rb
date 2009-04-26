@@ -1,5 +1,4 @@
 class Caterpillar::SessionController < Caterpillar::ApplicationController
-  layout 'basic'
 
   def initialize
 

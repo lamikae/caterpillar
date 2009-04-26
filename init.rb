@@ -26,3 +26,6 @@ ActionController::Base.append_view_path File.join(this_dir, 'views')
   # NOTE: the routes need to be activated by 'map.caterpillar' in RAILS_ROOT/config/routes.rb
   require File.join(this_dir, 'portlet_test_bench', 'routing')
   ActionController::Routing::RouteSet::Mapper.send :include, Caterpillar::Routing::MapperExtensions
+
+  # hack; the application controller needs to be loaded now
+  require File.join(this_dir, 'portlet_test_bench','controllers','caterpillar','application')

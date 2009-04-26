@@ -1,5 +1,4 @@
 class Caterpillar::ResourceController < Caterpillar::ApplicationController
-  layout 'basic'
 
   def images
     @images = [

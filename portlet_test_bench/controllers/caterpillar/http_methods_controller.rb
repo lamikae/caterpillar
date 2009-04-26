@@ -1,5 +1,4 @@
-class HttpMethodsController < ApplicationController
-  layout 'basic'
+class Caterpillar::HttpMethodsController < Caterpillar::ApplicationController
 
   def post
     @msg      = params[:msg] if request.post?
