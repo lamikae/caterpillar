@@ -14,6 +14,7 @@ ActionController::Base.append_view_path File.join(this_dir, 'views')
 ### Portlet test bench
   # Adding directories to the load path makes them appear just like files in the the main app directory.
   ActiveSupport::Dependencies.load_paths << File.join(this_dir, 'portlet_test_bench', 'controllers')
+  ActiveSupport::Dependencies.load_paths << File.join(this_dir, 'portlet_test_bench', 'helpers')
 
   # Removing a directory from the load once paths allow changes
   # to be picked up as soon as you save the file – without having to restart the web server.

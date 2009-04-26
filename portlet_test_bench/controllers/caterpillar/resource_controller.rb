@@ -15,6 +15,7 @@ class Caterpillar::ResourceController < Caterpillar::ApplicationController
 
   # link to outside the portlet
   def exit_portlet
+    @links = ['http://www.rubyonrails.org', 'http://www.google.fi/search?q=jsr286', {:action => :exit_portlet}]
     if params.include? :exit_portlet
       render :inline => 'portlet should now be exited'
     end

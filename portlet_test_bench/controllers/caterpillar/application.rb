@@ -2,6 +2,8 @@ class Caterpillar::ApplicationController < ActionController::Base
 
   layout 'basic'
 
+  helper 'Caterpillar::Application'
+
   before_filter :is_test_selected
 
   def is_test_selected
