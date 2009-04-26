@@ -10,8 +10,20 @@
     <%= javascript_include_tag @javascripts if @javascripts -%>
   </head>
   <body>
-    <% if @navigation==true -%>
-      <%= render :partial => 'caterpillar/application/navigation' %>
+    <% if @test_is_selected==true -%>
+      <p style="
+border: 2px groove gray;
+margin-top: 10px;
+margin-bottom: 10px;
+width: auto;
+padding: 3px;
+background: #FFFFFF;
+overflow: hidden;
+margin-left: 0px;
+margin-right: 0px;
+">
+        <%= link_to "All tests", portlet_test_bench_url -%>
+      </p>
     <% end -%>
     <%= yield %>
     <br />
