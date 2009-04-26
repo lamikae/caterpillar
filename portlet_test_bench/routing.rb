@@ -7,7 +7,7 @@ module Caterpillar #:nodoc:
         @set.add_named_route(
           'portlet_test_bench',
           'caterpillar/test_bench',
-          {:controller => 'HttpMethods', :action => 'post'})
+          {:controller => 'Caterpillar::HttpMethods', :action => 'post'})
 
         @set.add_route(
           'caterpillar/test_bench/:controller/:action')

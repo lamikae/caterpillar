@@ -1,4 +1,4 @@
-class ResourceController < ApplicationController
+class Caterpillar::ResourceController < Caterpillar::ApplicationController
   layout 'basic'
 
   def images

@@ -1,4 +1,4 @@
-class UserController < ApplicationController
+class Caterpillar::UserController < Caterpillar::ApplicationController
   layout 'basic'
 
   def initialize
