@@ -2,10 +2,9 @@ class Caterpillar::ResourceController < Caterpillar::ApplicationController
 
   def images
     @images = [
-      { :description => "Rails logo", :file => 'rails.png' },
-      { :description => "Image from a subdirectory", :file => 'lolcat/lolcat-monorail.jpg' }
+      { :description => "Rails logo", :file => 'portlet_test_bench/rails.png' }
+#       { :description => "Image from a subdirectory", :file => 'lolcat/lolcat-monorail.jpg' }
     ]
-    render :template => 'resource/images'
   end
 
   # Inline text
