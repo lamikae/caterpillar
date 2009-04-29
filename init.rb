@@ -30,6 +30,6 @@ ActionController::Base.append_view_path File.join(this_dir, 'views')
 
   # hack; the application controller needs to be loaded explicitly,
   # but NOT for standard Caterpillar tasks (breaks the tasks)
-  unless $0[/caterpillar/]
+  unless $0[/caterpillar|generate/]
     require File.join(this_dir, 'portlet_test_bench','controllers','caterpillar','application')
   end
