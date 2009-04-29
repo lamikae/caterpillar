@@ -54,10 +54,9 @@ Caterpillar::Config.new do |portlet|
 
   # Rails-portlet testing application:
   portlet.instances << {
-    :name     => 'test',
-    :title    => 'Rails-portlet testing application',
-    :category => 'Caterpillar',
-    :path     => '/RailsTestBench'
+    :name     => 'portlet_test_bench',
+    :title    => 'Rails-portlet test bench',
+    :category => 'Caterpillar'
   }
 
   # this will include all named routes without further configuration
