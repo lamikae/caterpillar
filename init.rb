@@ -28,5 +28,8 @@ ActionController::Base.append_view_path File.join(this_dir, 'views')
   require File.join(this_dir, 'portlet_test_bench', 'routing')
   ActionController::Routing::RouteSet::Mapper.send :include, Caterpillar::Routing::MapperExtensions
 
-  # hack; the application controller needs to be loaded now
-  require File.join(this_dir, 'portlet_test_bench','controllers','caterpillar','application')
+  # hack; the application controller needs to be loaded explicitly,
+  # but NOT for standard Caterpillar tasks (breaks the tasks)
+  unless $0[/caterpillar/]
+    require File.join(this_dir, 'portlet_test_bench','controllers','caterpillar','application')
+  end
