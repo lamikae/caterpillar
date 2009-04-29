@@ -1,1 +1,1 @@
-This writes a set of Caterpillar files into the Rails application.
+This installs Caterpillar development navigation and the portlet test bench images, javascripts and stylesheets into the Rails' public folder.

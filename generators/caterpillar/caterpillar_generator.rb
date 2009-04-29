@@ -6,40 +6,55 @@ class CaterpillarGenerator < Rails::Generator::Base
     require 'find'
     file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
     this_dir = File.dirname(File.expand_path(file))
-    tmpl = this_dir+'/templates'
+    tmpl = File.join(this_dir,'templates')
 
-    STDOUT.puts ' * Installing config and images'
+    STDOUT.puts ' * Installing configuration file with images, stylesheets and javascripts'
 
     record do |m|
 
       ### config ###
       m.directory('config')
       file = 'portlets.rb'
-      m.file('config/'+file, 'config/'+file)
-      ####################################
+      m.file(File.join('config',file), File.join('config',file))
 
 
-# these are now cramped inline to the view partial
-#       ### stylesheet ###
-#       target = 'public/stylesheets/caterpillar'
-#       m.directory(target)
-#       file = 'caterpillar.css'
-#       m.file('stylesheets/caterpillar/'+file, target+'/'+file)
-#       ####################################
-# 
-#       ### javascript ###
-#       target = 'public/javascripts/caterpillar'
-#       m.directory(target)
-#       file = 'caterpillar.js'
-#       m.file('javascripts/caterpillar/'+file, target+'/'+file)
-#       ####################################
-
-      ### images ###
-      target = 'public/images'
+      ### Navigation ###
+      target = File.join('public','images')
       m.directory(target)
       file = 'caterpillar.gif'
-      m.file('images/caterpillar/'+file, target+'/'+file)
-      ####################################
+      m.file(File.join('images','caterpillar',file), File.join(target,file))
+
+
+      ### Test bench ###
+      testb = 'portlet_test_bench'
+      #
+      # images
+      #
+      target = File.join('public','images',testb)
+      m.directory(target)
+      Find.find(File.join(tmpl,'images',testb)) do |file|
+        if FileTest.directory?(file)
+          next
+        else
+          img = File.basename(file)
+          next unless img[/(.jpg|.png|.gif)$/]
+          m.file(File.join('images',testb,img), File.join(target,img))
+        end
+      end
+      #
+      # stylesheets
+      #
+      target = File.join('public','stylesheets',testb)
+      m.directory(target)
+      file = 'main.css'
+      m.file(File.join('stylesheets',testb,file), File.join(target,file))
+      #
+      # javascripts
+      #
+      target = File.join('public','javascripts',testb)
+      m.directory(target)
+      file = 'main.js'
+      m.file(File.join('javascripts',testb,file), File.join(target,file))
 
     end
   end
