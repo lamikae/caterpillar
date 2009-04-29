@@ -52,7 +52,8 @@ Caterpillar::Config.new do |portlet|
   #  - :servlet     -- by default, the name of the Rails app (= name of the WAR package)
   #  - :path        -- unless you're using named routes, you can define the path here
 
-  # Rails-portlet testing application:
+  # Rails-portlet testing application.
+  # NOTE: this needs to be activated by 'map.caterpillar' in RAILS_ROOT/config/routes.rb
   portlet.instances << {
     :name     => 'portlet_test_bench',
     :title    => 'Rails-portlet test bench',

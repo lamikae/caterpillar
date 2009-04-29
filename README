@@ -2,7 +2,37 @@ Caterpillar helps you with building Rails applications to be used in Java
 JSR286 portlets. This is possible with the help of Rails-portlet[http://rails-portlet.rubyforge.org].
 
 Writing Rails portlets for Liferay is great fun!
-Caterpillar tasks offer specialized methods for better Liferay integration:
+Caterpillar tasks offer specialized tasks for better Liferay integration,
+the Rails-portlet JAR for the portlet container and a portlet test bench application,
+that integrates into any Rails project when you 'pluginize' Caterpillar.
+
+== Quickstart ==
+Start up a new Rails project:
+
+  $ rails shiny_app
+  $ cd shiny_app
+  $ caterpillar pluginize
+
+Activate the test bench portlet by inserting 'map.caterpillar' in RAILS_ROOT/config/routes.rb before any other routes.
+
+If you are using Liferay, +require 'lportal'+ in the Rails startup:
+
+  $ echo "require 'lportal'" > config/initializers/lportal.rb
+
+Finally, set up the database connection. Then you should run +caterpillar portlets+ to check if your installation is working. The output should be something like this:
+
+  Caterpillar: version 0.9.9999
+  Using Liferay schema build 5101, version 5.1.1
+  Caterpillar configured for Liferay version 5.1.1 at /usr/local/liferay/
+  * Portlet configuration ***********************
+  Caterpillar
+    Rails-portlet test bench      "portlet_test_bench"  []
+
+Then you can start up the server (./script/server) and navigate to http://localhost:3000/caterpillar/test_bench
+
+
+== Useful tasks ==
+Here are the most useful tasks; see the rdoc documentation and caterpillar --describe for the full feature list.
 
 ++xml++ and ++xml:deploy++
  - processes the portlet XML configuration in accordance with the named routes
@@ -15,10 +45,11 @@ See Caterpillar::Config
  - warbles the application, updates the XML configuration and copies these to Liferay
 
 ++pluginize++
- - provides a navigation view in development (you will have to enable it manually)
-See Caterpillar::Navigation
+ - provides a navigation view in development (you will have to enable it manually).
+   See Caterpillar::Navigation
+ - includes the portlet test bench
 
-++db:migrate++
+++db:migrate++ and ++db:update++
  - offers a set of migrations to help with Liferay integration
 
  - patches Web::Portlet in the lportal[http://lportal.rubyforge.org] library, so manipulating
@@ -28,10 +59,9 @@ See Caterpillar::Navigation
  - imports live data from the production database for testing
 
 
-See the rdoc documentation and caterpillar --describe for the full feature list.
-
 
 Caterpillar is open source! Patches and comments are welcome.
 Join the bugs mailing list (http://rubyforge.org/mailman/listinfo/rails-portlet-bugs) to request help.
 
 Caterpillar is written by Mikael Lammentausta for Cel'Amanzi Ltd.
+

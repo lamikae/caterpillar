@@ -20,7 +20,8 @@ Gem::Specification.new do |s|
   s.executables = ["caterpillar"]
   s.default_executable = %q{caterpillar}
 
-  s.files = FileList["Rakefile", "*.rb", "lib/**/*", "generators/**/*", "db/**/*", "views/**/*"].to_a
+  s.files = FileList["Rakefile", "*.rb", "lib/**/*", "generators/**/*", "db/**/*", "views/**/*",
+    "portlet_test_bench/**/*"].to_a
 
   s.has_rdoc = true
   s.extra_rdoc_files = ["README","MIT-LICENSE","ChangeLog"]

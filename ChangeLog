@@ -1,4 +1,5 @@
 	- included portlet test bench
+	- generator is now filesystem independent
 
 = 0.9.17
 	- add role definitions; all portlets are only addable by admin
