@@ -16,6 +16,36 @@ CATERPILLAR_LIBS=this_dir unless defined?(CATERPILLAR_LIBS)
 RAILS_ROOT = Dir.pwd unless defined? RAILS_ROOT
 
 require 'find'
+require 'rake'
+require 'rake/tasklib'
+
+# NOTE: ActiveRecord should be loaded at this point, before loading any of the models.
+# However, this may conflict later when Rails' rake task activates the boot process.
+# The correct versions should be loaded at this point.
+# Otherwise only one version of Rails & co. rubygems should exist on the system.
+
+# Attempt to fix this by reading Rails' config file
+f=File.open(
+  File.join(
+    File.expand_path(RAILS_ROOT),
+    'config',
+    'environment.rb'
+  )
+)
+config = f.read
+rails_gem_version = config[/RAILS_GEM_VERSION.*(\d\.\d\.\d)/,1]
+f.close
+
+# Load the proper versions of Rails etc.
+# Not tested on all setups.
+require 'rubygems'
+['activesupport',
+'actionpack',
+'activerecord'].each { |rg|
+  gem(rg, '= '+rails_gem_version)
+  require rg
+}
+require 'action_controller'
 
 # include all ruby files
 Find.find(this_dir) do |file|

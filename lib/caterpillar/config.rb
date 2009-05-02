@@ -35,14 +35,24 @@ module Caterpillar
 
     # Sets sane defaults that are overridden in the config file.
     def initialize
-      @rails_root  = File.expand_path(defined?(RAILS_ROOT) ? RAILS_ROOT : Dir.getwd)
+      # RAILS_ROOT is at least defined in Caterpillar initialization
+      @rails_root  = File.expand_path(RAILS_ROOT)
       @servlet = File.basename(@rails_root)
       @category = @servlet
       @instances = []
       @javascripts = []
       @include_all_named_routes = true
+
+      rails_conf = File.join(@rails_root,'config','environment.rb')
+      unless File.exists?(rails_conf)
+        STDERR.puts 'Rails configuration file could not be found'
+      end
+
       @warbler_conf = File.join(@rails_root,'config','warble.rb')
-      STDERR.puts 'Warbler configuration file could not be found' unless File.exists?(@warbler_conf)
+      unless File.exists?(@warbler_conf)
+        STDERR.puts 'Warbler configuration file could not be found'
+      end
+
       #@logger  = (defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : Logger.new)
 
       yield self if block_given?
