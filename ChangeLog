@@ -1,3 +1,5 @@
+= 1.0.0
+	- improved rubygem loading; detect RAILS_GEM_VERSION
 	- included portlet test bench
 	- generator is now filesystem independent
 
