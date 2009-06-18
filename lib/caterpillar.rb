@@ -41,16 +41,16 @@ else
   f.close
 end
 
-  # Load the proper versions of Rails etc.
-  # Not tested on all setups.
-  require 'rubygems'
-  ['activesupport',
-  'actionpack',
-  'activerecord'].each { |rg|
-    gem(rg, '= '+rails_gem_version) if rails_gem_version
-    require rg
-  }
-  require 'action_controller'
+# Load the proper versions of Rails etc.
+# Not tested on all setups.
+require 'rubygems'
+['activesupport',
+'actionpack',
+'activerecord'].each { |rg|
+  gem(rg, '= '+rails_gem_version) if rails_gem_version
+  require rg
+}
+require 'action_controller'
 
 # include all ruby files
 Find.find(this_dir) do |file|
