@@ -370,7 +370,7 @@ module Caterpillar
 
           require 'find'
           Find.find(source) do |file|
-            if File.basename(file) =~ /rails-portlet-#{version}/
+            if File.basename(file) =~ /^rails-portlet-#{version}.jar$/
               portlet_jar = file
             end
           end
@@ -381,17 +381,17 @@ module Caterpillar
               old_version = file[/(\d.\d.\d).jar/,1]
               # check if there's an update available
               if version.gsub(/\./,'').to_i > old_version.gsub(/\./,'').to_i
-                info 'Rails-portlet version %s is found, but an update is available.' % old_version
+                info 'Rails-portlet version %s is found, but an update is available' % old_version
                 old_jar = file
               else
-                info 'Rails-portlet version %s is already installed.' % old_version
+                info 'Rails-portlet version %s is already installed (%s)' % [old_version,file]
                 exit 0
               end
             end
           end
 
           exit 1 unless system('cp %s %s' % [portlet_jar,target])
-          info 'installed Rails-portlet version %s to %s' % [version, target]
+          info 'installed Rails-portlet version %s (%s)' % [version, File.join(target,portlet_jar)]
           if old_jar
             exit 1 unless system('rm -f %s' % old_jar)
             info '..removed the old version %s' % old_jar
