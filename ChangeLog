@@ -1,3 +1,9 @@
+= 1.0.1
+	- added test for liferay session variables
+	- fixed XML validation error on 5.2.3 (all portlets are now uninstanceable)
+	- fix jar installation; do not copy VCS files
+	- require lportal version 1.0.18
+
 = 1.0.0
 	- improved rubygem loading; detect RAILS_GEM_VERSION
 	- included portlet test bench
