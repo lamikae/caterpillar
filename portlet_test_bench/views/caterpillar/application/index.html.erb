@@ -1,8 +1,14 @@
 <body>
+<h1>
+Rails-portlet test bench
+</h1>
+<p style="font-size: 14px;">
+These are isolated test cases of the Rails-portlet. These cases cover the most common techniques used in dynamic web applications. The <%= link_to_exit_portlet 'source code', 'http://rails-portlet.rubyforge.org/svn/trunk/caterpillar/portlet_test_bench/' -%> can be used as a reference for using the same features in other Rails apps.
+</p>
 
 <h1>HTTP</h1>
 
-  <%= link_to 'URL parameters',
+  <%= link_to 'URL parameter passing',
         :controller => 'Caterpillar::HttpMethods', :action => :parameter  -%><br />
 
   <%= link_to 'HTTP POST form',
@@ -60,6 +66,8 @@
   <%= link_to 'Link outside the portlet',
         :controller => 'Caterpillar::Resource', :action => :exit_portlet  -%><br />
 
+  <%= link_to 'Liferay session variables',
+        :controller => 'Caterpillar::Liferay', :action => :session_variables -%><br />
 
 
   <%#= link_to 'Login',
