@@ -1,6 +1,7 @@
 #--
 # (c) Copyright 2008,2009 Mikael Lammentausta
-# See the file LICENSES.txt included with the distribution for
+#
+# See the file MIT-LICENSE included with the distribution for
 # software license details.
 #++
 
@@ -227,11 +228,13 @@ module Caterpillar
       xml << "    <portlet-name>%s</portlet-name>\n" % portlet[:name]
       xml << "    <icon>/%s/favicon.ico</icon>\n" % portlet[:servlet]
       # can there be several portlet instances on the same page?
-      xml << "    <instanceable>true</instanceable>\n"
-      # define the control panel category for 5.2 and newer
+      xml << "    <instanceable>false</instanceable>\n"
+      # define the control panel category for 5.2 and newer -
+      # Note that when the control panel settings are defined,
+      # the portlet cannot be instanceable.
       unless @version[/5.1/]
         xml << "    <control-panel-entry-category>#{portlet[:category]}</control-panel-entry-category>\n"
-        xml << "    <control-panel-entry-weight>99.0</control-panel-entry-weight>\n"
+        xml << "    <control-panel-entry-weight>1.0</control-panel-entry-weight>\n"
       end
       # include javascripts?
       js_tag = (@version[/5.1/] ? 'header' : 'footer') + '-portal-javascript'
