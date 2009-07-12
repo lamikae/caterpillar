@@ -370,7 +370,7 @@ module Caterpillar
 
           require 'find'
           Find.find(source) do |file|
-            if File.basename(file) =~ /^rails-portlet-#{version}.jar$/
+            if File.basename(file) == "rails-portlet-#{version}.jar"
               portlet_jar = file
             end
           end
