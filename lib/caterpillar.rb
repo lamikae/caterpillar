@@ -1,6 +1,7 @@
 #--
 # (c) Copyright 2008,2009 Mikael Lammentausta
-# See the file LICENSES.txt included with the distribution for
+#
+# See the file MIT-LICENSE included with the distribution for
 # software license details.
 #++
 
@@ -23,8 +24,6 @@ require 'rake/tasklib'
 # ActiveRecord should be loaded at this point, before loading any of the models.
 # However, this may conflict later when Rails' rake task activates the boot process.
 # The correct versions should be loaded at this point.
-# Otherwise only one version of Rails & co. rubygems should exist on the system.
-
 if $0[/gem$/]
   rails_gem_version = nil
 else
@@ -42,14 +41,11 @@ else
 end
 
 # Load the proper versions of Rails etc.
-# Not tested on all setups.
 require 'rubygems'
-['activesupport',
-'actionpack',
-'activerecord'].each { |rg|
+%w{ activesupport actionpack activerecord }.each do |rg|
   gem(rg, '= '+rails_gem_version) if rails_gem_version
   require rg
-}
+end
 require 'action_controller'
 
 # include all ruby files
