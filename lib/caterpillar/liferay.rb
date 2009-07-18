@@ -5,7 +5,8 @@
 # software license details.
 #++
 
-module Caterpillar
+module Caterpillar # :nodoc:
+
   # Creates liferay-portlet XML and liferay-display XML.
   # The latter optionally combines your production portlet display configuration.
   #
@@ -43,11 +44,17 @@ module Caterpillar
     # the installation directory
     attr_accessor :root
 
+    # server type:
+    #  - 'Tomcat'
+    #  - 'JBoss/Tomcat'
+    attr_accessor :server
+
     # Liferay version is given as a String, eg. '5.2.2'.
     # Defaults to +Lportal::Schema.version+.
     def initialize(version=nil)
       @version = version
       @root    = '/usr/local/liferay'
+      @server  = 'Tomcat'
     end
 
     # The name of the portal. Used in STDOUT messages.
@@ -55,11 +62,55 @@ module Caterpillar
       'Liferay'
     end
 
+    def deploy_dir
+      raise 'Configure container root folder' unless self.root
+      case @server
+
+      when 'Tomcat'
+        root_dir = 'ROOT'
+        File.join(self.root,'webapps')
+
+      when 'JBoss/Tomcat'
+        # detect server name
+        name     = Dir.new(
+            File.join(self.root,'server')).entries.first
+        path = File.join(self.root,'server',name,'deploy')
+
+        unless File.exists?(path)
+          raise 'Portal deployment directory does not exist: %s' % path
+        end
+
+        return path
+      end
+    end
+
     # The location of Liferay's WEB-INF folder for XML analyzation.
     # This is relative to installation directory (self.root)
     def WEB_INF
       raise 'Configure container root folder' unless self.root
-      File.join(self.root,'webapps','ROOT','WEB-INF')
+      case @server
+
+      when 'Tomcat'
+        root_dir = 'ROOT'
+        File.join(self.deploy_dir,root_dir,'WEB-INF')
+
+      when 'JBoss/Tomcat'
+        # detect lportal dir (ROOT.war or lportal.war)
+        root_dir =
+          if File.exists?(File.join(self.deploy_dir,'ROOT.war'))
+            'ROOT.war'
+          elsif File.exists?(File.join(self.deploy_dir,'lportal.war'))
+            'lportal.war'
+          end
+        unless root_dir
+          STDERR.puts 'There seems to be a problem detecting the proper install paths.'
+          STDERR.puts 'Please file a bug on Caterpillar.'
+          raise 'Portal root directory not found at %s' % self.deploy_dir
+        end
+
+        File.join(self.deploy_dir,root_dir,'WEB-INF')
+
+      end
     end
 
     # Reads Liferay portlet descriptor XML files and parses them with Hpricot.
@@ -281,63 +332,68 @@ module Caterpillar
 
     # tables that are skipped when creating fixtures
     def skip_fixture_tables
-      [
-        "cyrususer","cyrusvirtual",
-        "documentlibrary_fsentry","documentlibrary_binval","documentlibrary_node","documentlibrary_prop","documentlibrary_refs",
-        "expandocolumn",
-        "expandorow",
-        "expandotable",
-        "expandovalue",
-        "image",
-        "chat_entry",
-        "chat_status",
-        "journalcontentsearch",
-        "mbban",
-        "membershiprequest",
-        "orglabor",
-        "passwordpolicyrel",
-        "passwordpolicy",
-        "passwordtracker",
-        "pluginsetting",
-        "quartz_blob_triggers",
-        "quartz_calendars",
-        "quartz_cron_triggers",
-        "quartz_fired_triggers",
-        "quartz_job_details",
-        "quartz_job_listeners",
-        "quartz_locks",
-        "quartz_paused_trigger_grps",
-        "quartz_scheduler_state",
-        "quartz_simple_triggers",
-        "quartz_trigger_listeners",
-        "quartz_triggers",
-        "ratingsentry",
-        "ratingsstats",
-        "region",
-        "scframeworkversion",
-        "scframeworkversi_scproductvers",
-        "schema_migrations",
-        "sclicenses_scproductentries",
-        "sclicense",
-        "scproductentry",
-        "scproductscreenshot",
-        "scproductversion",
-        "servicecomponent",
-        "sessions",
-        "shoppingcart",
-        "shoppingcategory",
-        "shoppingcoupon",
-        "shoppingitemfield",
-        "shoppingitemprice",
-        "shoppingitem",
-        "shoppingorderitem",
-        "shoppingorder",
-        "subscription",
-        "tasksproposal",
-        "tasksreview",
-        "webdavprops",
-        "website"
-      ]
+      %w{
+        cyrususer
+        cyrusvirtual
+        documentlibrary_fsentry
+        documentlibrary_binval
+        documentlibrary_node
+        documentlibrary_prop
+        documentlibrary_refs
+        expandocolumn
+        expandorow
+        expandotable
+        expandovalue
+        image
+        chat_entry
+        chat_status
+        journalcontentsearch
+        mbban
+        membershiprequest
+        orglabor
+        passwordpolicyrel
+        passwordpolicy
+        passwordtracker
+        pluginsetting
+        quartz_blob_triggers
+        quartz_calendars
+        quartz_cron_triggers
+        quartz_fired_triggers
+        quartz_job_details
+        quartz_job_listeners
+        quartz_locks
+        quartz_paused_trigger_grps
+        quartz_scheduler_state
+        quartz_simple_triggers
+        quartz_trigger_listeners
+        quartz_triggers
+        ratingsentry
+        ratingsstats
+        region
+        scframeworkversion
+        scframeworkversi_scproductvers
+        schema_migrations
+        sclicenses_scproductentries
+        sclicense
+        scproductentry
+        scproductscreenshot
+        scproductversion
+        servicecomponent
+        sessions
+        shoppingcart
+        shoppingcategory
+        shoppingcoupon
+        shoppingitemfield
+        shoppingitemprice
+        shoppingitem
+        shoppingorderitem
+        shoppingorder
+        subscription
+        tasksproposal
+        tasksreview
+        webdavprops
+        website
+      }
     end
 
   end

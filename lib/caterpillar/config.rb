@@ -60,7 +60,7 @@ module Caterpillar
 
     # The container class is used for parsing XML files.
     #
-    # Possible values: Liferay (default)
+    # Possible values: Caterpillar::Liferay (default using Tomcat)
     def container
       self._container || Caterpillar::Liferay.new
     end

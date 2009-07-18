@@ -337,19 +337,14 @@ module Caterpillar
         task :install => :environment do
           source = File.join(CATERPILLAR_LIBS,'java')
 
-          unless @config.container.kind_of? Liferay
-            info 'Installation of the JAR is only supported on Liferay. Patches are welcome.'
-            info 'Copy the JAR from this directory into the CLASSPATH of the portlet container.'
-            info source
-            exit 1
-          end
-
+          # detect (Liferay) container version
           container_v = @config.container.version
-
           unless container_v
             info 'Unable to detect the version of the portlet container. Installing the latest version.'
           end
 
+          # detect the version of the JAR to install
+          portlet_jar = nil
           version = (
             if container_v and container_v[/^5.1/]
               '0.6.0' #'0.5.2' # FIXME: branch properly
@@ -357,8 +352,21 @@ module Caterpillar
               '0.6.1'
             end
           )
+          require 'find'
+          Find.find(source) do |file|
+            if File.basename(file) == "rails-portlet-#{version}.jar"
+              portlet_jar = file
+            end
+          end
 
-          portlet_jar = nil
+          # check if requirements match
+          unless deployment_requirements_met?
+            info 'Installation of the JAR is only supported on Liferay on Tomcat. Patches are welcome.'
+            info 'Copy this JAR into the CLASSPATH of the portlet container.'
+            info portlet_jar
+            exit 1
+          end
+
           old_jar = nil
           target = File.join(@config.container.WEB_INF,'lib')
 
@@ -366,13 +374,6 @@ module Caterpillar
           unless File.exists?(target)
             info 'JAR directory %s does not exist' % target
             exit 1
-          end
-
-          require 'find'
-          Find.find(source) do |file|
-            if File.basename(file) == "rails-portlet-#{version}.jar"
-              portlet_jar = file
-            end
           end
 
           # check for previous installs..
@@ -391,7 +392,8 @@ module Caterpillar
           end
 
           exit 1 unless system('cp %s %s' % [portlet_jar,target])
-          info 'installed Rails-portlet version %s (%s)' % [version, File.join(target,portlet_jar)]
+          info 'installed Rails-portlet version %s (%s)' % [
+            version, File.join(target,File.basename(portlet_jar))]
           if old_jar
             exit 1 unless system('rm -f %s' % old_jar)
             info '..removed the old version %s' % old_jar
@@ -406,7 +408,7 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Uninstalls Rails-portlet JAR from the portlet container'
         task :uninstall do
-          raise 'Only Liferay is supported' unless @config.container.kind_of? Liferay
+          raise 'Only Liferay is supported' unless deployment_requirements_met?
           target = File.join(@config.container.WEB_INF,'lib')
 
           # check that target exists
@@ -436,7 +438,7 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Checks the installed Rails-portlet version'
         task :version do
-          raise 'Only Liferay is supported' unless @config.container.kind_of? Liferay
+          raise 'Only Liferay is supported' unless deployment_requirements_met?
           require 'find'
           target = File.join(@config.container.WEB_INF,'lib')
 
@@ -483,8 +485,8 @@ module Caterpillar
           info 'Warbler configuration file %s was not found, exiting' % @config.warbler_conf
           exit 1
         end
-        info 'Building WAR using Warbler %s on JRuby %i (%s)' % [
-          Warbler::VERSION, JRUBY_VERSION, jruby]
+        info 'Building WAR using Warbler %s on JRuby at %s' % [
+          Warbler::VERSION, jruby]
         info ''
         exit 1 unless system(jruby+' -S warble war')
         info 'Warbler finished successfully'
@@ -493,8 +495,12 @@ module Caterpillar
 
     def define_deploy_task
       desc 'Deploy XML files and the application WAR to the portlet container'
+      tasks = []
 
-      tasks = ['db:update', :xml, :warble, 'deploy:xml', 'deploy:war']
+      # only update the DB if the lportal gem is loaded
+      tasks << 'db:update' if defined?(Lportal)
+
+      [:xml, :warble, 'deploy:xml', 'deploy:war'].each { |task| tasks << task }
       task :deploy => tasks
     end
 
@@ -503,7 +509,13 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Deploys the XML files'
         task :xml do
-          raise 'Only deployment to Liferay on Tomcat is supported' unless @config.container.kind_of? Liferay
+          unless deployment_requirements_met?
+            info 'Deployment is only supported on Liferay on Tomcat. Patches are welcome.'
+            info 'Copy these XML files into the portlet container\'s WEB-INF.'
+            @xml_files.each { |f| info f }
+            exit 1
+          end
+
           target = @config.container.WEB_INF
           info 'deploying XML files to %s' % target
 
@@ -519,19 +531,28 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Deploys the WAR file'
         task :war do
-          raise 'Only deployment to Liferay on Tomcat is supported' unless @config.container.kind_of? Liferay
           file = @config.servlet+'.war'
           unless File.exists?(file)
             info 'cannot find the WAR file %s, exiting' % file
             exit 1
           end
 
-          target = File.join(@config.container.root,'webapps')
+          # check if requirements match
+          unless deployment_requirements_met?
+            info 'Deployment is only supported on Liferay on Tomcat. Patches are welcome.'
+            info 'Copy this WAR file into the portlet container\'s deployment directory.'
+            info file
+            exit 1
+          end
 
-          info '..removing previous installs..'
-          exit 1 unless system('rm -rf %s' % File.join(target,@config.servlet+'*'))
+          target = @config.container.deploy_dir
 
-          info 'deploying the WAR package to %s' % target
+          if File.exists?(File.join(target,File.basename(file)))
+            info '..removing previous installs..'
+            exit 1 unless system('rm -rf %s' % File.join(target,@config.servlet+'*'))
+          end
+
+          info 'deploying the WAR package to %s' % File.join(target,file)
           exit 1 unless system('cp %s %s' % [file,target])
 
         end
@@ -549,6 +570,13 @@ module Caterpillar
     end
 
     protected
+
+    def deployment_requirements_met?
+      @config.container.kind_of? Liferay and (
+        @config.container.server == 'Tomcat' or
+        @config.container.server == 'JBoss/Tomcat'
+      )
+    end
 
     def print_portlets(hash)
       # organize

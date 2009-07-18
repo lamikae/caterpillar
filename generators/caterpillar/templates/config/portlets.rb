@@ -17,7 +17,13 @@ Caterpillar::Config.new do |portlet|
   #
   # No changes are made to any of the files in this directory while making XML,
   # only the deploy and install tasks make any changes.
-  portlet.container.root = '/usr/local/liferay/'
+  # portlet.container.root = '/usr/local/liferay/'
+
+  # The server that the container is running on.
+  # Possible values:
+  #  - 'Tomcat' (default)
+  #  - 'JBoss/Tomcat'
+  # portlet.container.server = 'JBoss/Tomcat'
 
   # The hostname and port.
   # By default the values are taken from the request.
