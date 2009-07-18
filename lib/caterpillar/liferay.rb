@@ -49,6 +49,9 @@ module Caterpillar # :nodoc:
     #  - 'JBoss/Tomcat'
     attr_accessor :server
 
+    # the name of the JBoss server directory
+    attr_accessor :server_dir
+
     # Liferay version is given as a String, eg. '5.2.2'.
     # Defaults to +Lportal::Schema.version+.
     def initialize(version=nil)
@@ -71,10 +74,10 @@ module Caterpillar # :nodoc:
         File.join(self.root,'webapps')
 
       when 'JBoss/Tomcat'
-        # detect server name
-        name     = Dir.new(
+        # detect server name if not configured
+        @server_dir ||= Dir.new(
             File.join(self.root,'server')).entries.first
-        path = File.join(self.root,'server',name,'deploy')
+        path = File.join(self.root,'server',@server_dir,'deploy')
 
         unless File.exists?(path)
           raise 'Portal deployment directory does not exist: %s' % path

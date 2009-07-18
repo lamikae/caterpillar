@@ -25,6 +25,11 @@ Caterpillar::Config.new do |portlet|
   #  - 'JBoss/Tomcat'
   # portlet.container.server = 'JBoss/Tomcat'
 
+  # The server dir is only meaningful with JBoss.
+  # This is the name of the directory in server/.
+  # By default the first entry in the directory is chosen.
+  # portlet.container.server_dir = 'default'
+
   # The hostname and port.
   # By default the values are taken from the request.
   # portlet.host
