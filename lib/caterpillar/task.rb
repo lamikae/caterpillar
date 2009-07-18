@@ -172,6 +172,11 @@ module Caterpillar
       task :environment do
         require(File.join(@config.rails_root, 'config', 'environment'))
         if @config.container.is_a?(Caterpillar::Liferay)
+          if @config.container.version.nil? and !defined?(Lportal)
+            STDERR.puts 'Liferay version is undefined, and lportal gem is not present.'
+            STDERR.puts 'Please define portlet.container.version in %s.' % @config.class::FILE
+            raise 'Insufficient configuration'
+          end
           @config.container.version ||= Lportal::Schema.version
           portal_info
         end

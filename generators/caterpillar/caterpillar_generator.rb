@@ -9,10 +9,7 @@ class CaterpillarGenerator < Rails::Generator::Base
     tmpl = File.join(this_dir,'templates')
 
     STDOUT.puts ' * Installing configuration file with images, stylesheets and javascripts.'
-    STDOUT.puts ' * If you want to use the portlet test bench,'
-    STDOUT.puts ' * put the following line in your config/routes.rb before other routes.'
-    STDOUT.puts ' *   map.caterpillar'
-    STDOUT.puts ' *'
+    STDOUT.flush
 
     record do |m|
 
@@ -61,5 +58,11 @@ class CaterpillarGenerator < Rails::Generator::Base
       m.file(File.join('javascripts',testb,file), File.join(target,file))
 
     end
+
+    STDOUT.puts ' * If you want to use the portlet test bench,'
+    STDOUT.puts ' * put the following line in your config/routes.rb before other routes.'
+    STDOUT.puts ' *   map.caterpillar'
+    STDOUT.puts ' *'
+
   end
 end
