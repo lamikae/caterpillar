@@ -6,6 +6,9 @@ class Caterpillar::ApplicationController < ActionController::Base
 
   before_filter :is_test_selected
 
+  # Rails-portlet does not have session cookie support.
+  session :disabled => true
+
   def is_test_selected
     @test_is_selected = self.class.to_s[/Application/].nil?
   end

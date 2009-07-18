@@ -67,7 +67,10 @@ These are isolated test cases of the Rails-portlet. These cases cover the most c
         :controller => 'Caterpillar::Resource', :action => :exit_portlet  -%><br />
 
   <%= link_to 'Liferay session variables',
-        :controller => 'Caterpillar::Liferay', :action => :session_variables -%><br />
+        :controller => 'Caterpillar::Liferay',
+        :action => :session_variables,
+        :uid => '%UID%',
+        :gid => '%GID%' -%><br />
 
 
   <%#= link_to 'Login',

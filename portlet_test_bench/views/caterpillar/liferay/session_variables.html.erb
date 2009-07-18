@@ -9,26 +9,30 @@ When the Rails-portlet receives a request where the URL contains keywords %UID% 
 </p>
 
 <p>
-  <%= link_to 'UID', url_for(:action => :session_variables)+'/uid/%UID%' -%><br/>
+  <%#= link_to 'UID', url_for(:action => :session_variables)+'/uid/%UID%' -%><br/>
   <%#= link_to 'UID debug', url_for(:action => :session_variables)+'/uid/10000' -%><br/>
   <% if @uid -%>
-    <span style="font-size: 14px;">
+    <span style="font-size: 18px;">
       Received UID: <%= @uid %>
     </span>
+  <% else -%>
+    No UID found!
   <% end -%>
 </p>
 
 <p>
-  <%= link_to 'GID', url_for(:action => :session_variables)+'/gid/%GID%' -%><br/>
+  <%#= link_to 'GID', url_for(:action => :session_variables)+'/gid/%GID%' -%><br/>
   <%#= link_to 'GID debug', url_for(:action => :session_variables)+'/gid/20000' -%><br/>
   <% if @gid -%>
-    <span style="font-size: 14px;">
+    <span style="font-size: 18px;">
       Received GID: <%= @gid %>
     </span>
+  <% else -%>
+    No GID found!
   <% end -%>
 </p>
 
 <p style="font-size: 18px;">
-  <%= link_to 'Reset', :action => :session_variables -%>
+  <%#= link_to 'Reset', :action => :session_variables -%>
 </p>
 
