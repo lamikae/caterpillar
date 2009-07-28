@@ -12,6 +12,12 @@ Gem::Specification.new do |s|
   s.version = Caterpillar::VERSION
 
   s.add_dependency("lportal", ">= 1.0.18")
+  if RUBY_PLATFORM =~ /java/
+	# FIXME: Just make sure the hpricot-java gem is installed...
+#	 s.add_dependency("hpricot", ">= 0.6.164", 'java')
+  else
+	 s.add_dependency("hpricot", ">= 0.6.164")
+  end
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.description = %q{= Caterpillar}
