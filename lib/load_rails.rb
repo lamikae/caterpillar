@@ -15,11 +15,14 @@ else
   config = f.read
   rails_gem_version = config[/RAILS_GEM_VERSION.*(\d\.\d\.\d)/,1]
   f.close
+  p 'Read Rails version %s from the config file %s' % [rails_gem_version,config_file]
 end
 
 # Load the proper versions of Rails etc.
 require 'rubygems'
-%w{ activesupport actionpack activerecord }.each do |rg|
+# gem build fails when activesupport is loaded here
+%w{ actionpack activerecord }.each do |rg|
+# %w{ activesupport actionpack activerecord }.each do |rg|
   gem(rg, '= '+rails_gem_version) if rails_gem_version
   require rg
 end

@@ -11,7 +11,8 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://rails-portlet.rubyforge.org}
   s.version = Caterpillar::VERSION
 
-  s.add_dependency("lportal", ">= 1.0.18")
+# lportal has broken system of requiring Rails gems....
+#  s.add_dependency("lportal", ">= 1.0.18")
   if RUBY_PLATFORM =~ /java/
 	# FIXME: Just make sure the hpricot-java gem is installed...
 #	 s.add_dependency("hpricot", ">= 0.6.164", 'java')
