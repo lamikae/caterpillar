@@ -1,3 +1,5 @@
+require 'init'
+
 class Caterpillar::TestCase < Test::Unit::TestCase # :nodoc:
   fixtures [
     :portletitem, :portlet_names, :portletpreferences
