@@ -1,0 +1,11 @@
+<h1>Flash message:</h1>
+
+<% if flash[:info] -%>
+  <p style="border: 2px solid black; background: #ccff99; padding: 5px;">
+    <%= flash[:info] %>
+  </p>
+
+<% else -%>
+  There is something wrong with flash.
+
+<% end -%>

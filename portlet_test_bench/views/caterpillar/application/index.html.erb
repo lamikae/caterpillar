@@ -73,10 +73,8 @@ These are isolated test cases of the Rails-portlet. These cases cover the most c
         )+'/uid/%UID%/gid/%GID%'
   -%><br />
 
-
-  <%#= link_to 'Login',
-        :controller => 'Caterpillar::Login', :action => :index  -%><br />
-
+  <%= link_to 'Flash message',
+        :controller => 'Caterpillar::Session', :action => :flash_msg -%><br />
 
 
 </body>
