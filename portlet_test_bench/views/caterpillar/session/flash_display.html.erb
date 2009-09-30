@@ -1,9 +1,17 @@
 <h1>Flash message:</h1>
 
 <% if flash[:info] -%>
-  <p style="border: 2px solid black; background: #ccff99; padding: 5px;">
+  <p style="border: 2px solid black; background: #ccff99; padding: 5px; color: green;">
     <%= flash[:info] %>
   </p>
+
+  <%= link_to 'GET',
+        :controller => 'Caterpillar::Session', :action => :flash_msg -%><br />
+
+  <% form_tag( :controller => 'Caterpillar::Session', :action => :flash_msg ) do -%>
+    <div><%= submit_tag 'POST' %></div>
+  <% end -%>
+
 
 <% else -%>
   There is something wrong with flash.
