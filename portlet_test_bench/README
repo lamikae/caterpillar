@@ -1,0 +1,23 @@
+= Portlet test bench
+
+This application is for testing the portlet features live.
+Caterpillar includes this portlet into a vanilla Rails application:
+
+  rails new_app
+  cd new_app
+  caterpillar pluginize
+
+Edit the config/routes as instructed by the previous command.
+
+The command
+  caterpillar portlets
+
+Should output
+
+ * Portlet configuration ***********************
+Caterpillar
+	Rails-portlet test bench      "portlet_test_bench"	[]
+
+
+Now launch the Webrick server and navigate to http://localhost:3000/caterpillar/test_bench
+
