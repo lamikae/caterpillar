@@ -50,7 +50,7 @@ module Caterpillar
 
       @warbler_conf = File.join(@rails_root,'config','warble.rb')
       unless File.exists?(@warbler_conf)
-        STDERR.puts 'Warbler configuration file could not be found'
+        #STDERR.puts 'Warbler configuration file could not be found'
       end
 
       #@logger  = (defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : Logger.new)

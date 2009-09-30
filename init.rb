@@ -13,7 +13,7 @@ this_dir = File.dirname(File.expand_path(file))
 # load the main file
 require File.join(this_dir, 'lib', 'caterpillar')
 
-STDERR.puts 'Caterpillar: version %s' % Caterpillar::VERSION
+#STDERR.puts 'Caterpillar: version %s' % Caterpillar::VERSION
 
 # Add Caterpillar portlet navigation to views paths
 ActionController::Base.append_view_path File.join(this_dir, 'views')

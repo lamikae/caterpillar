@@ -15,7 +15,7 @@ else
   config = f.read
   rails_gem_version = config[/RAILS_GEM_VERSION.*(\d\.\d\.\d)/,1]
   f.close
-  p 'Read Rails version %s from the config file %s' % [rails_gem_version,config_file]
+  #STDOUT.puts 'Detected Rails version %s from the config file %s' % [rails_gem_version,config_file]
 end
 
 # Load the proper versions of Rails etc.
