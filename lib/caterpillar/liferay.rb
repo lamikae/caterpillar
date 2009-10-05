@@ -171,7 +171,6 @@ module Caterpillar # :nodoc:
             end
             # debug
             #puts _p.inspect
-            #portlets << _p
 
           end
         end
@@ -276,20 +275,40 @@ module Caterpillar # :nodoc:
       end
     end
 
-    # the actual portlet definition
+    # liferay-portlet-ext definition
+    #
+    # http://www.liferay.com/web/guest/community/wiki/-/wiki/Main/Liferay-portlet.xml
+    #
+    # The content of element type "portlet" must match "(portlet-name,icon?,virtual-path?,struts-path?,configuration-path?,configuration-action-class?,indexer-class?,open-search-class?,scheduler-class?,portlet-url-class?,friendly-url-mapper-class?,url-encoder-class?,portlet-data-handler-class?,portlet-layout-listener-class?,poller-processor-class?,pop-message-listener-class?,social-activity-interpreter-class?,social-request-interpreter-class?,webdav-storage-token?,webdav-storage-class?,control-panel-entry-category?,control-panel-entry-weight?,control-panel-entry-class?,preferences-company-wide?,preferences-unique-per-layout?,preferences-owned-by-group?,use-default-template?,show-portlet-access-denied?,show-portlet-inactive?,action-url-redirect?,restore-current-view?,maximize-edit?,maximize-help?,pop-up-print?,layout-cacheable?,instanceable?,scopeable?,user-principal-strategy?,private-request-attributes?,private-session-attributes?,render-weight?,ajaxable?,header-portal-css*,header-portlet-css*,header-portal-javascript*,header-portlet-javascript*,footer-portal-css*,footer-portlet-css*,footer-portal-javascript*,footer-portlet-javascript*,css-class-wrapper?,facebook-integration?,add-default-resource?,system?,active?,include?)".
     def portletapp_template(portlet)
       xml =  "  <portlet>\n"
       xml << "    <portlet-name>%s</portlet-name>\n" % portlet[:name]
+      # portlet icon is favicon - FIXME: use proper host
       xml << "    <icon>/%s/favicon.ico</icon>\n" % portlet[:servlet]
-      # can there be several portlet instances on the same page?
-      xml << "    <instanceable>false</instanceable>\n"
-      # define the control panel category for 5.2 and newer -
+
+      # define the control panel category for Liferay 5.2 and newer -
+      #
       # Note that when the control panel settings are defined,
       # the portlet cannot be instanceable.
       unless @version[/5.1/]
         xml << "    <control-panel-entry-category>#{portlet[:category]}</control-panel-entry-category>\n"
-        xml << "    <control-panel-entry-weight>1.0</control-panel-entry-weight>\n"
+        xml << "    <control-panel-entry-weight>420.0</control-panel-entry-weight>\n"
+        #xml << "    <control-panel-entry-class></control-panel-entry-class>\n"
       end
+
+      # Set the use-default-template value to true if the portlet uses the default template to decorate and wrap content. Setting this to false allows the developer to own and maintain the portlet's entire outputted content. The default value is true.
+      #
+      # The most common use of this is if you want the portlet to look different from the other portlets or if you want the portlet to not have borders around the outputted content.
+      #
+      # RD: This is a nice option except that if you set it, then you loose all border functionality including drag, drop, min,max,edit,conf,close These should be controlled by a separate property.
+      xml << "    <use-default-template>true</use-default-template>\n"
+
+      # can there be several portlet instances on the same page?
+      xml << "    <instanceable>false</instanceable>\n"
+
+      # The default value of ajaxable is true. If set to false, then this portlet can never be displayed via Ajax.
+      xml << "    <ajaxable>true</ajaxable>\n"
+
       # include javascripts?
       js_tag = (@version[/5.1/] ? 'header' : 'footer') + '-portal-javascript'
       portlet[:javascripts].each do |js|
@@ -297,6 +316,13 @@ module Caterpillar # :nodoc:
         xml << "/#{portlet[:servlet]}/javascripts/#{js}"
         xml << "</#{js_tag}>\n"
       end
+
+      # If the add-default-resource value is set to true, the default portlet resources and permissions are added to the page. The user can then view the portlet.
+      xml << "    <add-default-resource>true</add-default-resource>\n"
+      xml << "    <system>false</system>\n"
+      xml << "    <active>true</active>\n"
+      xml << "    <include>true</include>\n"
+
       xml << "  </portlet>\n\n"
     end
 
