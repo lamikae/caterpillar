@@ -9,26 +9,29 @@ that integrates into any Rails project when you 'pluginize' Caterpillar.
 == Quickstart ==
 Start up a new Rails project:
 
-  $ rails shiny_app
-  $ cd shiny_app
+  $ rails example
+  $ cd example
   $ caterpillar pluginize
 
-Activate the test bench portlet by inserting 'map.caterpillar' in RAILS_ROOT/config/routes.rb before any other routes.
+Caterpillar contains Rails portlet test bench, which can be activated by inserting 
++map.caterpillar+ in RAILS_ROOT/config/routes.rb before any other routes.
 
-If you are using Liferay, +require 'lportal'+ in the Rails startup:
-
+If you are connecting to the Liferay database, add +require 'lportal'+ in the Rails startup:
   $ echo "require 'lportal'" > config/initializers/lportal.rb
+And set up the database connection.
 
-Finally, set up the database connection. Then you should run +caterpillar portlets+ to check if your installation is working. The output should be something like this:
+Now you should run +caterpillar portlets+ to check if your installation is working.
+The output should include these lines:
 
-  Caterpillar: version 0.9.9999
-  Using Liferay schema build 5101, version 5.1.1
-  Caterpillar configured for Liferay version 5.1.1 at /usr/local/liferay/
   * Portlet configuration ***********************
   Caterpillar
     Rails-portlet test bench      "portlet_test_bench"  []
 
 Then you can start up the server (./script/server) and navigate to http://localhost:3000/caterpillar/test_bench
+
+
+== Quick production deployment using JRuby ==
+See the documentation in the example app (SVN checkout).
 
 
 == Useful tasks ==
