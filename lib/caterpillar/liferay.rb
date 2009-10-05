@@ -283,8 +283,9 @@ module Caterpillar # :nodoc:
     def portletapp_template(portlet)
       xml =  "  <portlet>\n"
       xml << "    <portlet-name>%s</portlet-name>\n" % portlet[:name]
-      # portlet icon is favicon - FIXME: use proper host
-      xml << "    <icon>/%s/favicon.ico</icon>\n" % portlet[:servlet]
+      xml << "    <icon>%s</icon>\n" % [
+          portlet[:host], portlet[:servlet], 'favicon.png' # .ico does not work on Firefox 3.0
+        ].join('/').gsub(/([^:])\/\//,'\1/')
 
       # define the control panel category for Liferay 5.2 and newer -
       #
