@@ -1,3 +1,9 @@
+= 1.0.5
+	- comply XML with Liferay 5.2.3 - output more XML with default values
+	- cleanup program output
+	- generator cleanup
+	- added portlet test for flash messages
+
 = 1.0.4
 	- bugfix release
 
@@ -90,5 +96,6 @@ Released at 2008-12-18
 = 0.9.0
 Released at 2008-12-17
 	- the initial release
+
 
 
