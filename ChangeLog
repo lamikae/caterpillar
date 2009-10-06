@@ -1,3 +1,6 @@
+= 1.0.6
+	- include rails-portlet 0.7.0
+
 = 1.0.5
 	- comply XML with Liferay 5.2.3 - output more XML with default values
 	- cleanup program output
