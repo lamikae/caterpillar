@@ -352,9 +352,9 @@ module Caterpillar
           portlet_jar = nil
           version = (
             if container_v and container_v[/^5.1/]
-              '0.6.0' #'0.5.2' # FIXME: branch properly
+              '0.6.0' # FIXME: branch properly
             else
-              '0.6.1'
+              '0.7.0'
             end
           )
           require 'find'
