@@ -354,7 +354,7 @@ module Caterpillar
             if container_v and container_v[/^5.1/]
               '0.6.0' # FIXME: branch properly
             else
-              '0.7.0'
+              '0.7.2'
             end
           )
           require 'find'
@@ -390,15 +390,16 @@ module Caterpillar
                 info 'Rails-portlet version %s is found, but an update is available' % old_version
                 old_jar = file
               else
-                info 'Rails-portlet version %s is already installed (%s)' % [old_version,file]
+                info 'Rails-portlet version %s is already installed' % [old_version]
+				info "\t" + file
                 exit 0
               end
             end
           end
 
           exit 1 unless system('cp %s %s' % [portlet_jar,target])
-          info 'installed Rails-portlet version %s (%s)' % [
-            version, File.join(target,File.basename(portlet_jar))]
+          info 'installed Rails-portlet version %s' % [version]
+				info "\t" + File.join(target,File.basename(portlet_jar))
           if old_jar
             exit 1 unless system('rm -f %s' % old_jar)
             info '..removed the old version %s' % old_jar

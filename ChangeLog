@@ -1,3 +1,6 @@
+= 1.0.7
+	- include rails-portlet 0.7.2
+
 = 1.0.6
 	- include rails-portlet 0.7.0
 
