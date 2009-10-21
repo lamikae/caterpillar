@@ -20,7 +20,13 @@ require 'find'
 require 'rake'
 require 'rake/tasklib'
 
-require File.join(this_dir,'load_rails')
+# NOTE: During normal startup (not while building the gem),
+# ActiveRecord should be loaded at this point, before loading any of the models.
+# However, this may conflict later when Rails' rake task activates the boot process.
+# The correct versions should be loaded at this point.
+# Maybe this is too heavy, as some tasks do not need any Rails modules.
+require File.join(this_dir,'rails_gem_chooser')
+RailsGemChooser.__load # detects the Rails config file from RAILS_ROOT
 
 # include all ruby files
 Find.find(this_dir) do |file|
