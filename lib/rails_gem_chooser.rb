@@ -28,16 +28,25 @@ class RailsGemChooser
     return rails_gem_version
   end
 
-  def __load(config_file=nil)
-    rails_gem_version = version(config_file)
+  # Load a specific GEM
+  def __load_gem(name,ver)
+    gem(name, '= '+ver)
+    require name
+  end
+
+  # Either define +rails_gem_version+ or +config_file+
+  # Without any parameters, the config_file is detected from RAILS_ROOT.
+  def __load(rails_gem_version=nil,config_file=nil)
+    raise 'oops' if config_file and rails_gem_version
+
+    rails_gem_version ||= version(config_file)
     raise 'Rails version could not be detected!' unless rails_gem_version
 
     STDOUT.puts 'Loading Rails version %s' % rails_gem_version
     # gem build fails when activesupport is loaded here
     # %w{ activesupport actionpack activerecord }.each do |rg|
     %w{ actionpack activerecord }.each do |rg|
-      gem(rg, '= '+rails_gem_version)
-      require rg
+      __load_gem(rg,rails_gem_version)
     end
     require 'action_controller'
   end
