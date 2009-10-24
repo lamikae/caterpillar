@@ -269,22 +269,10 @@ module Caterpillar
     def define_db_migrate_task
       @name = :db
       with_namespace_and_config do |name, config|
-        desc "Migrates lportal and Caterpillar database tables"
+        desc "Migrates lportal database tables"
         task :migrate => :environment do
-
-          # first run lportal sequence migrations (TODO)
-          info('Running lportal migrations')
-          ActiveRecord::Migrator.migrate(LPORTAL_MIGRATIONS)
-
-          # info('running Caterpillar migrations')
-          # ActiveRecord::Migrator.migrate(
-          #   File.expand_path(
-          #     File.join(CATERPILLAR_LIBS,'..','db','migrate')))
-
-          #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
-          info 'You need to manually run rake db:schema:dump'
-
-          Rake::Task['db:update'].invoke
+          info 'TODO: use lportal Rake task'
+          return
         end
       end
     end
@@ -292,21 +280,10 @@ module Caterpillar
     def define_db_rollback_task
       @name = :db
       with_namespace_and_config do |name, config|
-        desc "Wipes out Caterpillar database tables"
+        desc "Wipes out lportal database tables"
         task :rollback => :environment do
-
-          version = ENV['VERSION'].to_i || 0
-
-          info('Reverting lportal migrations')
-          ActiveRecord::Migrator.migrate(LPORTAL_MIGRATIONS, version)
-
-          # info('Reverting Caterpillar migrations')
-          # ActiveRecord::Migrator.migrate(
-          #   File.expand_path(
-          #     File.join(CATERPILLAR_LIBS,'..','db','migrate')), version)
-
-          #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
-          info 'You need to manually run rake db:schema:dump'
+          info 'TODO: use lportal Rake task'
+          return
         end
       end
     end
