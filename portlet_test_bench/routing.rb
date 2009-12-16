@@ -60,6 +60,10 @@ module Caterpillar #:nodoc:
           'caterpillar/test_bench/liferay/:action/uid/:uid/gid/:gid',
           {:controller => 'Caterpillar::Liferay'})
 
+        @set.add_route(
+          'caterpillar/test_bench/junit/:action',
+          {:controller => 'Caterpillar::Junit'})
+
       end
     end
   end
