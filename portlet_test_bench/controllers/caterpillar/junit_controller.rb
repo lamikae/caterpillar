@@ -6,19 +6,19 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
 	end
 
 	# Sets a session value so the single SESSION_KEY cookie is set.
-  # The output XML prints the session ID and the JUnit test compares this
-  # to the value from another request, and with the same cookie they should match.
+	# The output XML prints the session ID and the JUnit test compares this
+	# to the value from another request, and with the same cookie they should match.
 	def session_cookie
 		session[:the_time] = Time.now.to_s
 		render :text => request.session_options.to_xml
 	end
   
-  def redirect
-    redirect_to :action => :redirect_target
-  end
-  def redirect_target
-    render :text => request.request_uri
-  end
+	def redirect
+		redirect_to :action => :redirect_target
+	end
+	def redirect_target
+		render :text => request.request_uri
+	end
 
 	# Sets multiple cookies and redirects.
  	def cookies_with_redirect
@@ -27,9 +27,17 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
 		redirect_to :action => "cookies_with_redirect_target"
 	end
 	def cookies_with_redirect_target
-    render :text => cookies.to_xml
+		render :text => cookies.to_xml
 	end
 
+	def post_redirect_get
+		if request.post?
+			session[:the_time] = Time.now.to_s
+			redirect_to :action => :cookies_with_redirect_target
+		else
+			render :nothing => true, :status => 404
+		end
+	end
 
 #   # inspect the request variables
 #   def req
