@@ -39,6 +39,10 @@ module Caterpillar
       @name   = name
       @config = Util.eval_configuration(config)
       @logger = @config.logger
+      unless @config.rails_root
+        Usage.show()
+        exit 1
+      end
 
       yield self if block_given?
       @xml_files = []

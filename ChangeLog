@@ -1,3 +1,6 @@
+= 1.1.1
+	- regression fix
+
 = 1.1.0
 	- include rails-portlet 0.8.1
 	- improved test bench appearance, updated available tests

@@ -37,8 +37,8 @@ module Caterpillar
     def initialize
       # RAILS_ROOT is at least defined in Caterpillar initialization
       @rails_root  = File.expand_path(RAILS_ROOT)
-      @servlet = File.basename(@rails_root)
-      @category = @servlet
+      @servlet = nil
+      @category = nil
       @instances = []
       @javascripts = []
       @include_all_named_routes = true
@@ -46,11 +46,15 @@ module Caterpillar
       rails_conf = File.join(@rails_root,'config','environment.rb')
       unless File.exists?(rails_conf)
         STDERR.puts 'Rails configuration file could not be found'
-      end
+        @rails_root = nil
+      else
+        @servlet = File.basename(@rails_root)
+        @category = @servlet
 
-      @warbler_conf = File.join(@rails_root,'config','warble.rb')
-      unless File.exists?(@warbler_conf)
-        #STDERR.puts 'Warbler configuration file could not be found'
+        @warbler_conf = File.join(@rails_root,'config','warble.rb')
+        unless File.exists?(@warbler_conf)
+          #STDERR.puts 'Warbler configuration file could not be found'
+        end
       end
 
       #@logger  = (defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : Logger.new)

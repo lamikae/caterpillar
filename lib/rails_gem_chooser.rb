@@ -46,8 +46,6 @@ class RailsGemChooser
     # gem build fails when activesupport is loaded here
     if $0[/gem$/]
         rails_gems -= ['activesupport']
-    else
-        raise 'Rails version could not be detected!' unless rails_gem_version
     end
     rails_gems.each do |rg|
       __load_gem(rg,rails_gem_version)
