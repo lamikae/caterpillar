@@ -2,7 +2,7 @@ class Caterpillar::SessionController < Caterpillar::ApplicationController
 
   # flash message.
   def flash_msg
-    flash[:info] = "Flash works."
+    flash[:info] = "Flash works on %s" % request.request_method.to_s.upcase
     redirect_to :action => :flash_display
   end
 
