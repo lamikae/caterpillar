@@ -1,3 +1,11 @@
+= 1.1.0
+	- include rails-portlet 0.8.1
+	- improved test bench appearance, updated available tests
+	- added JUnit test controller for automatic testing
+	- moved db:migrate and db:rollback to lportal
+	- gem loading is now handled by a static class
+	- fixed gem loading with Rails 2.3.5'
+
 = 1.0.7
 	- include rails-portlet 0.7.2
 
