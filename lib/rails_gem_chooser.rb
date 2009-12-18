@@ -30,7 +30,7 @@ class RailsGemChooser
 
   # Load a specific GEM
   def __load_gem(name,ver)
-    gem(name, '= '+ver)
+    ver ? gem(name, '= '+ver) : gem(name)
     require name
   end
 
@@ -40,12 +40,16 @@ class RailsGemChooser
     raise 'oops' if config_file and rails_gem_version
 
     rails_gem_version ||= version(config_file)
-    raise 'Rails version could not be detected!' unless rails_gem_version
 
     STDOUT.puts 'Loading Rails version %s' % rails_gem_version
+    rails_gems = %w{ activesupport actionpack activerecord }
     # gem build fails when activesupport is loaded here
-    # %w{ activesupport actionpack activerecord }.each do |rg|
-    %w{ actionpack activerecord }.each do |rg|
+    if $0[/gem$/]
+        rails_gems -= ['activesupport']
+    else
+        raise 'Rails version could not be detected!' unless rails_gem_version
+    end
+    rails_gems.each do |rg|
       __load_gem(rg,rails_gem_version)
     end
     require 'action_controller'
