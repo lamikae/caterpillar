@@ -51,13 +51,17 @@ module Caterpillar # :nodoc:
 
     # the name of the JBoss server directory
     attr_accessor :server_dir
+    
+    # setting of the deploy dir from the config file
+    attr_writer   :deploy_dir
 
     # Liferay version is given as a String, eg. '5.2.2'.
     # Defaults to +Lportal::Schema.version+.
     def initialize(version=nil)
-      @version = version
-      @root    = '/usr/local/liferay'
-      @server  = 'Tomcat'
+      @version    = version
+      @root       = '/usr/local/liferay'
+      @server     = 'Tomcat'
+      @deploy_dir = nil
     end
 
     # The name of the portal. Used in STDOUT messages.
@@ -65,26 +69,34 @@ module Caterpillar # :nodoc:
       'Liferay'
     end
 
+    # The directory where to deploy.
+    # By default, it is based on the servlet container name and
+    # the confured location of its root.
+    # It can also be defined from the configuration file:
+    # 	portlet.container.deploy_dir = '/opt/myDeployDir'
     def deploy_dir
+      return @deploy_dir unless @deploy_dir.nil?
+
       raise 'Configure container root folder' unless self.root
       case @server
 
       when 'Tomcat'
         root_dir = 'ROOT'
-        File.join(self.root,'webapps')
+        @deploy_dir = File.join(self.root,'webapps')
 
       when 'JBoss/Tomcat'
         # detect server name if not configured
         @server_dir ||= Dir.new(
             File.join(self.root,'server')).entries.first
-        path = File.join(self.root,'server',@server_dir,'deploy')
+        @deploy_dir = File.join(self.root,'server',@server_dir,'deploy')
 
-        unless File.exists?(path)
-          raise 'Portal deployment directory does not exist: %s' % path
-        end
-
-        return path
       end
+
+      unless File.exists?(@deploy_dir)
+        raise 'Portal deployment directory does not exist: %s' % @deploy_dir
+      end
+
+      return @deploy_dir
     end
 
     # The location of Liferay's WEB-INF folder for XML analyzation.

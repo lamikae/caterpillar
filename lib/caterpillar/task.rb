@@ -518,7 +518,12 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Deploys the WAR file'
         task :war do
-          file = @config.servlet+'.war'
+          file = 
+          	if @config.servlet.any?
+            	@config.servlet + '.war'
+            else
+            	File.basename(Dir.pwd) + '.war'
+            end
           unless File.exists?(file)
             info 'cannot find the WAR file %s, exiting' % file
             exit 1

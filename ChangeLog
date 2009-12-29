@@ -1,3 +1,7 @@
+= 1.1.2
+	- allow to defining the deploy_dir in config/portlets.rb
+		(requested by Túlio Ornelas dos Santos, who sent the original patch)
+
 = 1.1.1
 	- regression fix
 

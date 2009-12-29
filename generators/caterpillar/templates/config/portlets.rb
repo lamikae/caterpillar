@@ -30,6 +30,10 @@ Caterpillar::Config.new do |portlet|
   # By default the first entry in the directory is chosen.
   # portlet.container.server_dir = 'default'
 
+  # Allow to defining the deploy_dir - both the WAR file and the XML files
+  # are deployed under this directory.
+  # portlet.container.deploy_dir = '/opt/myDeployDir'
+
   # The hostname and port.
   # By default the values are taken from the request.
   # portlet.host
