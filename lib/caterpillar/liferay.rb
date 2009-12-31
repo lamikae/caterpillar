@@ -52,7 +52,8 @@ module Caterpillar # :nodoc:
     # the name of the JBoss server directory
     attr_accessor :server_dir
     
-    # setting of the deploy dir from the config file
+    # For setting @deploy dir from the config file.
+    # The "get" method is deploy_dir().
     attr_writer   :deploy_dir
 
     # Liferay version is given as a String, eg. '5.2.2'.
@@ -107,7 +108,7 @@ module Caterpillar # :nodoc:
 
       when 'Tomcat'
         root_dir = 'ROOT'
-        File.join(self.deploy_dir,root_dir,'WEB-INF')
+        return web_inf_dir(root_dir)
 
       when 'JBoss/Tomcat'
         # detect lportal dir (ROOT.war or lportal.war)
@@ -122,10 +123,19 @@ module Caterpillar # :nodoc:
           STDERR.puts 'Please file a bug on Caterpillar.'
           raise 'Portal root directory not found at %s' % self.deploy_dir
         end
-
-        File.join(self.deploy_dir,root_dir,'WEB-INF')
+                
+        return web_inf_dir(root_dir)
 
       end
+    end
+    
+    # The rule by which the WEB-INF is constructed regardless of the server.
+    def web_inf_dir(root_dir)
+      # The @deploy_dir variable does not need checking,
+      # as the method deploy_dir() does that.
+      #if deploy_dir_defined?
+
+      return File.join(self.deploy_dir(),root_dir,'WEB-INF')
     end
 
     # Reads Liferay portlet descriptor XML files and parses them with Hpricot.
