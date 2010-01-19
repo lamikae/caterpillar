@@ -6,18 +6,6 @@ class Caterpillar::SessionController < Caterpillar::ApplicationController
     redirect_to :action => :flash_display
   end
 
-#   def index
-#     render :inline => VERSION
-#   end
-# 
-# 
-#   # inspect the session variables
-#   def raw
-#     render :inline => session.inspect
-#   end
-# 
-# 
-  # inspect the session cookie
 
 	def cookie_with_redirect
 		cookies[:the_time] = Time.now.to_s
@@ -31,19 +19,10 @@ class Caterpillar::SessionController < Caterpillar::ApplicationController
 	def cookie
 		cookies[:platform] = RUBY_PLATFORM
 		cookies[:the_time] = Time.now.to_s
-
-
     cookies.each do |cookie|
-#       s += "name: " + cookie[0]
       logger.debug cookie.inspect
-#       s += "id: " + cookie[1].to_s
-#       s += "<br />"
-# cookie.methods.each { |m| s += m.to_s + "<br />" }
-
     end
-
-	session[:testvalue] = "Session data set at " + Time.now.to_s
-
+		session[:testvalue] = "Session data set at " + Time.now.to_s
   end
 
 #   def _id
