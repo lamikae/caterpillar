@@ -38,6 +38,12 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
 			render :nothing => true, :status => 404
 		end
 	end
+  
+  # The filter checks that the UID in the cookie is presented with the proper secret key.
+  def cookie_uid
+  	render :inline => @uid, :status => 200
+  end
+  before_filter :get_cookie_uid, :only => :cookie_uid
 
 #   # inspect the request variables
 #   def req
