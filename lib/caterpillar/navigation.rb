@@ -1,4 +1,10 @@
-module Caterpillar
+#--
+# (c) Copyright 2008,2009 Mikael Lammentausta
+# See the file LICENSES.txt included with the distribution for
+# software license details.
+#++
+
+module Caterpillar # :nodoc:
   # Portlet navigation on Rails.
   #
   # Caterpillar installs a partial 'caterpillar/navigation' into your views,
