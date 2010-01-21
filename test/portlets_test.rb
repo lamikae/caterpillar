@@ -31,11 +31,13 @@ class PortletsTest < Caterpillar::TestCase # :nodoc:
   end
 
   def test_vars
-    valid_variables = [:uid,:gid] # the rails-portlet can handle these
+    valid_variables = [:gid] # the rails-portlet can handle these
     @portlets.each do |portlet|
       assert_not_nil portlet[:vars], '%s has no vars' % portlet[:name]
       portlet[:vars].each do |var|
-        assert valid_variables.include?(var), '%s is not supported by Rails-portlet, file a feature request' % var
+	unless valid_variables.include?(var)
+		'%s is not supported by Rails-portlet' % var
+	end
       end
     end
   end
