@@ -97,15 +97,6 @@ module Caterpillar
         xml << "      <role-name>#{role}</role-name>\n"
         xml << "    </security-role-ref>\n"
       end
-
-      # insert session secret
-      unless session_secret.nil?
-        xml << "    <init-param>\n"
-        xml << "      <name>session_secret</name>\n"
-        xml << "      <value>%s</value>\n" % session_secret
-        xml << "    </init-param>\n"
-      end
-
       xml << "  </portlet>\n\n"
 
       ### portlet filters
@@ -127,6 +118,13 @@ module Caterpillar
       xml << "      <name>route</name>\n"
       xml << "      <value>%s</value>\n" % portlet[:path].gsub(/&/,"&amp;")
       xml << "    </init-param>\n"
+      # insert session secret
+      unless session_secret.nil?
+        xml << "    <init-param>\n"
+        xml << "      <name>session_secret</name>\n"
+        xml << "      <value>%s</value>\n" % session_secret
+        xml << "    </init-param>\n"
+      end
       xml << "  </filter>\n\n"
 
       xml << "  <filter-mapping>\n"
