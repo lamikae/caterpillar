@@ -8,6 +8,25 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     assert_not_nil xml
     assert !xml.empty?
   end
+  
+  def test_portlet_template
+    portlet = {
+      :name  => "some name",
+      :title => "some title",
+      :servlet => "Test",
+      :path => "/test/path"
+    }
+    
+    xml = Caterpillar::Portlet.template(portlet)
+    assert_not_nil xml
+    assert !xml.empty?
+
+    assert xml[/#{portlet[:name]}/]
+    assert xml[/#{portlet[:title]}/]
+    assert xml[/#{portlet[:servlet]}/]
+    assert xml[/#{portlet[:path]}/]
+  end
+  
 
   def test_liferay_display_xml
 #    xml = @config.container.display_xml(@portlets)

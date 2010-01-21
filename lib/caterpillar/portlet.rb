@@ -35,8 +35,6 @@ module Caterpillar
       'com.celamanzi.liferay.portlets.rails286.Rails286PortletRenderFilter'
     end
 
-    protected
-
     # JSR 286 portlet XML header. Opens portlet-app.
     def header
       xml =  '<?xml version="1.0" encoding="UTF-8"?>' +"\n"
