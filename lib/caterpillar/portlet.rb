@@ -1,5 +1,5 @@
 #--
-# (c) Copyright 2008 Mikael Lammentausta
+# (c) Copyright 2008, 2010 Mikael Lammentausta
 # See the file LICENSES.txt included with the distribution for
 # software license details.
 #++
@@ -11,12 +11,28 @@ module Caterpillar
 
     # Creates portlet XML
     def xml(portlets)
+      session_secret = 
+        begin get_session_secret
+        rescue nil
+        end
+        
       xml = self.header
       portlets.each do |p|
-        xml << self.template(p)
+        xml << self.template(p,session_secret)
       end
       xml << self.footer
       return xml
+    end
+
+    # Return Rails' session secret key    
+    def get_session_secret
+      # Rails before 2.3 had a different way
+      if RAILS_GEM_VERSION.gsub('.','').to_i < 230
+        ActionController::Base.session_options_for(nil,nil)[:secret]
+      # On Rails 2.3:
+      else
+        ActionController::Base.session_options[:secret]
+      end
     end
 
     def debug(config,routes) # :nodoc:
@@ -52,7 +68,7 @@ module Caterpillar
     end
 
     # portlet.xml template.
-    def template(portlet)
+    def template(portlet,session_secret=nil)
       # add roles
       # TODO: move into portlet hash
       # administrator, power-user, user
@@ -81,6 +97,15 @@ module Caterpillar
         xml << "      <role-name>#{role}</role-name>\n"
         xml << "    </security-role-ref>\n"
       end
+
+      # insert session secret
+      unless session_secret.nil?
+        xml << "    <init-param>\n"
+        xml << "      <name>session_secret</name>\n"
+        xml << "      <value>%s</value>\n" % session_secret
+        xml << "    </init-param>\n"
+      end
+
       xml << "  </portlet>\n\n"
 
       ### portlet filters

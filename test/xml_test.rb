@@ -7,6 +7,7 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     xml = Caterpillar::Portlet.xml(@portlets)
     assert_not_nil xml
     assert !xml.empty?
+    assert xml[/session_secret/]
   end
   
   def test_portlet_template
@@ -17,6 +18,8 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
       :path => "/test/path"
     }
     
+    session_secret = 'XXX'
+    
     xml = Caterpillar::Portlet.template(portlet)
     assert_not_nil xml
     assert !xml.empty?
@@ -25,10 +28,23 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     assert xml[/#{portlet[:title]}/]
     assert xml[/#{portlet[:servlet]}/]
     assert xml[/#{portlet[:path]}/]
+    assert !xml[/session_secret/]
+
+    xml = Caterpillar::Portlet.template(portlet,session_secret)
+    assert_not_nil xml
+    assert !xml.empty?
+
+    assert xml[/#{session_secret}/]
+  end
+  
+  def test_session_secret
+  	secret = Caterpillar::Portlet.get_session_secret
+    assert_not_nil secret
   end
   
 
   def test_liferay_display_xml
+# FIXME
 #    xml = @config.container.display_xml(@portlets)
 #    assert_not_nil xml
 #    assert !xml.empty?
