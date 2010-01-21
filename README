@@ -1,10 +1,26 @@
-Caterpillar helps you with building Rails applications to be used in Java
-JSR286 portlets. This is possible with the help of Rails-portlet[http://rails-portlet.rubyforge.org].
+Caterpillar is a developer tool to help building Rails applications for Liferay portlets.
+This is possible with the help of Rails-portlet[http://rails-portlet.rubyforge.org], also called html2jsr286.
 
 Writing Rails portlets for Liferay is great fun!
-Caterpillar tasks offer specialized tasks for better Liferay integration,
-the Rails-portlet JAR for the portlet container and a portlet test bench application,
-that integrates into any Rails project when you 'pluginize' Caterpillar.
+The aim is to minimize the needed changes to the Rails framework and its workflow.
+
+The command-line tool <tt>caterpillar</tt> should be executed in the Rails project root directory.
+You can install and upgrade the <tt>rails-portlet</tt> JAR and generate dynamic portlet XML and also
+deploy them. See the task description below - and you can also run <tt>caterpillar --describe</tt>.
+
+
+The optional Caterpillar Rails plugin offers specialized helpers and views for better Liferay integration
+and to ease the development. Not to mention the portlet test bench application. Developers should know
+that this is required to successfully run the <tt>rails-portlet</tt> test suite, where JUnit tests
+do actual requests to the Rails app.
+
+You can take plugins into use by running <tt>caterpillar pluginize</tt>, but
+you need to remember that with each subsequent upgrade of Caterpillar, you would need to
+  rm vendor/plugins/caterpillar && caterpillar pluginize
+each time. Rails is quite picky where it will load the views - security issue.
+
+Maybe caterpillar could have an upgrade task to handle this?
+
 
 == Quickstart ==
 Start up a new Rails project:
@@ -16,9 +32,14 @@ Start up a new Rails project:
 Caterpillar contains Rails portlet test bench, which can be activated by inserting 
 +map.caterpillar+ in RAILS_ROOT/config/routes.rb before any other routes.
 
+This route mapping is also needed to use security features, unless they are explicitly
+encoded to your private routes. ApplicationController also needs to have:
+  include Caterpillar::Security
+  secure_portlet_sessions
+
 If you are connecting to the Liferay database, add +require 'lportal'+ in the Rails startup:
   $ echo "require 'lportal'" > config/initializers/lportal.rb
-And set up the database connection.
+And set up the database connection. See [http://lportal.rubyforge.org/]
 
 Now you should run +caterpillar portlets+ to check if your installation is working.
 The output should include these lines:
@@ -65,6 +86,4 @@ See Caterpillar::Config
 
 Caterpillar is open source! Patches and comments are welcome.
 Join the bugs mailing list (http://rubyforge.org/mailman/listinfo/rails-portlet-bugs) to request help.
-
-Caterpillar is written by Mikael Lammentausta for Cel'Amanzi Ltd.
 
