@@ -7,7 +7,12 @@
 
 module Caterpillar # :nodoc:
 
-  # Security
+  # Security methods for <tt>ApplicationController</tt>.
+  #
+  # Usage (insert to to your controller):
+  #   include Caterpillar::Security
+  #   secure_portlet_sessions
+  #
   module Security
     def self.included(base)
       base.extend(ClassMethods)
@@ -21,8 +26,15 @@ module Caterpillar # :nodoc:
       end
     end
 
-    # All the methods available to a record that has had <tt>acts_as_resourceful</tt> specified.
+    # Filters:
+    #   - authorize_agent
+    #   - get_cookie_uid
+    #
+    # Actions:
+    #   - cookiejar
+    #
     module InstanceMethods
+
 	  # This is a rudimentary firewall against simple spoofing.
 	  # In production the app should not receive HTTP requests from
 	  # anywhere else than from Java HttpClient, except XHRs.
