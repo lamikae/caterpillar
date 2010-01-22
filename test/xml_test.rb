@@ -38,7 +38,7 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
   end
   
   def test_session_secret
-  	secret = Caterpillar::Portlet.get_session_secret
+  	secret = Caterpillar::Security.get_session_secret
     assert_not_nil secret
   end
   

@@ -7,12 +7,13 @@
 
 module Caterpillar # :nodoc:
 
-  # Security methods for <tt>ApplicationController</tt>.
+  # Security methods for Rails controllers.
   #
-  # Usage (insert to to your controller):
+  # Usage:
   #   include Caterpillar::Security
   #   secure_portlet_sessions
   #
+  # TODO: update docs once finished with the implementation
   module Security
     def self.included(base)
       base.extend(ClassMethods)
@@ -35,16 +36,24 @@ module Caterpillar # :nodoc:
     #
     module InstanceMethods
 
-	  # This is a rudimentary firewall against simple spoofing.
-	  # In production the app should not receive HTTP requests from
-	  # anywhere else than from Java HttpClient, except XHRs.
-	  #
-	  # Exceptions should be added (for resources such as images) 
-	  # in respective controllers.
-	  #
+    # This is a rudimentary protection against simple spoofing in production environment.
+    #
+    # Only accepts HTTP requests from the Java HttpClient.
+    #
+    # XHR is a different issue, it is not (yet) supported by the portlet,
+    # so it will always pass this check.
+    #
+    # Exceptions should be added (for resources such as images) 
+    # in respective controllers.
+    #
+    # This filter will always be passed in RAILS_ENV development and test, because you
+    # most likely want to develop portlets sometimes without the Liferay environment.
+    # If you want this to change, send in a feature request to the developers or the
+    # bugs mailing list.
+    #
 	  def authorize_agent
 	    # make development and test ENV to pass
-	    return true if RAILS_ENV != 'production'
+	    return true if ( RAILS_ENV == 'development' || RAILS_ENV == 'test' )
 
 	    # XHR always passes
 	    return true if request.xhr?
@@ -63,12 +72,9 @@ module Caterpillar # :nodoc:
 	  # meaning the portlet either did not handle cookie correctly
 	  # or someone tried to spoof by making up a fake cookie.
 	  def get_cookie_uid
-		secret =
-	    #logger.debug     ActionController::Base.session_options_for(nil,nil)[:secret]
-	    # On Rails 2.3:
-		ActionController::Base.session_options[:secret]
-
-	    uid_key = secret+"_UID"
+             # get_session_secret is callable, as this method is
+             # called after including the Module and the method.
+	    uid_key = get_session_secret+"_UID"
 	    logger.debug "Key: "+uid_key
 	    
 	    unless cookies.nil? or cookies[uid_key].nil?
@@ -98,6 +104,19 @@ module Caterpillar # :nodoc:
 	    render :nothing => true, :status => 200 
 	  end
 
-    end 
+    end # module
+
+
+    # Return Rails' session secret key    
+    def self.get_session_secret
+      # Rails before 2.3 had a different way
+      if RAILS_GEM_VERSION.gsub('.','').to_i < 230
+        ActionController::Base.session_options_for(nil,nil)[:secret]
+      # On Rails 2.3:
+      else
+        ActionController::Base.session_options[:secret]
+      end
+    end
+
   end
 end

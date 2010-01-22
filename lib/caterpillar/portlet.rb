@@ -12,7 +12,7 @@ module Caterpillar
     # Creates portlet XML
     def xml(portlets)
       session_secret = 
-        begin get_session_secret
+        begin Caterpillar::Security.get_session_secret()
         rescue nil
         end
         
@@ -22,17 +22,6 @@ module Caterpillar
       end
       xml << self.footer
       return xml
-    end
-
-    # Return Rails' session secret key    
-    def get_session_secret
-      # Rails before 2.3 had a different way
-      if RAILS_GEM_VERSION.gsub('.','').to_i < 230
-        ActionController::Base.session_options_for(nil,nil)[:secret]
-      # On Rails 2.3:
-      else
-        ActionController::Base.session_options[:secret]
-      end
     end
 
     def debug(config,routes) # :nodoc:
