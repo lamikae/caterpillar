@@ -72,10 +72,8 @@ module Caterpillar # :nodoc:
 	  # meaning the portlet either did not handle cookie correctly
 	  # or someone tried to spoof by making up a fake cookie.
 	  def get_cookie_uid
-             # get_session_secret is callable, as this method is
-             # called after including the Module and the method.
-	    uid_key = get_session_secret+"_UID"
-	    logger.debug "Key: "+uid_key
+	    uid_key = Caterpillar::Security.get_session_secret+"_UID"
+	    logger.debug "Matching key: "+uid_key
 	    
 	    unless cookies.nil? or cookies[uid_key].nil?
 	      @uid = cookies[uid_key]
@@ -84,7 +82,7 @@ module Caterpillar # :nodoc:
 	    end
 
 	    logger.debug("UID key is not present in %s" % cookies.inspect)
-	    render :nothing => true, :status => 404
+	    render :nothing => true, :status => 403
 	  end
 
 
