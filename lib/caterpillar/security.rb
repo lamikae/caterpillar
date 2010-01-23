@@ -67,40 +67,35 @@ module Caterpillar # :nodoc:
 	  end
 
 
-	  # Get the UID from the cookie.
-	  # There is an error if the key does not exist,
-	  # meaning the portlet either did not handle cookie correctly
-	  # or someone tried to spoof by making up a fake cookie.
-	  def get_cookie_uid
-	    uid_key = Caterpillar::Security.get_session_secret+"_UID"
-	    logger.debug "Matching key: "+uid_key
-	    
-	    unless cookies.nil? or cookies[uid_key].nil?
-	      @uid = cookies[uid_key]
-	      logger.debug("Accepted UID %s" % @uid)
-	      return true
-	    end
+    # Authorize the request.
+    #
+    # The request needs to pass in "session_secret" cookie with
+    # the value of session secret.
+    #
+    def authorize_request
+      if !cookies.nil? and !cookies[:session_secret].nil?
+      	if cookies[:session_secret] == Caterpillar::Security.get_session_secret
+          logger.debug "Passes security check"
+          return true
+        end
+      end
+      logger.debug("Session secret is not present in %s" % cookies.inspect)
+      logger.warn 'Someone from IP %s may be spoofing' % request.env['REMOTE_ADDR']
+      render :nothing => true, :status => 403
+    end
 
-	    logger.debug("UID key is not present in %s" % cookies.inspect)
-	    render :nothing => true, :status => 403
-	  end
 
+    # Get the Liferay UID from cookie.
+    def get_liferay_uid
+      uid_key = 'Liferay_UID'
+      unless cookies.nil? or cookies[uid_key].nil?
+        @uid = cookies[uid_key]
+        logger.debug("Liferay UID %s" % @uid)
+      else
+        logger.debug("UID key is not present in cookies %s" % cookies.inspect)
+      end
+    end
 
-	  # Handles out a cookie.
-	  # Because session needs the cookie to maintain its state,
-	  # a new cookie is sent with the response automatically.
-	  def cookiejar
-	    logger.debug "Handling cookie to " + request.env['REMOTE_ADDR']
-	    # TODO: handle security key from request params, now just reply on proper user agent
-	    # For cookie creation, at least one session or cookies key need to be set here.
-	    
-	    # rng_security_key is not actually used for anything, but it could be used to
-	    # enforce one more layer of security since if the attacker intercepts unencrypted
-	    # TCP traffic and gets a cookie, the attacker can create a poison cookie as
-	    # now the security key would be in the attacker's knowledge.
-	    cookies[:rng_security_key] = "99999"; # Debian style random number generator
-	    render :nothing => true, :status => 200 
-	  end
 
     end # module
 

@@ -4,10 +4,6 @@ module Caterpillar #:nodoc:
     module MapperExtensions # :nodoc:
       def caterpillar
 
-        @set.add_route(
-          'caterpillar/test_bench/cookiejar',
-          {:controller => 'Caterpillar::Application', :action => 'cookiejar'})
-
         @set.add_named_route(
           'portlet_test_bench',
           'caterpillar/test_bench',
