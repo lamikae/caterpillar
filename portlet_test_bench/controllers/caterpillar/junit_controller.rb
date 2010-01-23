@@ -24,40 +24,73 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
  	def cookies_with_redirect
 		cookies[:user_agent] = request.user_agent
 		cookies[:the_time]   = Time.now.to_s
-		redirect_to :action => "cookies_with_redirect_target"
+		redirect_to :action => "show_cookies"
 	end
-	def cookies_with_redirect_target
+	def show_cookies
 		render :text => cookies.to_xml
 	end
 
 	def post_redirect_get
 		if request.post?
 			session[:the_time] = Time.now.to_s
-			redirect_to :action => :cookies_with_redirect_target
+			redirect_to :action => :show_cookies
 		else
 			render :nothing => true, :status => 404
 		end
 	end
   
-  # The filter checks that the UID in the cookie is presented with the proper secret key.
-  def cookie_uid
+  def foobarcookies
+   cookies[:foo] = "__g00d__";
+    cookies[:bar] = "__yrcl__";
+    cookies[:baz] = "__3ver__";
+    render :nothing => true, :status => 200
+  end
+  def foobarcookiestxt
+    logger.debug cookies.inspect
+    if cookies.nil?
+      txt = 'nil == cookies' 
+    else
+      txt = 
+        begin
+          "#{cookies[:foo]}#{cookies[:bar]}#{cookies[:baz]}"
+        rescue Exception => e
+          e.message()
+        end
+    end
+    render :text => txt, :status => 200
+  end
+
+  # test foobarcookies with Liferay UID cookie and authentication.
+  # 5 cookies altogether.  
+  def cookies_liferay_auth
+    txt =  "Liferay_UID: #{@uid}\n"
+    txt += "#{cookies[:foo]}#{cookies[:bar]}#{cookies[:baz]}"
+    render :inline => txt, :status => 200
+  end
+  before_filter :get_liferay_uid, :only => [:liferay_uid, :cookies_liferay_auth]
+
+  #
+  # authenticate these actions
+  #
+  before_filter :authorize_request, :only => [
+    :authorized,
+    :liferay_uid,
+    :foobarcookies_auth,
+    :foobarcookiestxt_auth,
+    :cookies_liferay_auth
+    ]
+  alias :foobarcookies_auth :foobarcookies
+  alias :foobarcookiestxt_auth :foobarcookiestxt
+
+  # test session authorization
+  def authorized
+    render :nothing => true, :status => 200
+  end
+  
+  # test Liferay UID cookie from portlet
+  def liferay_uid
+  	@uid = 'nil' if @uid.nil?
   	render :inline => @uid, :status => 200
   end
-  before_filter :get_cookie_uid, :only => :cookie_uid
-
-#   # inspect the request variables
-#   def req
-#     s = "<html><body>"
-# 
-#     request.env.each_pair do |key,value|
-#       s += key
-#       s += " => "
-#       s += value unless value.nil?
-#       s += "<br />"
-#     end
-# 
-#     s += "</body></html>"
-#     render :inline => s
-#   end
 
 end
