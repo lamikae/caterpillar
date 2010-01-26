@@ -41,16 +41,23 @@ class RailsGemChooser
 
     rails_gem_version ||= version(config_file)
 
-    STDOUT.puts 'Loading Rails version %s' % rails_gem_version
+    #STDOUT.puts 'Loading Rails version %s' % rails_gem_version
+    # deprecation warnings of used gems, but with the underline divider
+    # the gem is not found by ruby...
+    #rails_gems = %w{ active_support action_pack active_record }
     rails_gems = %w{ activesupport actionpack activerecord }
+
     # gem build fails when activesupport is loaded here
+    # - except with Rails 2.3.5 where this needs to be added.
     if $0[/gem$/]
-        rails_gems -= ['activesupport']
+    #    rails_gems -= ['activesupport']
     end
     rails_gems.each do |rg|
       __load_gem(rg,rails_gem_version)
     end
     require 'action_controller'
+
+    #STDOUT.puts 'Loaded Rails version %s' % Rails::VERSION::STRING
   end
 
   end
