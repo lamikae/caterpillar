@@ -1,12 +1,12 @@
 #--
-# (c) Copyright 2008,2009 Mikael Lammentausta
+# (c) Copyright 2008-2010 Mikael Lammentausta
 #
 # See the file MIT-LICENSE included with the distribution for
 # software license details.
 #++
 
 module Caterpillar
-  VERSION='1.1.2'
+  VERSION='1.2.0'
 end
 
 this_file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
