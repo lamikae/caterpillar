@@ -33,9 +33,9 @@ module Caterpillar
     # The main task.
     # Reads the configuration file and launches appropriate tasks.
     def initialize(name = :usage, config = nil, tasks = :define_tasks)
-      STDOUT.puts 'Caterpillar v.%s (c) Copyright 2008,2009 Mikael Lammentausta' % VERSION
-      STDOUT.puts 'Provided under the terms of the MIT license.'
-      STDOUT.puts
+      #STDOUT.puts 'Caterpillar v.%s (c) Copyright 2008,2009 Mikael Lammentausta' % VERSION
+      #STDOUT.puts 'Provided under the terms of the MIT license.'
+      #STDOUT.puts
       @name   = name
       @config = Util.eval_configuration(config)
       @logger = @config.logger
