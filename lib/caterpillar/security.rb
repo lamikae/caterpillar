@@ -100,8 +100,22 @@ module Caterpillar # :nodoc:
     end # module
 
 
-    # Return Rails' session secret key    
-    def self.get_session_secret
+    # Return Rails' session key    
+    def self.get_session_key
+      # Rails before 2.3 had a different way
+      if RAILS_GEM_VERSION.gsub('.','').to_i < 230
+        ActionController::Base.session_options_for(nil,nil)[:session_key]
+      # On Rails 2.3:
+      else
+        key = ActionController::Base.session_options[:key]
+        return key unless key.nil?
+        # try session_key
+        ActionController::Base.session_options[:session_key]
+      end
+    end
+
+    # Return Rails' secret    
+    def self.get_secret
       # Rails before 2.3 had a different way
       if RAILS_GEM_VERSION.gsub('.','').to_i < 230
         ActionController::Base.session_options_for(nil,nil)[:secret]

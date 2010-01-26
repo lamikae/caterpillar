@@ -11,14 +11,18 @@ module Caterpillar
 
     # Creates portlet XML
     def xml(portlets)
-      session_secret = 
-        begin Caterpillar::Security.get_session_secret()
+    	session = 
+        begin
+          {
+            :key    => Caterpillar::Security.get_session_key(),
+            :secret => Caterpillar::Security.get_secret()
+          }
         rescue nil
         end
         
       xml = self.header
       portlets.each do |p|
-        xml << self.template(p,session_secret)
+        xml << self.template(p,session)
       end
       xml << self.footer
       return xml
@@ -57,7 +61,8 @@ module Caterpillar
     end
 
     # portlet.xml template.
-    def template(portlet,session_secret=nil)
+    # session is a hash containing session key and secret from Rails.
+    def template(portlet,session=nil)
       # add roles
       # TODO: move into portlet hash
       # administrator, power-user, user
@@ -81,6 +86,20 @@ module Caterpillar
       xml << "    <portlet-info>\n"
       xml << "      <title>%s</title>\n" % portlet[:title]
       xml << "    </portlet-info>\n"
+      # insert session key
+      unless session.nil?
+        xml << "    <init-param>\n"+\
+               "      <name>session_key</name>\n"+\
+               "      <value>#{session[:key]}</value>\n"+\
+               "    </init-param>\n"
+      end
+      # insert secret
+      unless session.nil?
+        xml << "    <init-param>\n"+\
+               "      <name>secret</name>\n"+\
+               "      <value>#{session[:secret]}</value>\n"+\
+               "    </init-param>\n"
+      end
       roles.each do |role|
         xml << "    <security-role-ref>\n"
         xml << "      <role-name>#{role}</role-name>\n"
@@ -107,13 +126,6 @@ module Caterpillar
       xml << "      <name>route</name>\n"
       xml << "      <value>%s</value>\n" % portlet[:path].gsub(/&/,"&amp;")
       xml << "    </init-param>\n"
-      # insert session secret
-      unless session_secret.nil?
-        xml << "    <init-param>\n"
-        xml << "      <name>session_secret</name>\n"
-        xml << "      <value>%s</value>\n" % session_secret
-        xml << "    </init-param>\n"
-      end
       xml << "  </filter>\n\n"
 
       xml << "  <filter-mapping>\n"
