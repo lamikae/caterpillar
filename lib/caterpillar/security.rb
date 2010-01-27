@@ -74,7 +74,7 @@ module Caterpillar # :nodoc:
     #
     def authorize_request
       if !cookies.nil? and !cookies[:session_secret].nil?
-      	if cookies[:session_secret] == Caterpillar::Security.get_session_secret
+      	if cookies[:session_secret] == Caterpillar::Security.get_secret
           logger.debug "Passes security check"
           return true
         end
