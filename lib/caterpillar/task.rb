@@ -1,5 +1,5 @@
 #--
-# (c) Copyright 2008,2009 Mikael Lammentausta
+# (c) Copyright 2008,2009,2010 Mikael Lammentausta
 #
 # Thanks to Nick Sieger for the rake structure!
 #
@@ -602,8 +602,11 @@ module Caterpillar
     end
 
     def portal_info(config=@config)
-      msg = 'Caterpillar configured for %s version %s at %s' % [
-        config.container.name, config.container.version, config.container.root
+      msg = 'Caterpillar %s configured for %s version %s at %s' % [
+        Caterpillar::VERSION,
+        config.container.name,
+        config.container.version,
+        config.container.root
       ]
       @logger ? @logger.info(msg) : STDOUT.puts(msg)
     end
