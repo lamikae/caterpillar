@@ -1,3 +1,7 @@
+= 1.2.2
+	- include rails-portlet 0.9.1
+	- parse session key and secret into the XML
+
 = 1.1.2
 	- allow to defining the deploy_dir in config/portlets.rb
 		(requested by Túlio Ornelas dos Santos, who sent the original patch)
