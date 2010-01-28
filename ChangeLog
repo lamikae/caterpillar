@@ -1,6 +1,7 @@
-= 1.2.2
-	- include rails-portlet 0.9.1
+= 1.2.3
+	- include rails-portlet 0.9.2
 	- parse session key and secret into the XML
+	- provide Caterpillar::Security actions for Rails controllers
 
 = 1.1.2
 	- allow to defining the deploy_dir in config/portlets.rb

@@ -6,7 +6,7 @@
 #++
 
 module Caterpillar
-  VERSION='1.2.2'
+  VERSION='1.2.3'
 end
 
 this_file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
