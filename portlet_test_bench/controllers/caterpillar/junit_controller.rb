@@ -5,6 +5,19 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
 		render :text => ""
 	end
 
+  def upload_image
+    if params[:normal_param].nil? or params[:normal_param] != 'importância'
+      render :text => "normal_param_fail"
+      return
+    end     
+    if params[:file_param].nil? or params[:file_param].class != Tempfile
+      render :text => "file_param_fail"
+      return
+    end  
+    
+    render :text => ""
+  end
+	
 	# Sets a session value so the single SESSION_KEY cookie is set.
 	# The output XML prints the session ID and the JUnit test compares this
 	# to the value from another request, and with the same cookie they should match.
