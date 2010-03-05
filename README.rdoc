@@ -55,9 +55,9 @@ Then you can start up the server (./script/server) and navigate to http://localh
 == Useful tasks 
 Here are the most useful tasks; see the rdoc documentation and caterpillar --describe for the full feature list.
 
-+xml+ and +xml:deploy+
- - processes the portlet XML configuration in accordance with the named routes
-See Caterpillar::Config
+  <tt>xml</tt>::  processes the portlet XML configuration in accordance with the named routes
+
+  <tt>xml:deploy</tt>::  deploys the created XML to the J2EE portlet container 
 
 ++jar:install++
  - installs the Rails-portlet JAR into Liferay's classpath
