@@ -1,8 +1,7 @@
 Caterpillar is a developer tool to help building Rails applications for Liferay portlets.
-This is possible with the help of Rails-portlet[http://rails-portlet.rubyforge.org], also called html2jsr286.
+This is possible with the help of Rails-portlet[http://rails-portlet.rubyforge.org].
 
-Writing Rails portlets for Liferay is great fun!
-The aim is to minimize the needed changes to the Rails framework and its workflow.
+The aim is to minimize the needed additions to the Rails framework and interfere with the developer workflow.
 
 The command-line tool <tt>caterpillar</tt> should be executed in the Rails project root directory.
 You can install and upgrade the <tt>rails-portlet</tt> JAR and generate dynamic portlet XML and also
@@ -10,19 +9,21 @@ deploy them. See the task description below - and you can also run <tt>caterpill
 
 
 The optional Caterpillar Rails plugin offers specialized helpers and views for better Liferay integration
-and to ease the development. Not to mention the portlet test bench application. Developers should know
-that this is required to successfully run the <tt>rails-portlet</tt> test suite, where JUnit tests
-do actual requests to the Rails app.
+and to ease the development. Not to mention the portlet test bench application.
 
-You can take plugins into use by running <tt>caterpillar pluginize</tt>, but
-you need to remember that with each subsequent upgrade of Caterpillar, you would need to
+Developers should know that this is required to successfully run the <tt>rails-portlet</tt> test suite,
+where JUnit tests do actual requests to the Rails app.
+
+You can take plugins into use by running
+  $ caterpillar pluginize
+in the Rails directory, but you need to remember that with each subsequent upgrade of Caterpillar, you would need to
   rm vendor/plugins/caterpillar && caterpillar pluginize
 each time. Rails is quite picky where it will load the views - security issue.
 
 Maybe caterpillar could have an upgrade task to handle this?
 
 
-== Quickstart ==
+== Quickstart
 Start up a new Rails project:
 
   $ rails example
@@ -32,8 +33,8 @@ Start up a new Rails project:
 Caterpillar contains Rails portlet test bench, which can be activated by inserting 
 +map.caterpillar+ in RAILS_ROOT/config/routes.rb before any other routes.
 
-This route mapping is also needed to use security features, unless they are explicitly
-encoded to your private routes. ApplicationController also needs to have:
+This route mapping is also needed to use portlet security features to prevent UID faking.
+ApplicationController also needs to have:
   include Caterpillar::Security
   secure_portlet_sessions
 
@@ -51,14 +52,10 @@ The output should include these lines:
 Then you can start up the server (./script/server) and navigate to http://localhost:3000/caterpillar/test_bench
 
 
-== Quick production deployment using JRuby ==
-See the documentation in the example app (SVN checkout).
-
-
-== Useful tasks ==
+== Useful tasks 
 Here are the most useful tasks; see the rdoc documentation and caterpillar --describe for the full feature list.
 
-++xml++ and ++xml:deploy++
++xml+ and +xml:deploy+
  - processes the portlet XML configuration in accordance with the named routes
 See Caterpillar::Config
 
