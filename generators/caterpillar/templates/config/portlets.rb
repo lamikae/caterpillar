@@ -7,7 +7,7 @@ Caterpillar::Config.new do |portlet|
   # By default only portlet.xml is created.
   # Currently only Liferay is supported. You may optionally define the version.
   portlet.container = Liferay
-  # portlet.container.version = '5.1.1'
+  # portlet.container.version = '5.2.3'
 
   # If you want to install the Rails-portlet JAR into the container, the container
   # WEB-INF will be used.
@@ -36,17 +36,17 @@ Caterpillar::Config.new do |portlet|
 
   # The hostname and port.
   # By default the values are taken from the request.
-  # portlet.host
-
+  portlet.host = 'http://0.0.0.0:3000'
+ 
   # If the Rails is running inside a servlet container such as Tomcat,
   # you can define the servlet here.
   # By default the servlet is the name of the Rails app.
-  # Remember to update this if you override Warbler's default.
-  # portlet.servlet
-
+  # Without Warbler this should be an empty string.
+  portlet.servlet = ''
+ 
   # Portlet category. This is only available for Liferay.
   # By default this is the same as the servlet.
-  # portlet.category = 'Zcore'
+  # portlet.category = 'Example Rails app'
 
   # Portlet instances.
   #
