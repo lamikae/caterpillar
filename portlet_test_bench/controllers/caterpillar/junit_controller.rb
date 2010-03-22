@@ -1,9 +1,9 @@
 class Caterpillar::JunitController < Caterpillar::ApplicationController
 
   # test response 200 OK
-	def index
-		render :text => ""
-	end
+  def index
+    render :text => ""
+  end
 
   def upload_image
     if params[:normal_param].nil? or params[:normal_param] != 'importância'
@@ -17,67 +17,67 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     
     render :text => ""
   end
-	
-	# Sets a session value so the single SESSION_KEY cookie is set.
-	# The output XML prints the session ID and the JUnit test compares this
-	# to the value from another request, and with the same cookie they should match.
-	def session_cookie
-		session[:the_time] = Time.now.to_s
-		render :text => request.session_options.to_xml
-	end
   
-	def redirect
-		redirect_to :action => :redirect_target
-	end
-	def redirect_target
-		render :text => request.request_uri
-	end
+  # Sets a session value so the single SESSION_KEY cookie is set.
+  # The output XML prints the session ID and the JUnit test compares this
+  # to the value from another request, and with the same cookie they should match.
+  def session_cookie
+    session[:the_time] = Time.now.to_s
+    render :text => request.session_options.to_xml
+  end
 
-	# Sets multiple cookies and redirects.
- 	def cookies_with_redirect
-		cookies[:user_agent] = request.user_agent
-		cookies[:the_time]   = Time.now.to_s
-		redirect_to :action => "show_cookies"
-	end
-	def show_cookies
-		logger.debug 'Cookies: %s' % cookies.inspect
-		render :text => cookies.to_xml
-	end
+  def redirect
+    redirect_to :action => :redirect_target
+  end
+  def redirect_target
+    render :text => request.request_uri
+  end
 
-	# Accepts a POST request with parameters, 
-	# adds the params to cookies and redirects to another action to display cookies.
-	def post_redirect_get
-		if request.post?
-			redirect_to :action => :redirect_target
-		else
-			render :nothing => true, :status => 404
-		end
-	end
+  # Sets multiple cookies and redirects.
+   def cookies_with_redirect
+    cookies[:user_agent] = request.user_agent
+    cookies[:the_time]   = Time.now.to_s
+    redirect_to :action => "show_cookies"
+  end
+  def show_cookies
+    logger.debug 'Cookies: %s' % cookies.inspect
+    render :text => cookies.to_xml
+  end
 
-	def post_params
-		if request.post?
-		_params = {}
-			params.each_pair do |k,v|
-				next if k=='action' or k=='controller'
-				_params[k] = v
-			end
-			render :text => _params.to_xml
-		else
-			render :nothing => true, :status => 404
-		end
-	end
+  # Accepts a POST request with parameters, 
+  # adds the params to cookies and redirects to another action to display cookies.
+  def post_redirect_get
+    if request.post?
+      redirect_to :action => :redirect_target
+    else
+      render :nothing => true, :status => 404
+    end
+  end
 
-	def post_cookies
-		if request.post?
-			cookies[:server_time] = Time.now
-			redirect_to :action => :show_cookies
-		else
-			render :nothing => true, :status => 404
-		end
-	end
+  def post_params
+    if request.post?
+    _params = {}
+      params.each_pair do |k,v|
+        next if k=='action' or k=='controller'
+        _params[k] = v
+      end
+      render :text => _params.to_xml
+    else
+      render :nothing => true, :status => 404
+    end
+  end
+
+  def post_cookies
+    if request.post?
+      cookies[:server_time] = Time.now
+      redirect_to :action => :show_cookies
+    else
+      render :nothing => true, :status => 404
+    end
+  end
   
   def foobarcookies
-   cookies[:foo] = "__g00d__";
+    cookies[:foo] = "__g00d__";
     cookies[:bar] = "__yrcl__";
     cookies[:baz] = "__3ver__";
     render :nothing => true, :status => 200
@@ -126,8 +126,8 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   
   # test Liferay UID cookie from portlet
   def liferay_uid
-  	@uid = 'nil' if @uid.nil?
-  	render :inline => @uid, :status => 200
+    @uid = 'nil' if @uid.nil?
+    render :inline => @uid, :status => 200
   end
 
 end
