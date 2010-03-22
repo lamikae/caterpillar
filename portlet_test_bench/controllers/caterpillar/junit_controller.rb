@@ -40,12 +40,36 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
 		redirect_to :action => "show_cookies"
 	end
 	def show_cookies
+		logger.debug 'Cookies: %s' % cookies.inspect
 		render :text => cookies.to_xml
 	end
 
+	# Accepts a POST request with parameters, 
+	# adds the params to cookies and redirects to another action to display cookies.
 	def post_redirect_get
 		if request.post?
-			session[:the_time] = Time.now.to_s
+			redirect_to :action => :redirect_target
+		else
+			render :nothing => true, :status => 404
+		end
+	end
+
+	def post_params
+		if request.post?
+		_params = {}
+			params.each_pair do |k,v|
+				next if k=='action' or k=='controller'
+				_params[k] = v
+			end
+			render :text => _params.to_xml
+		else
+			render :nothing => true, :status => 404
+		end
+	end
+
+	def post_cookies
+		if request.post?
+			cookies[:server_time] = Time.now
 			redirect_to :action => :show_cookies
 		else
 			render :nothing => true, :status => 404
