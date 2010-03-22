@@ -130,4 +130,8 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     render :inline => @uid, :status => 200
   end
 
+  def xslt_simple
+    render :action => 'xslt_simple', :layout => false
+  end
+
 end
