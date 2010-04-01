@@ -31,8 +31,8 @@ Gem::Specification.new do |s|
     "portlet_test_bench/**/*"].to_a
 
   s.has_rdoc = true
-  s.extra_rdoc_files = ["README","MIT-LICENSE","ChangeLog"]
-  s.rdoc_options = ["--main", "README"]
+  s.extra_rdoc_files = ["README.rdoc","MIT-LICENSE","ChangeLog"]
+  s.rdoc_options = ["--main", "README.rdoc"]
   s.rdoc_options << '--line-numbers' << '--inline-source'
   s.rubyforge_project = %q{rails-portlet}
   s.rubygems_version = %q{1.2.0}
