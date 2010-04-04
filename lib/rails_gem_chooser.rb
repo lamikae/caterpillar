@@ -42,9 +42,9 @@ class RailsGemChooser
     rails_gem_version ||= version(config_file)
 
     #STDOUT.puts 'Loading Rails version %s' % rails_gem_version
-    # deprecation warnings of used gems, but with the underline divider
-    # the gem is not found by ruby...
+    # the gem without underline will be removed in Rails3..
     #rails_gems = %w{ active_support action_pack active_record }
+    # except that with the underline divider the gem is not found ..
     rails_gems = %w{ activesupport actionpack activerecord }
 
     # gem build fails when activesupport is loaded here
