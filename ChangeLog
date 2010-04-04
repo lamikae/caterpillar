@@ -1,3 +1,7 @@
+= 1.2.4
+	- use standalone Rails defaults in the installed config file
+	- updated xUnit tests in the portlet test bench
+
 = 1.2.3
 	- include rails-portlet 0.9.2
 	- parse session key and secret into the XML
