@@ -8,18 +8,26 @@
 module Caterpillar # :nodoc:
 
   # Security methods for Rails controllers.
+  # Request authentication is based on shared secret key, that is the Rails' session secret.
+  # 
   #
-  # Usage:
+  # Filters (see Caterpillar::Security::InstanceMethods)
+  # - authorize_agent
+  # - authorize_request
+  # - get_liferay_uid
+  #
+  # To enable session security, insert this into ApplicationController:
   #   include Caterpillar::Security
   #   secure_portlet_sessions
+  #   before_filter [:authorize_agent, :authorize_request], :only => :get_liferay_uid
+  #   before_filter :get_liferay_uid
   #
-  # TODO: update docs once finished with the implementation
   module Security
-    def self.included(base)
+    def self.included(base) # :nodoc:
       base.extend(ClassMethods)
     end
     
-    module ClassMethods
+    module ClassMethods # :nodoc:
       def secure_portlet_sessions(options = {})
         class_eval <<-EOV
           include Caterpillar::Security::InstanceMethods
@@ -27,13 +35,6 @@ module Caterpillar # :nodoc:
       end
     end
 
-    # Filters:
-    #   - authorize_agent
-    #   - get_cookie_uid
-    #
-    # Actions:
-    #   - cookiejar
-    #
     module InstanceMethods
 
     # This is a rudimentary protection against simple spoofing in production environment.
@@ -51,21 +52,20 @@ module Caterpillar # :nodoc:
     # If you want this to change, send in a feature request to the developers or the
     # bugs mailing list.
     #
-	  def authorize_agent
-	    # make development and test ENV to pass
-	    return true if ( RAILS_ENV == 'development' || RAILS_ENV == 'test' )
+    def authorize_agent
+      # make development and test ENV to pass
+      return true if ( RAILS_ENV == 'development' || RAILS_ENV == 'test' )
 
-	    # XHR always passes
-	    return true if request.xhr?
+      # XHR always passes
+      return true if request.xhr?
 
-	    # check the user agent
-	    agent = request.env['HTTP_USER_AGENT']
-	    unless agent=='Jakarta Commons-HttpClient/3.1'
-	      logger.warn 'Someone from IP %s may be spoofing using agent %s' % [request.env['REMOTE_ADDR'], agent]
-	      render :nothing => true, :status => 404
-	    end
-	  end
-
+      # check the user agent
+      agent = request.env['HTTP_USER_AGENT']
+      unless agent=='Jakarta Commons-HttpClient/3.1'
+        logger.warn 'Someone from IP %s may be spoofing using agent %s' % [request.env['REMOTE_ADDR'], agent]
+        render :nothing => true, :status => 404
+      end
+    end
 
     # Authorize the request.
     #
