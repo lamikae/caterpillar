@@ -5,6 +5,29 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     render :text => ""
   end
 
+  def xhr
+    @javascripts = ['prototype']
+    logger.debug ('AJAX: %s' % request.xhr?)
+  end
+
+  def xhr_get
+    if request.xhr?
+      render :text => 'Hello World!', :layout => false
+    else
+      logger.debug(request.inspect)
+      render :nothing => true, :status => 404
+    end
+  end
+
+  def xhr_post
+    if request.xhr? and request.post?
+      render :text => 'Hello World!', :layout => false
+    else
+      logger.debug(request.inspect)
+      render :nothing => true, :status => 404
+    end
+  end
+
   def upload_image
     if params[:normal_param].nil? or params[:normal_param] != 'importância'
       render :text => "normal_param_fail"
