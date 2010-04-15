@@ -7,20 +7,12 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
 
   def xhr
     @javascripts = ['prototype']
-    logger.debug ('AJAX: %s' % request.xhr?)
-  end
-
-  def xhr_get
-    if request.xhr?
-      render :text => 'Hello World!', :layout => false
-    else
-      logger.debug(request.inspect)
-      render :nothing => true, :status => 404
-    end
+    logger.debug 'XHR: %s' % request.xhr?
   end
 
   def xhr_post
     if request.xhr? and request.post?
+      logger.debug 'XHR POST'
       render :text => 'Hello World!', :layout => false
     else
       logger.debug(request.inspect)
