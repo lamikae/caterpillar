@@ -37,29 +37,16 @@ module Caterpillar #:nodoc:
           'caterpillar/test_bench/user/:action',
           {:controller => 'Caterpillar::User'})
 
-
         @set.add_route(
           'caterpillar/test_bench/liferay/:action',
           {:controller => 'Caterpillar::Liferay'})
 
-        # Liferay session variables.
-        #
-        # Watch out for route conflicts!
-        # If the route would be /something/:uid,
-        # a later defined route /something/:gid would never match.
-
-        @set.add_route(
-          'caterpillar/test_bench/liferay/:action/uid/:uid',
-          {:controller => 'Caterpillar::Liferay'})
-
+        # Liferay GID
         @set.add_route(
           'caterpillar/test_bench/liferay/:action/gid/:gid',
           {:controller => 'Caterpillar::Liferay'})
 
-        @set.add_route(
-          'caterpillar/test_bench/liferay/:action/uid/:uid/gid/:gid',
-          {:controller => 'Caterpillar::Liferay'})
-
+        # xUnit test routes
         @set.add_route(
           'caterpillar/test_bench/junit/:action',
           {:controller => 'Caterpillar::Junit'})
