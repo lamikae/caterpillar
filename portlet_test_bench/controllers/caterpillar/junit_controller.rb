@@ -149,4 +149,11 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     render :action => 'xslt_simple', :layout => false
   end
 
+  def basic_tags
+    @host = request.host
+    @port = request.port
+    @netloc = 'http://%s:%s' % [@host, @port]
+    render :action => 'basic_tags', :layout => false
+  end
+
 end
