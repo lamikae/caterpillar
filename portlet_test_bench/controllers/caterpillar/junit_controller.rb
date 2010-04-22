@@ -24,6 +24,7 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   def xhr
     @javascripts = ['prototype']
     logger.debug 'XHR: %s' % request.xhr?
+    render :action => 'xhr', :layout => 'bare'
   end
 
   def xhr_post
