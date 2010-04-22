@@ -1,8 +1,24 @@
 class Caterpillar::JunitController < Caterpillar::ApplicationController
 
-  # test response 200 OK
+  layout false
+
   def index
-    render :text => ""
+    render :nothing => true
+  end
+
+   # test response 200 OK
+  def empty
+    render :nothing => true
+  end
+
+  def basic_tags
+    @host = request.host
+    @port = request.port
+    @netloc = 'http://%s:%s' % [@host, @port]
+  end
+
+  def css
+    @netloc = 'http://%s:%s' % [request.host, request.port]
   end
 
   def xhr
@@ -13,7 +29,7 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   def xhr_post
     if request.xhr? and request.post?
       logger.debug 'XHR POST'
-      render :text => 'Hello World!', :layout => false
+      render :text => 'Hello World!'
     else
       logger.debug(request.inspect)
       render :nothing => true, :status => 404
@@ -143,17 +159,6 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   def liferay_uid
     @uid = 'nil' if @uid.nil?
     render :inline => @uid, :status => 200
-  end
-
-  def xslt_simple
-    render :action => 'xslt_simple', :layout => false
-  end
-
-  def basic_tags
-    @host = request.host
-    @port = request.port
-    @netloc = 'http://%s:%s' % [@host, @port]
-    render :action => 'basic_tags', :layout => false
   end
 
 end
