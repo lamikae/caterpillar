@@ -3,7 +3,7 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   layout false
 
   def index
-    render :nothing => true
+    render :text => "", :layout => 'bare'
   end
 
    # test response 200 OK
@@ -160,6 +160,10 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   def liferay_uid
     @uid = 'nil' if @uid.nil?
     render :inline => @uid, :status => 200
+  end
+
+  def target1
+    render :action => 'target1', :layout => 'bare'
   end
 
 end
