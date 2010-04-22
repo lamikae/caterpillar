@@ -15,35 +15,13 @@ For developers:
 * portlet test bench
 * a Rails view helper which lists portlets during development
 
-Quickstart:
-Rubygems does not seem to get the most uptodate version. The latest release is 1.2.3.
-Please download the gem from Rubyforge.
-#--
-  $ gem install caterpillar
-#++
-
-
-The command-line tool <tt>caterpillar</tt> should be executed in the Rails project root directory.
-You can install and upgrade the <tt>rails-portlet</tt> JAR and generate dynamic portlet XML and also
-deploy them. See the task description below - and you can also run <tt>caterpillar --describe</tt>.
-
-
-The optional Caterpillar Rails plugin offers specialized helpers and views for better Liferay integration
-and to ease the development. Not to mention the portlet test bench application.
-
-Developers should know that this is required to successfully run the <tt>rails-portlet</tt> test suite,
-where JUnit tests do actual requests to the Rails app.
-
-You can take plugins into use by running
-  $ caterpillar pluginize
-in the Rails directory, but you need to remember that with each subsequent upgrade of Caterpillar, you would need to
-  rm vendor/plugins/caterpillar && caterpillar pluginize
-each time. Rails is quite picky where it will load the views - security issue.
-
-Maybe caterpillar could have an upgrade task to handle this?
-
 
 == Quickstart
+Rubygems does not seem to get the most uptodate version. The release should be >= 1.2.3.
+Please download the latest release from Rubyforge.
+
+  $ gem install caterpillar-1.2.3.gem
+
 Start up a new Rails project:
 
   $ rails example
@@ -70,6 +48,26 @@ The output should include these lines:
     Rails-portlet test bench      "portlet_test_bench"  []
 
 Then you can start up the server (./script/server) and navigate to http://localhost:3000/caterpillar/test_bench
+
+
+== Good to know
+The command-line tool <tt>caterpillar</tt> should be executed in the Rails project root directory.
+You can install and upgrade the <tt>rails-portlet</tt> JAR and generate dynamic portlet XML and also
+deploy them. See the task description below - and you can also run <tt>caterpillar --describe</tt>.
+
+The optional Caterpillar Rails plugin offers specialized helpers and views for better Liferay integration
+and to ease the development. Not to mention the portlet test bench application.
+
+Developers should know that this is required to successfully run the <tt>rails-portlet</tt> test suite,
+where JUnit tests do actual requests to the Rails app.
+
+You can take plugins into use by running
+  $ caterpillar pluginize
+in the Rails directory, but you need to remember that with each subsequent upgrade of Caterpillar, you would need to
+  rm vendor/plugins/caterpillar && caterpillar pluginize
+each time. Rails is quite picky where it will load the views - security issue.
+
+Maybe caterpillar could have an upgrade task to handle this?
 
 
 == Useful tasks 
