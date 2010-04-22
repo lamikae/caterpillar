@@ -5,10 +5,23 @@ The aim is to minimize the needed additions to the Rails framework and interfere
 
 Main features:
 
-<tt>dynamic portlet XML creation</tt>
-<tt>portlet session security mechanism</tt>
-<tt>Rails-portlet JAR install command</tt>
-<tt>list of portlets during development</tt>
+* installs the portlet JAR to Liferay's [+CLASSPATH+]
+* dynamic portlet XML creation based on named routes
+* deploys the generated XML to Liferay, requires Liferay restart
+* implements session security by shared key authentication
+
+For developers:
+
+* portlet test bench
+* a Rails view helper which lists portlets during development
+
+Quickstart:
+Rubygems does not seem to get the most uptodate version. The latest release is 1.2.3.
+Please download the gem from Rubyforge.
+#--
+  $ gem install caterpillar
+#++
+
 
 The command-line tool <tt>caterpillar</tt> should be executed in the Rails project root directory.
 You can install and upgrade the <tt>rails-portlet</tt> JAR and generate dynamic portlet XML and also
