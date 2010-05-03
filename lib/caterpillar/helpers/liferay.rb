@@ -15,6 +15,24 @@ module Helpers
     include ActionView::Helpers::UrlHelper
     include ActionView::Helpers::TagHelper
 
+    def liferay_resource_url(params)
+      controller = params.delete :controller
+      action = params.delete :action
+      
+      resource_url = cookies[:Liferay_resourceUrl]
+      url = "#{resource_url}&railsRoute=/#{controller}/#{action}"
+      
+      unless params.empty?
+        url += '?'
+        params.keys.each do |key|
+          url += "#{key}=#{params[key]}&"
+        end
+        url.gsub!(/&$/, '')
+      end
+      
+      url
+    end
+
     # Link that the rails-portlet will leave unparsed.
     def link_to_exit_portlet(name, options = {}, html_options = {})
       link_to(name, url_to_exit_portlet(options), html_options)

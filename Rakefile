@@ -1,6 +1,8 @@
 require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
+require 'rake/gempackagetask'
+load 'caterpillar.gemspec'
 
 desc 'Default: create API doc.'
 task :default => :rdoc
@@ -15,5 +17,3 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('generators/**/*.rb')
   rdoc.options << '--line-numbers' << '--inline-source' << '-U'
 end
-
-

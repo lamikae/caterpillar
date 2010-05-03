@@ -4,7 +4,7 @@ require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'lib/caterpillar'
 
-Gem::Specification.new do |s|
+spec = Gem::Specification.new do |s|
   s.name = %q{caterpillar}
   s.authors = ["Mikael Lammentausta"]
   s.email = %q{mikael.lammentausta@gmail.com}
@@ -51,4 +51,9 @@ Gem::Specification.new do |s|
   else
     s.add_dependency(%q<rake>, [">= 0.7.3"])
   end
+end
+
+Rake::GemPackageTask.new(spec) do |pkg|
+  #pkg.need_zip = true
+  #pkg.need_tar = true
 end

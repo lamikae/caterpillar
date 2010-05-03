@@ -39,9 +39,9 @@ module Caterpillar
       'com.celamanzi.liferay.portlets.rails286.Rails286Portlet'
     end
 
-    # Rails-portlet Java class
+    # Rails-portlet Java class for 0.10.0+
     def portlet_filter_class
-      'com.celamanzi.liferay.portlets.rails286.Rails286PortletRenderFilter'
+      'com.celamanzi.liferay.portlets.rails286.Rails286PortletFilter'
     end
 
     # JSR 286 portlet XML header. Opens portlet-app.
@@ -113,6 +113,7 @@ module Caterpillar
       xml << "    <filter-name>%s_filter</filter-name>\n" % portlet[:name]
       xml << "    <filter-class>%s</filter-class>\n" % self.portlet_filter_class
       xml << "    <lifecycle>RENDER_PHASE</lifecycle>\n"
+      xml << "    <lifecycle>RESOURCE_PHASE</lifecycle>\n"
       # define host, servlet and route (path to be more precise)
       xml << "    <init-param>\n"
       xml << "      <name>host</name>\n"
