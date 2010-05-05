@@ -1,5 +1,5 @@
 Caterpillar is a developer tool to help building Rails applications for Liferay portlets.
-This is possible with the help of Rails-portlet[http://rails-portlet.rubyforge.org].
+This is possible with the help of Rails-portlet[http://github.com/tulios/html2jsr286].
 
 The aim is to minimize the needed additions to the Rails framework and interfere with the developer workflow.
 
@@ -94,13 +94,48 @@ In order to use download links in your webpages, you need to use method
   send_file(file_path, :filename=>"filename")
 in which the parameter filePath represents the location of the file, and fileName represents the name of the file. 
 
-For example, on DownloadController, 'start()' method allows the download of 'image.jpg' file.     
+For example, on DownloadController, 'start' method allows the download of 'image.jpg' file.     
   def start
     send_file('../images/image.jpg', :filename => "image.jpg")
   end
 
 In your webpage, you should use the following method which will manage your urls:
-  liferay_resource_url(:controller=> :controllerName, :action=> :methodName) 
-
+  liferay_resource_url(:controller=> :controllerName, :action=> :methodName)  
+           
 It should look like: 
   <%= link_to "Download", liferay_resource_url(:controller => :download , :action => :start) %>
+
+To access the +liferay_resource_url+ method you will need to include the Liferay module in your application_helper
+	include Caterpillar::Helpers::Liferay
+
+This method will generate a valid url for +serveResource+ method in liferay
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
