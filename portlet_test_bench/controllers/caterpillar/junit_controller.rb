@@ -50,6 +50,10 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     render :text => ""
   end
   
+  def download_image
+    send_file(File.expand_path('vendor/plugins/caterpillar/portlet_test_bench/resources/jake_sully.jpg'), :filename => "jake_sully.jpg")
+  end
+  
   # Sets a session value so the single SESSION_KEY cookie is set.
   # The output XML prints the session ID and the JUnit test compares this
   # to the value from another request, and with the same cookie they should match.
