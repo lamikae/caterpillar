@@ -109,12 +109,7 @@ To access the +liferay_resource_url+ method you will need to include the Liferay
 	include Caterpillar::Helpers::Liferay
 
 This method will generate a valid url for +serveResource+ method in liferay
- 
-
-
-
-
-
+                                                                           
 
 
 
