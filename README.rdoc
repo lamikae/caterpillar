@@ -90,9 +90,8 @@ Join the bugs mailing list (http://rubyforge.org/mailman/listinfo/rails-portlet-
 
 == How to implement File Download
 
-In order to use download links in your webpages, you need to use method 
+In order to use download links in your webpages, you need to use the method:
   send_file(file_path, :filename=>"filename")
-in which the parameter filePath represents the location of the file, and fileName represents the name of the file. 
 
 For example, on DownloadController, 'start' method allows the download of 'image.jpg' file.     
   def start
@@ -109,28 +108,3 @@ To access the +liferay_resource_url+ method you will need to include the Liferay
 	include Caterpillar::Helpers::Liferay
 
 This method will generate a valid url for +serveResource+ method in liferay
-                                                                           
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
