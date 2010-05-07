@@ -3,6 +3,7 @@ require 'action_controller'
 
 module Caterpillar
 module Helpers
+  
   # This module contains Rails helpers that provide methods to deal with various aspects
   # of portlet functionality in Liferay.
   #
