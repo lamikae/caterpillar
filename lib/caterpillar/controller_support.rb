@@ -8,7 +8,7 @@ module Caterpillar
   
       preferences = {}
       if value and (not value.empty?)
-        value.split(";").each do |pair|
+        value.split("#").each do |pair|
           if pair.nil? or pair.empty? then next end
       
           result = pair.split("=")
