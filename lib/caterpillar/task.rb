@@ -611,7 +611,5 @@ module Caterpillar
       @logger ? @logger.info(msg) : STDOUT.puts(msg)
     end
 
-
-
   end
 end
