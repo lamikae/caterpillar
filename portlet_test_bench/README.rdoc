@@ -1,6 +1,8 @@
 = Portlet test bench
 
-This application is for testing the portlet features live.
+This application is for testing live portlet features both in the browser (click click) and by xUnit tests.
+The xUnit tests are called by html2jsr286[http://github.com/lamikae/html2jsr286] and django-marionet[http://github.com/youleaf/django-marionet].
+
 Caterpillar includes this portlet into a vanilla Rails application:
 
   rails new_app
