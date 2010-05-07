@@ -1,0 +1,17 @@
+<div>
+  <span id="post_msg">
+    <%= @msg -%>
+  </span>
+  <br />
+  <span id="post_info">
+    <% if @checkbox -%>
+      Checkbox was checked
+    <% else -%>
+      <% if @checkbox == false %>
+<!--
+        Checkbox was unchecked
+-->
+      <% end %>
+    <% end -%>
+  </span>
+</div>

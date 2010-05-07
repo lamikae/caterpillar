@@ -21,15 +21,42 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     @netloc = 'http://%s:%s' % [request.host, request.port]
   end
 
+  def http_post
+    @msg      = params[:msg] if request.post?
+    @checkbox = params[:checkbox]
+    render :action => 'http_post', :layout => 'bare'
+  end
+
+  def post_and_redirect
+    @msg      = '"%s" passed from POST to GET' % params[:msg_get] if request.get? and params[:msg_get]
+    if request.post?
+      redirect_to :action => :post_and_redirect, :msg_get => params[:msg]
+    else
+      render :action => 'post_and_redirect', :layout => 'bare'
+    end
+  end
+
+  def parameter
+    @params = params
+    @params.delete :action
+    @params.delete :controller
+  end
+
   def xhr
     @javascripts = ['prototype']
     logger.debug 'XHR: %s' % request.xhr?
     render :action => 'xhr', :layout => 'bare'
   end
 
+  def check_xhr
+    logger.debug(request.inspect) unless request.xhr?
+    render :text => request.xhr?
+  end
+
   def xhr_post
     if request.xhr? and request.post?
       logger.debug 'XHR POST'
+      logger.debug(request.inspect)
       render :text => 'Hello World!'
     else
       logger.debug(request.inspect)
