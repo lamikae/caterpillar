@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class Caterpillar::JunitController < Caterpillar::ApplicationController
 
   layout false
@@ -21,7 +23,15 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     @netloc = 'http://%s:%s' % [request.host, request.port]
   end
 
+  def form
+    logger.debug 'XHR: %s' % request.xhr?
+    if request.post?
+      render :text => params.to_xml
+    end
+  end
+
   def http_post
+    logger.debug 'XHR: %s' % request.xhr?
     @msg      = params[:msg] if request.post?
     @checkbox = params[:checkbox]
     render :action => 'http_post', :layout => 'bare'
@@ -49,17 +59,25 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   end
 
   def check_xhr
+    logger.debug 'XHR: %s' % request.xhr?
     logger.debug(request.inspect) unless request.xhr?
     render :text => request.xhr?
   end
 
-  def xhr_post
-    if request.xhr? and request.post?
-      logger.debug 'XHR POST'
-      logger.debug(request.inspect)
+  def xhr_hello
+    logger.debug 'XHR: %s' % request.xhr?
+    if request.xhr?
       render :text => 'Hello World!'
     else
-      logger.debug(request.inspect)
+      render :nothing => true, :status => 404
+    end 
+  end
+
+  def xhr_post
+    logger.debug 'XHR: %s' % request.xhr?
+    if request.xhr? and request.post?
+      render :text => params.to_xml
+    else
       render :nothing => true, :status => 404
     end
   end
