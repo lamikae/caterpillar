@@ -1,8 +1,6 @@
 # encoding: utf-8
-
-
 #--
-# (c) Copyright 2008,2009 Mikael Lammentausta
+# (c) Copyright 2008,2009,2010 Mikael Lammentausta
 # See the file LICENSES.txt included with the distribution for
 # software license details.
 #++
@@ -28,7 +26,7 @@ module Caterpillar
       return config
     end
 
-    # Collects Rails' routes and parses the config
+    # Collects Rails' named routes
     def parse_routes(config)
 # taken from Rails' "routes" task
 #         routes = ActionController::Routing::Routes.routes.collect do |route|
@@ -41,15 +39,24 @@ module Caterpillar
 #         end
 
       ActionController::Routing::Routes.named_routes.collect do |route|
-        name = route[0]
+
+        # Ruby 1.9
+        if route.class == Symbol
+          name = route
+          _route = ActionController::Routing::Routes.named_routes.routes[route]
+        # Ruby 1.8
+        elsif route.class == Array
+          name = route[0]
+          _route = route[1] # 'ActionController::Routing::Route'
+        end
+
         # segments; the path
-        segs = route[1].segments.inject("") { |str,s| str << s.to_s }
+        segs = _route.segments.inject("") { |str,s| str << s.to_s }
         segs.chop! if segs.length > 1
         # controller and action
-        reqs = route[1].requirements
-
+        reqs = _route.requirements
         # extra variables
-        keys = route[1].significant_keys
+        keys = _route.significant_keys
         vars = keys - [:action, :controller]
 
         {:name => name, :path => segs, :reqs => reqs, :vars => vars}

@@ -1,3 +1,6 @@
+	- Ruby 1.9 compatibility fix
+	- define utf8 encoding (thanks to Hendie Dijkman for mentioning about it)
+
 = 1.2.4
 	- use standalone Rails defaults in the installed config file
 	- updated xUnit tests in the portlet test bench
