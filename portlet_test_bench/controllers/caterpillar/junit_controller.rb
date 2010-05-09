@@ -1,5 +1,8 @@
 # encoding: utf-8
 
+
+# encoding: utf-8
+
 class Caterpillar::JunitController < Caterpillar::ApplicationController
 
   layout false

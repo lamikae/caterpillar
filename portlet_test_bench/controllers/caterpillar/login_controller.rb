@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 class Caterpillar::LoginController < Caterpillar::ApplicationController
 
   before_filter :authorize, :except => [ :login, :index, :logout ]

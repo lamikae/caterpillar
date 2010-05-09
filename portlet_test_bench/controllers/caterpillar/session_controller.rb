@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 class Caterpillar::SessionController < Caterpillar::ApplicationController
 
   # flash message.

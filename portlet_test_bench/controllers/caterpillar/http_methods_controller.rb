@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 class Caterpillar::HttpMethodsController < Caterpillar::ApplicationController
 
   def post

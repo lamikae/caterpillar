@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 module Caterpillar::JunitHelper
 
   def xhr_onclick_tag # :nodoc:

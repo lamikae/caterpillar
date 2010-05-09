@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 class Caterpillar::LiferayController < Caterpillar::ApplicationController
 
   def session_variables

@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 require 'test_helper'
 require File.dirname(File.expand_path(__FILE__))+'/test_helper'
 

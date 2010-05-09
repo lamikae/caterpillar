@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 Caterpillar::Config.new do |portlet|
 
   # JRUBY_HOME can be set here, unless the environment variable can be used.

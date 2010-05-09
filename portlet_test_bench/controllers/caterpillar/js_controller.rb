@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 class Caterpillar::JsController < Caterpillar::ApplicationController
 
   def simple
