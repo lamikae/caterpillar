@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 module Web # :nodoc:
   # Adds Caterpillar portlets to available portlets.
   class Portlet < ActiveRecord::Base

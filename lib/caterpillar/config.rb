@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 #--
 # (c) Copyright 2008 Mikael Lammentausta
 # See the file LICENSES.txt included with the distribution for

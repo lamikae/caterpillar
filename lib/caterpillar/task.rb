@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 #--
 # (c) Copyright 2008,2009,2010 Mikael Lammentausta
 #

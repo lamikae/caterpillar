@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 # This generator installs the required files into the main Rails application.
 # This generator should always be run after upgrading the plugin.
 class CaterpillarGenerator < Rails::Generator::Base
