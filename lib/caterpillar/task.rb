@@ -584,11 +584,7 @@ module Caterpillar
           return system "rails #{ARGV[1]} >/dev/null"
         end
         exit 1 unless conferring_step 'Updating config/environment.rb...' do
-          path = ARGV[1] + '/config/environment.rb'
-          file = File.read(path).
-            sub(/([ ]*#[ ]*config\.gem)/,
-                "  config.gem 'caterpillar', :version => '#{Caterpillar::VERSION}'\n" + '\1')
-          File.open(path, 'w') {|f| f << file}
+          update_environment(ARGV[1] + '/config/environment.rb')
         end
         exit 1 unless conferring_step 'Activating caterpillar...' do
           # Rake::Task['pluginize'].execute         
@@ -696,6 +692,13 @@ module Caterpillar
       else
         return 'rails binary was not found in your path'
       end
+    end
+
+    def update_environment(file_path)
+      file = File.read(file_path).
+        sub(/([ ]*#[ ]*config\.gem)/,
+            "  config.gem 'caterpillar', :version => '#{Caterpillar::VERSION}'\n" + '\1')
+      File.open(file_path, 'w') {|f| f << file}
     end
 
     def conferring_step(message)
