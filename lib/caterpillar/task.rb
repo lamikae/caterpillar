@@ -36,17 +36,22 @@ module Caterpillar
       #STDOUT.puts 'Caterpillar v.%s (c) Copyright 2008,2009 Mikael Lammentausta' % VERSION
       #STDOUT.puts 'Provided under the terms of the MIT license.'
       #STDOUT.puts
+
       @name   = name
       @config = Util.eval_configuration(config)
       @logger = @config.logger
-      unless @config.rails_root
-        Usage.show()
-        exit 1
+      @xml_files = []
+
+      if name == 'rails'
+        @required_gems = %w(rails caterpillar jruby-jars warbler)
+      else
+        unless @config.rails_root
+          Usage.show()
+          exit 1
+        end
       end
 
       yield self if block_given?
-      @xml_files = []
-
       send tasks
     end
 
@@ -75,6 +80,7 @@ module Caterpillar
       define_deploy_task
       define_deploy_xml_task
       define_deploy_war_task
+      define_rails_task
     end
 
     def define_usage_task
@@ -513,6 +519,7 @@ module Caterpillar
         end
       end
     end
+
     def define_deploy_war_task
       @name = :deploy
       with_namespace_and_config do |name, config|
@@ -551,13 +558,43 @@ module Caterpillar
       end
     end
 
-
-
-
     def with_namespace_and_config
       name, config = @name, @config
       namespace name do
         yield name, config
+      end
+    end
+
+    def define_rails_task
+      task :rails do
+        exit 1 unless conferring_step 'Checking for required gems...' do 
+          check_required_gems
+        end
+        exit 1 unless conferring_step 'Checking for JRuby binary...' do
+          check_jruby
+        end
+        exit 1 unless conferring_step 'Checking for required gems in JRuby...' do
+          check_jruby_required_gems
+        end
+        exit 1 unless conferring_step 'Checking for Rails binary...' do
+          check_rails
+        end
+        exit 1 unless conferring_step 'Creating Rails project...' do
+          return 'specify rails project name' if ARGV[1].nil?
+          return system "rails #{ARGV[1]} >/dev/null"
+        end
+        exit 1 unless conferring_step 'Updating config/environment.rb...' do
+          path = ARGV[1] + '/config/environment.rb'
+          file = File.read(path).
+            sub(/([ ]*#[ ]*config\.gem)/,
+                "  config.gem 'caterpillar', :version => '#{Caterpillar::VERSION}'\n" + '\1')
+          File.open(path, 'w') {|f| f << file}
+        end
+        exit 1 unless conferring_step 'Activating caterpillar...' do
+          # Rake::Task['pluginize'].execute         
+          Dir.chdir("#{ARGV[1]}/vendor/plugins"){system 'ruby -S gem unpack caterpillar >/dev/null'}
+          Dir.chdir("#{ARGV[1]}"){system 'script/generate caterpillar >/dev/null'}
+        end
       end
     end
 
@@ -611,5 +648,70 @@ module Caterpillar
       @logger ? @logger.info(msg) : STDOUT.puts(msg)
     end
 
+    private
+
+    def check_required_gems
+      gems = @required_gems
+      available_gems = []
+
+      gems.each {|gem| available_gems << gem if Gem::available? gem}
+      gems_not_found = (gems - available_gems)
+
+      if gems_not_found.empty?
+        return true
+      else
+        return "These required gems were not found: #{gems_not_found.join(' ')}"
+      end
+    end
+
+    def check_jruby
+      has_jruby = system 'jruby --copyright >/dev/null 2>&1'
+      
+      if has_jruby
+        return true
+      else
+        return 'jruby binary was not found in your path'
+      end
+    end
+
+    def check_jruby_required_gems
+      jruby_gems = `jruby -S gem list`
+      available_gems = []
+      
+      @required_gems.each {|gem| available_gems << gem if jruby_gems.match(gem)}
+      gems_not_found = (@required_gems - available_gems)
+
+      if gems_not_found.empty?
+        return true
+      else
+        return "These required gems were not found: #{gems_not_found.join(' ')}"
+      end
+    end
+
+    def check_rails
+      has_rails = system 'rails --version >/dev/null'
+      
+      if has_rails
+        return true
+      else
+        return 'rails binary was not found in your path'
+      end
+    end
+
+    def conferring_step(message)
+      STDOUT.print message
+      STDOUT.flush
+      
+      result = yield
+      if result.class == String or result.class == NilClass
+        STDOUT.puts "\e[31mFAILED\e[0m"
+        puts result unless result.nil?
+        return false
+      else
+        STDOUT.puts "\e[32mOK\e[0m"
+        return true
+      end
+    end
+      
   end
 end
