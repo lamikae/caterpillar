@@ -124,44 +124,44 @@ We have two kinds of portlets, the instanceable ones and not instaceables ones. 
 Each mapped portlet requires a <b>preferences</b> method which will handle the edit mode features. 
 For example:
   def preferences
-	  if request.post?
-	    flash[:notice] = 'Success!'
-	  end
-	end
+    if request.post?
+      flash[:notice] = 'Success!'
+    end
+  end
 
 Rails-portlet will provide us a hash with all saved preferences, to access this method we need to include the Caterpillar::PortletSupport module, like:
   include Caterpillar::PortletSupport
 
 This module will provide <b>get_liferay_preferences</b> method which returns the preferences hash. A good approach is to include this module on <i>ApplicationController</i>, like:
-	class ApplicationController < ActionController::Base
-	  include Caterpillar::PortletSupport
+  class ApplicationController < ActionController::Base
+    include Caterpillar::PortletSupport
 
-	  helper :all # include all helpers, all the time
-	  protect_from_forgery # See ActionController::RequestForgeryProtection for details
+    helper :all # include all helpers, all the time
+    protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
-	  before_filter :get_preferences
+    before_filter :get_preferences
 
-	  protected
-	  def get_preferences
-	    preferences = get_liferay_preferences
-			@preferences = preferences ? preferences : {}
-	  end
+    protected
+    def get_preferences
+      preferences = get_liferay_preferences
+      @preferences = preferences ? preferences : {}
+    end
 
-	end
+  end
 
 In your erb file you will have a form like this, where each attribute (that has to be saved) needs to have prefix <b>_preference</b> on its name. For example:
   <% form_tag :controller => :test , :action => :preferences do %>
-		<p>
-	  	Cor de fundo: <%= text_field_tag :background_color_preference, @preferences[:background_color_preference] %>
-		</p>
-		<p>
-	  	Tamanho fonte: <%= text_field_tag :font_size_preference, @preferences[:font_size_preference] %>
-	  </p>
-		<p>
-			Cor da fonte:  <%= text_field_tag :font_color_preference, @preferences[:font_color_preference] %>
-	  </p>
-		<%= submit_tag "Salve" %>
-	<% end %>
+    <p>
+      Cor de fundo: <%= text_field_tag :background_color_preference, @preferences[:background_color_preference] %>
+    </p>
+    <p>
+      Tamanho fonte: <%= text_field_tag :font_size_preference, @preferences[:font_size_preference] %>
+    </p>
+    <p>
+      Cor da fonte:  <%= text_field_tag :font_color_preference, @preferences[:font_color_preference] %>
+    </p>
+    <%= submit_tag "Salve" %>
+  <% end %>
 
 
 
