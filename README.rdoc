@@ -15,7 +15,7 @@ For developers:
 
 
 == Quickstart
-Rubygems does not seem to get the most uptodate version. The release should be >= 1.2.3.
+NOTE: *Rubygems does not seem to get the most uptodate version.* The release should be >= 1.2.3.
 Please download the latest release from Rubyforge.
 
   $ gem install caterpillar-1.2.3.gem
