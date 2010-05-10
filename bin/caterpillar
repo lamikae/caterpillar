@@ -33,9 +33,7 @@ application.standard_exception_handling do
 
   # Load the main tasks - choose the namespace
   Caterpillar::Task.new(ARGV[0] ? ARGV[0].gsub(/:.*/,'') : :usage)
-  # Load the rails tasks
-  Caterpillar::RailsTask.new(ARGV[0] ? ARGV[0].gsub(/:.*/,'') : :usage)
-
+  
   task :default => :usage
 
   application.top_level
