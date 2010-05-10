@@ -1,6 +1,4 @@
-Caterpillar is a developer tool to help building Rails applications for Liferay portlets.
-This is possible with the help of Rails-portlet[http://rails-portlet.rubyforge.org].
-
+Caterpillar is a developer tool to help building and deploying Rails applications for Liferay portlets.
 The aim is to minimize the needed additions to the Rails framework and interfere with the developer workflow.
 
 Main features:
