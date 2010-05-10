@@ -16,11 +16,15 @@ module Helpers
     include ActionView::Helpers::UrlHelper
     include ActionView::Helpers::TagHelper
 
-    def liferay_resource_url(params)
+    def liferay_resource_url(params, resource_url = cookies[:Liferay_resourceUrl])
+      if resource_url.nil? then return raise "resource_url is needed!" end
+      
       controller = params.delete :controller
       action = params.delete :action
       
-      resource_url = cookies[:Liferay_resourceUrl]
+      if controller.nil? then return resource_url end
+      if action.nil? then action = :index end
+      
       url = "#{resource_url}&railsRoute=/#{controller}/#{action}"
       
       unless params.empty?

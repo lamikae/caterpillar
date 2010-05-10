@@ -77,8 +77,7 @@ module Caterpillar
       xml << "    <supports>\n"
       xml << "      <mime-type>text/html</mime-type>\n"
       xml << "      <portlet-mode>view</portlet-mode>\n"
-      # edit mode is not used. this is for development.
-      if portlet[:edit]==true
+      if portlet[:edit_mode] == true
         xml << "      <portlet-mode>edit</portlet-mode>\n"
       end
       xml << "    </supports>\n"

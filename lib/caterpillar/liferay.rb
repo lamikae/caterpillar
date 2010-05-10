@@ -327,7 +327,7 @@ module Caterpillar # :nodoc:
       xml << "    <use-default-template>true</use-default-template>\n"
 
       # can there be several portlet instances on the same page?
-      xml << "    <instanceable>false</instanceable>\n"
+      xml << "    <instanceable>#{portlet[:instanceable]}</instanceable>\n"
 
       # The default value of ajaxable is true. If set to false, then this portlet can never be displayed via Ajax.
       xml << "    <ajaxable>true</ajaxable>\n"

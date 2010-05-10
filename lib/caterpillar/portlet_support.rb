@@ -1,11 +1,13 @@
 module Caterpillar
-  module ControllerSupport
   
-    def get_liferay_preferences
-      value = cookies[:Liferay_preferences]
+  # Add some portlet support
+  #
+  module PortletSupport
   
-      puts "\nLiferay_preferences => #{value}\n"
-  
+    # Gets portlet preferences from a cookie (Liferay_preferences) and generates
+    # a hash with it. Returns nil if cookie do not exists or the value is nil.
+    #
+    def get_liferay_preferences(value = cookies[:Liferay_preferences])
       preferences = {}
       if value and (not value.empty?)
         value.split(";").each do |pair|

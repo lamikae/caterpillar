@@ -15,6 +15,10 @@ module Caterpillar
 
     attr_accessor :category
 
+    attr_accessor :edit_mode
+    
+    attr_accessor :instanceable
+
     attr_accessor :host
 
     attr_accessor :servlet
