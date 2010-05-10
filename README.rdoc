@@ -88,7 +88,9 @@ Here are the most useful tasks; see the rdoc documentation and caterpillar --des
 
 Join the bugs mailing list (http://rubyforge.org/mailman/listinfo/rails-portlet-bugs) to request help.
 
-== How to implement File Download
+= How to implement 
+
+== File Download
 
 In order to use download links in your webpages, you need to use the method:
   send_file(file_path, :filename=>"filename")
@@ -105,6 +107,96 @@ It should look like:
   <%= link_to "Download", liferay_resource_url(:controller => :download , :action => :start) %>
 
 To access the +liferay_resource_url+ method you will need to include the Liferay module in your application_helper
-	include Caterpillar::Helpers::Liferay
+  include Caterpillar::Helpers::Liferay
 
 This method will generate a valid url for +serveResource+ method in liferay
+
+== Portlet Preferences
+
+To enable portlet preferences we need to set <b>:edit_mode</b> as true on <em>portlet.rb</em> file. 
+We have two kinds of portlets, the instanceable ones and not instaceables ones. Each instaceable portlet holds it's own preferences otherwise not instanceable has just one definition, keeping the same data into all portlets of the kind.
+  portlet.instances << {
+    :name => 'test',
+    :edit_mode => true,
+    :instanceable => false
+  }
+
+Each mapped portlet requires a <b>preferences</b> method which will handle the edit mode features. 
+For example:
+  def preferences
+	  if request.post?
+	    flash[:notice] = 'Success!'
+	  end
+	end
+
+Rails-portlet will provide us a hash with all saved preferences, to access this method we need to include the Caterpillar::PortletSupport module, like:
+  include Caterpillar::PortletSupport
+
+This module will provide <b>get_liferay_preferences</b> method which returns the preferences hash. A good approach is to include this module on <i>ApplicationController</i>, like:
+	class ApplicationController < ActionController::Base
+	  include Caterpillar::PortletSupport
+
+	  helper :all # include all helpers, all the time
+	  protect_from_forgery # See ActionController::RequestForgeryProtection for details
+
+	  before_filter :get_preferences
+
+	  protected
+	  def get_preferences
+	    preferences = get_liferay_preferences
+			@preferences = preferences ? preferences : {}
+	  end
+
+	end
+
+In your erb file you will have a form like this, where each attribute (that has to be saved) needs to have prefix <b>_preference</b> on its name. For example:
+  <% form_tag :controller => :test , :action => :preferences do %>
+		<p>
+	  	Cor de fundo: <%= text_field_tag :background_color_preference, @preferences[:background_color_preference] %>
+		</p>
+		<p>
+	  	Tamanho fonte: <%= text_field_tag :font_size_preference, @preferences[:font_size_preference] %>
+	  </p>
+		<p>
+			Cor da fonte:  <%= text_field_tag :font_color_preference, @preferences[:font_color_preference] %>
+	  </p>
+		<%= submit_tag "Salve" %>
+	<% end %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
