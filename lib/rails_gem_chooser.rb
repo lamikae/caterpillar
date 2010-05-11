@@ -1,5 +1,10 @@
 # encoding: utf-8
-
+#--
+# (c) Copyright 2009,2010 Mikael Lammentausta
+#
+# See the file MIT-LICENSE included with the distribution for
+# software license details.
+#++
 
 require 'rubygems'
 
@@ -32,8 +37,8 @@ class RailsGemChooser
   end
 
   # Load a specific GEM
-  def __load_gem(name,ver)
-    ver ? gem(name, '= '+ver) : gem(name)
+  def __load_gem(name,version)
+    version ? gem(name, '= '+version) : gem(name)
     require name
   end
 
@@ -45,10 +50,15 @@ class RailsGemChooser
     rails_gem_version ||= version(config_file)
 
     #STDOUT.puts 'Loading Rails version %s' % rails_gem_version
-    # the gem without underline will be removed in Rails3..
-    #rails_gems = %w{ active_support action_pack active_record }
-    # except that with the underline divider the gem is not found ..
-    rails_gems = %w{ activesupport actionpack activerecord }
+    #DEPRECATION WARNING: require "activesupport" is deprecated and will be removed in Rails 3. Use require "active_support" instead.. 
+    #DEPRECATION WARNING: require "actionpack" is deprecated and will be removed in Rails 3. Use require "action_pack" instead..
+    #DEPRECATION WARNING: require "activerecord" is deprecated and will be removed in Rails 3. Use require "active_record" instead..
+    #if rails_gem_version[/^2/]
+      rails_gems = %w{ activesupport actionpack activerecord }
+    #else
+      # .. except that this does not work..
+    #  rails_gems = %w{ active_support action_pack active_record }
+    #end
 
     # gem build fails when activesupport is loaded here
     # - except with Rails 2.3.5 where this needs to be added.
