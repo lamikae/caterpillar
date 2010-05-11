@@ -1,0 +1,25 @@
+<div id="http_post">
+  <h1>POST + GET redirect test</h1>
+
+  <div id="http_postform">
+    <%= form_tag :action => "post_and_redirect" %>
+      <p>
+        <span>Input text:</span>
+        <%= text_field_tag "msg", "try me", :size => 42 %>
+      </p>
+
+      <p id="submit_tags">
+        <input type="submit" value="Submit values" />
+      </p>
+    </form>
+  </div>
+
+
+  <h2>Message from last POST:</h2>
+  <span id="post_msg">
+    <%= @msg -%>
+  </span>
+  <br />
+
+
+</div>

@@ -1,3 +1,8 @@
+# encoding: utf-8
+
+
+# encoding: utf-8
+
 class Caterpillar::JunitController < Caterpillar::ApplicationController
 
   layout false
@@ -21,18 +26,61 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     @netloc = 'http://%s:%s' % [request.host, request.port]
   end
 
+  def form
+    logger.debug 'XHR: %s' % request.xhr?
+    if request.post?
+      render :text => params.to_xml
+    end
+  end
+
+  def http_post
+    logger.debug 'XHR: %s' % request.xhr?
+    @msg      = params[:msg] if request.post?
+    @checkbox = params[:checkbox]
+    render :action => 'http_post', :layout => 'bare'
+  end
+
+  def post_and_redirect
+    @msg      = '"%s" passed from POST to GET' % params[:msg_get] if request.get? and params[:msg_get]
+    if request.post?
+      redirect_to :action => :post_and_redirect, :msg_get => params[:msg]
+    else
+      render :action => 'post_and_redirect', :layout => 'bare'
+    end
+  end
+
+  def parameter
+    @params = params
+    @params.delete :action
+    @params.delete :controller
+  end
+
   def xhr
     @javascripts = ['prototype']
     logger.debug 'XHR: %s' % request.xhr?
     render :action => 'xhr', :layout => 'bare'
   end
 
-  def xhr_post
-    if request.xhr? and request.post?
-      logger.debug 'XHR POST'
+  def check_xhr
+    logger.debug 'XHR: %s' % request.xhr?
+    logger.debug(request.inspect) unless request.xhr?
+    render :text => request.xhr?
+  end
+
+  def xhr_hello
+    logger.debug 'XHR: %s' % request.xhr?
+    if request.xhr?
       render :text => 'Hello World!'
     else
-      logger.debug(request.inspect)
+      render :nothing => true, :status => 404
+    end 
+  end
+
+  def xhr_post
+    logger.debug 'XHR: %s' % request.xhr?
+    if request.xhr? and request.post?
+      render :text => params.to_xml
+    else
       render :nothing => true, :status => 404
     end
   end
@@ -54,6 +102,10 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     send_file(File.expand_path('vendor/plugins/caterpillar/portlet_test_bench/resources/jake_sully.jpg'), :filename => "jake_sully.jpg")
   end
   
+  def preferences
+    render :text => "Preferences view"
+  end
+  
   # Sets a session value so the single SESSION_KEY cookie is set.
   # The output XML prints the session ID and the JUnit test compares this
   # to the value from another request, and with the same cookie they should match.
@@ -65,6 +117,7 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   def redirect
     redirect_to :action => :redirect_target
   end
+  
   def redirect_target
     render :text => request.request_uri
   end
@@ -75,6 +128,7 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     cookies[:the_time]   = Time.now.to_s
     redirect_to :action => "show_cookies"
   end
+  
   def show_cookies
     logger.debug 'Cookies: %s' % cookies.inspect
     render :text => cookies.to_xml

@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 class Caterpillar::ApplicationController < ActionController::Base
 
   layout 'basic'

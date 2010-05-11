@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 module Caterpillar #:nodoc:
   # Routes for Portlet Test Bench.
   module Routing
