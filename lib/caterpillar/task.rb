@@ -591,7 +591,7 @@ module Caterpillar
           Dir.chdir("#{ARGV[1]}"){system 'script/generate caterpillar >/dev/null'}
         end
         exit 1 unless conferring_step 'Configuring warbler...' do
-          Dir.chdir("#{ARGV[1]}"){system 'ruby -S warble config >/dev/null'}
+          Dir.chdir("#{ARGV[1]}"){system 'ruby -S warble config >/dev/null 2>&1'}
         end
       end
     end
