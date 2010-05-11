@@ -576,9 +576,6 @@ module Caterpillar
         exit 1 unless conferring_step 'Checking for required gems in JRuby...' do
           check_jruby_required_gems
         end
-        exit 1 unless conferring_step 'Checking for Rails binary...' do
-          check_rails
-        end
         exit 1 unless conferring_step 'Creating Rails project...' do
           create_rails_project
         end
@@ -589,6 +586,9 @@ module Caterpillar
           # Rake::Task['pluginize'].execute         
           Dir.chdir("#{ARGV[1]}/vendor/plugins"){system 'ruby -S gem unpack caterpillar >/dev/null'}
           Dir.chdir("#{ARGV[1]}"){system 'script/generate caterpillar >/dev/null'}
+        end
+        exit 1 unless conferring_step 'Configuring warbler...' do
+          Dir.chdir("#{ARGV[1]}"){system 'ruby -S warble config >/dev/null'}
         end
       end
     end
@@ -667,7 +667,7 @@ module Caterpillar
         return true
       else
         return "jruby binary was not found in your path\n" +
-          "Please check: http://jruby.org/"
+          "Please visit: http://jruby.org/"
       end
     end
 
@@ -686,21 +686,10 @@ module Caterpillar
       end
     end
 
-    def check_rails
-      has_rails = system 'rails --version >/dev/null'
-      
-      if has_rails
-        return true
-      else
-        return "rails binary was not found in your path\n" +
-          "Check your environment with: gem env"
-      end
-    end
-    
     def create_rails_project
       return 'specify rails project name' if ARGV[1].nil?
-      return "#{ARGV[1]} folder name already exists" unless Dir[ARGV[1]].empty?
-      return system "rails #{ARGV[1]} >/dev/null"
+      return "#{ARGV[1]} folder name already exists" if FileTest.exists? ARGV[1]
+      return system "ruby -S rails #{ARGV[1]} >/dev/null"
     end
 
     def update_environment(file_path)

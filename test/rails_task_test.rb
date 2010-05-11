@@ -7,10 +7,12 @@ class RailsTaskTest < Caterpillar::TestCase
     project_name = 'caterpillar_rails_test'
 
 #    Rake::Task['rails'].execute(project_name)
-    `caterpillar rails #{project_name}`
+    `ruby -S caterpillar rails #{project_name}`
     assert FileTest.directory? project_name
     assert File.read("#{project_name}/config/environment.rb") =~ /caterpillar/
     assert FileTest.directory? "#{project_name}/vendor/plugins/caterpillar-#{Caterpillar::VERSION}"
+    assert FileTest.exists? "#{project_name}/config/warble.rb"
+    assert FileTest.exists? "#{project_name}/config/portlets.rb"
     FileUtils.rm_rf project_name
   end
     
