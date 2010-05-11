@@ -580,8 +580,7 @@ module Caterpillar
           check_rails
         end
         exit 1 unless conferring_step 'Creating Rails project...' do
-          return 'specify rails project name' if ARGV[1].nil?
-          return system "rails #{ARGV[1]} >/dev/null"
+          create_rails_project
         end
         exit 1 unless conferring_step 'Updating config/environment.rb...' do
           update_environment(ARGV[1] + '/config/environment.rb')
@@ -656,7 +655,8 @@ module Caterpillar
       if gems_not_found.empty?
         return true
       else
-        return "These required gems were not found: #{gems_not_found.join(' ')}"
+        return "These required gems were not found: #{gems_not_found.join(' ')}\n" +
+          "Please install them with: ruby -S gem install #{gems_not_found.join(' ')}"
       end
     end
 
@@ -666,7 +666,8 @@ module Caterpillar
       if has_jruby
         return true
       else
-        return 'jruby binary was not found in your path'
+        return "jruby binary was not found in your path\n" +
+          "Please check: http://jruby.org/"
       end
     end
 
@@ -680,7 +681,8 @@ module Caterpillar
       if gems_not_found.empty?
         return true
       else
-        return "These required gems were not found: #{gems_not_found.join(' ')}"
+        return "These required gems were not found: #{gems_not_found.join(' ')}\n" +
+          "Please install them with: jruby -S gem install #{gems_not_found.join(' ')}"
       end
     end
 
@@ -690,8 +692,15 @@ module Caterpillar
       if has_rails
         return true
       else
-        return 'rails binary was not found in your path'
+        return "rails binary was not found in your path\n" +
+          "Check your environment with: gem env"
       end
+    end
+    
+    def create_rails_project
+      return 'specify rails project name' if ARGV[1].nil?
+      return "#{ARGV[1]} folder name already exists" unless Dir[ARGV[1]].empty?
+      return system "rails #{ARGV[1]} >/dev/null"
     end
 
     def update_environment(file_path)
