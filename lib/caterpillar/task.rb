@@ -503,8 +503,8 @@ module Caterpillar
     def define_deploy_xml_task
       @name = :deploy
       with_namespace_and_config do |name, config|
-        desc 'Deploys the XML files'
-        task :xml do
+        desc 'Deploys the XML files'  
+        task :xml do                  
           unless deployment_requirements_met?
             info 'Deployment is only supported on Liferay on Tomcat. Patches are welcome.'
             info 'Copy these XML files into the portlet container\'s WEB-INF.'
