@@ -33,8 +33,8 @@ Caterpillar::Config.new do |portlet|
   # By default the first entry in the directory is chosen.
   # portlet.container.server_dir = 'default'
 
-  # Allow to defining the deploy_dir - both the WAR file and the XML files
-  # are deployed under this directory.
+  # Allow to defining the deploy_dir - just the WAR file will be deployed under this directory.
+  # Since version 1.3.0
   # portlet.container.deploy_dir = '/opt/myDeployDir'
 
   # The hostname and port.
@@ -61,14 +61,18 @@ Caterpillar::Config.new do |portlet|
   # Most likely you will want to let ActionController::Routing to set the route.
   #
   # Available keys are:
-  #  - :name        -- named route
-  #  - :category    -- portlet category (Liferay only)
-  #  - :title       -- the title in portlet container's category (Liferay only)
-  #  - :javascripts -- portlet-specific javascripts that are included at
-  #                    the head of master HTML, such as body onload functions (Liferay only)
-  #  - :host        -- hostname:port of the deployment server
-  #  - :servlet     -- by default, the name of the Rails app (= name of the WAR package)
-  #  - :path        -- unless you're using named routes, you can define the path here
+  #  - :name         -- named route
+  #  - :category     -- portlet category (Liferay only)
+  #  - :title        -- the title in portlet container's category (Liferay only)
+  #  - :edit_mode    -- enables edit mode for the portlet, adds <portlet-mode>edit</portlet-mode> to portlet-ext.xml
+  #                     Default value is false
+  #  - :instanceable -- enables instanceable for the portlet, add <instanceable>true</instanceable> to
+  #                     liferay-portlet-ext.xml. Default value is false
+  #  - :javascripts  -- portlet-specific javascripts that are included at
+  #                     the head of master HTML, such as body onload functions (Liferay only)
+  #  - :host         -- hostname:port of the deployment server
+  #  - :servlet      -- by default, the name of the Rails app (= name of the WAR package)
+  #  - :path         -- unless you're using named routes, you can define the path here
 
   # Rails-portlet testing application.
   # NOTE: this needs to be activated by 'map.caterpillar' in RAILS_ROOT/config/routes.rb

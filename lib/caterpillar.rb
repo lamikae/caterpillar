@@ -1,15 +1,14 @@
 # encoding: utf-8
-
-
 #--
 # (c) Copyright 2008-2010 Mikael Lammentausta
+#                    2010 Túlio Ornelas
 #
 # See the file MIT-LICENSE included with the distribution for
 # software license details.
 #++
 
 module Caterpillar
-  VERSION='1.2.5'
+  VERSION='1.3.0'
 end
 
 this_file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__

@@ -4,7 +4,7 @@ require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'lib/caterpillar'
 
-Gem::Specification.new do |s|
+spec = Gem::Specification.new do |s|
   s.name = %q{caterpillar}
   s.authors = ["Mikael Lammentausta"]
   s.email = %q{mikael.lammentausta@gmail.com}
@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project = %q{rails-portlet}
   s.rubygems_version = %q{1.2.0}
   s.summary = %q{Caterpillar helps building Rails applications for JSR286 portlets.}
-  s.test_files = FileList["{test}/**/*test.rb"].to_a
+  s.test_files = FileList["{test}/**/*.rb"].to_a
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
@@ -51,4 +51,9 @@ Gem::Specification.new do |s|
   else
     s.add_dependency(%q<rake>, [">= 0.7.3"])
   end
+end
+
+Rake::GemPackageTask.new(spec) do |pkg|
+  #pkg.need_zip = true
+  #pkg.need_tar = true
 end

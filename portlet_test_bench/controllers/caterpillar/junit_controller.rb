@@ -98,6 +98,14 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     render :text => ""
   end
   
+  def download_image
+    send_file(File.expand_path('vendor/plugins/caterpillar/portlet_test_bench/resources/jake_sully.jpg'), :filename => "jake_sully.jpg")
+  end
+  
+  def preferences
+    render :text => "Preferences view"
+  end
+  
   # Sets a session value so the single SESSION_KEY cookie is set.
   # The output XML prints the session ID and the JUnit test compares this
   # to the value from another request, and with the same cookie they should match.
@@ -109,6 +117,7 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   def redirect
     redirect_to :action => :redirect_target
   end
+  
   def redirect_target
     render :text => request.request_uri
   end
@@ -119,6 +128,7 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     cookies[:the_time]   = Time.now.to_s
     redirect_to :action => "show_cookies"
   end
+  
   def show_cookies
     logger.debug 'Cookies: %s' % cookies.inspect
     render :text => cookies.to_xml

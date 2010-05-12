@@ -1,1 +1,3 @@
-Run the tests from Rails, by rake test:plugins.
+Run the tests from Rails, by rake test:plugins.      
+
+You will need at least one portlet configured at config/routes.rb

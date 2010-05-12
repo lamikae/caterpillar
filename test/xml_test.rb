@@ -9,7 +9,7 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
   def test_portlet_xml
     xml = Caterpillar::Portlet.xml(@portlets)
     assert_not_nil xml
-    assert !xml.empty?
+    assert !xml.empty?        
     assert xml[/secret/]
   end
   

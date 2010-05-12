@@ -39,17 +39,22 @@ module Caterpillar
       #STDOUT.puts 'Caterpillar v.%s (c) Copyright 2008,2009 Mikael Lammentausta' % VERSION
       #STDOUT.puts 'Provided under the terms of the MIT license.'
       #STDOUT.puts
+
       @name   = name
       @config = Util.eval_configuration(config)
       @logger = @config.logger
-      unless @config.rails_root
-        Usage.show()
-        exit 1
+      @xml_files = []
+
+      if name == 'rails'
+        @required_gems = %w(rails caterpillar jruby-jars warbler)
+      else
+        unless @config.rails_root
+          Usage.show()
+          exit 1
+        end
       end
 
       yield self if block_given?
-      @xml_files = []
-
       send tasks
     end
 
@@ -78,6 +83,7 @@ module Caterpillar
       define_deploy_task
       define_deploy_xml_task
       define_deploy_war_task
+      define_rails_task
     end
 
     def define_usage_task
@@ -338,7 +344,7 @@ module Caterpillar
             if container_v and container_v[/^5.1/]
               '0.6.0' # FIXME: branch properly
             else
-              '0.9.2'
+              '0.10.0'
             end
           )
           require 'find'
@@ -497,8 +503,8 @@ module Caterpillar
     def define_deploy_xml_task
       @name = :deploy
       with_namespace_and_config do |name, config|
-        desc 'Deploys the XML files'
-        task :xml do
+        desc 'Deploys the XML files'  
+        task :xml do                  
           unless deployment_requirements_met?
             info 'Deployment is only supported on Liferay on Tomcat. Patches are welcome.'
             info 'Copy these XML files into the portlet container\'s WEB-INF.'
@@ -516,6 +522,7 @@ module Caterpillar
         end
       end
     end
+
     def define_deploy_war_task
       @name = :deploy
       with_namespace_and_config do |name, config|
@@ -554,13 +561,38 @@ module Caterpillar
       end
     end
 
-
-
-
     def with_namespace_and_config
       name, config = @name, @config
       namespace name do
         yield name, config
+      end
+    end
+
+    def define_rails_task
+      task :rails do
+        exit 1 unless conferring_step 'Checking for required gems...' do 
+          check_required_gems
+        end
+        exit 1 unless conferring_step 'Checking for JRuby binary...' do
+          check_jruby
+        end
+        exit 1 unless conferring_step 'Checking for required gems in JRuby...' do
+          check_jruby_required_gems
+        end
+        exit 1 unless conferring_step 'Creating Rails project...' do
+          create_rails_project
+        end
+        exit 1 unless conferring_step 'Updating config/environment.rb...' do
+          update_environment(ARGV[1] + '/config/environment.rb')
+        end
+        exit 1 unless conferring_step 'Activating caterpillar...' do
+          # Rake::Task['pluginize'].execute         
+          Dir.chdir("#{ARGV[1]}/vendor/plugins"){system 'ruby -S gem unpack caterpillar >/dev/null'}
+          Dir.chdir("#{ARGV[1]}"){system 'script/generate caterpillar >/dev/null'}
+        end
+        exit 1 unless conferring_step 'Configuring warbler...' do
+          Dir.chdir("#{ARGV[1]}"){system 'ruby -S warble config >/dev/null 2>&1'}
+        end
       end
     end
 
@@ -614,7 +646,76 @@ module Caterpillar
       @logger ? @logger.info(msg) : STDOUT.puts(msg)
     end
 
+    private
 
+    def check_required_gems
+      gems = @required_gems
+      available_gems = []
 
+      gems.each {|gem| available_gems << gem if Gem::available? gem}
+      gems_not_found = (gems - available_gems)
+
+      if gems_not_found.empty?
+        return true
+      else
+        return "These required gems were not found: #{gems_not_found.join(' ')}\n" +
+          "Please install them with: ruby -S gem install #{gems_not_found.join(' ')}"
+      end
+    end
+
+    def check_jruby
+      has_jruby = system 'jruby --copyright >/dev/null 2>&1'
+      
+      if has_jruby
+        return true
+      else
+        return "jruby binary was not found in your path\n" +
+          "Please visit: http://jruby.org/"
+      end
+    end
+
+    def check_jruby_required_gems
+      jruby_gems = `jruby -S gem list`
+      available_gems = []
+      
+      @required_gems.each {|gem| available_gems << gem if jruby_gems.match(gem)}
+      gems_not_found = (@required_gems - available_gems)
+
+      if gems_not_found.empty?
+        return true
+      else
+        return "These required gems were not found: #{gems_not_found.join(' ')}\n" +
+          "Please install them with: jruby -S gem install #{gems_not_found.join(' ')}"
+      end
+    end
+
+    def create_rails_project
+      return 'specify rails project name' if ARGV[1].nil?
+      return "#{ARGV[1]} folder name already exists" if FileTest.exists? ARGV[1]
+      return system "ruby -S rails #{ARGV[1]} >/dev/null"
+    end
+
+    def update_environment(file_path)
+      file = File.read(file_path).
+        sub(/([ ]*#[ ]*config\.gem)/,
+            "  config.gem 'caterpillar', :version => '#{Caterpillar::VERSION}'\n" + '\1')
+      File.open(file_path, 'w') {|f| f << file}
+    end
+
+    def conferring_step(message)
+      STDOUT.print message
+      STDOUT.flush
+      
+      result = yield
+      if result.class == String or result.class == NilClass
+        STDOUT.puts "\e[31mFAILED\e[0m"
+        puts result unless result.nil?
+        return false
+      else
+        STDOUT.puts "\e[32mOK\e[0m"
+        return true
+      end
+    end
+      
   end
 end

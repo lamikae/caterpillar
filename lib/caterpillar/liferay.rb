@@ -137,8 +137,10 @@ module Caterpillar # :nodoc:
       # The @deploy_dir variable does not need checking,
       # as the method deploy_dir() does that.
       #if deploy_dir_defined?
-
-      return File.join(self.deploy_dir(),root_dir,'WEB-INF')
+                                  
+      #self.deploy_dir(),    
+      # Xml files need to be in WEB-INF and not, for example, /opt/liferay/deploy
+      return File.join(File.join(self.root,'webapps'), root_dir,'WEB-INF')
     end
 
     # Reads Liferay portlet descriptor XML files and parses them with Hpricot.
@@ -330,7 +332,7 @@ module Caterpillar # :nodoc:
       xml << "    <use-default-template>true</use-default-template>\n"
 
       # can there be several portlet instances on the same page?
-      xml << "    <instanceable>false</instanceable>\n"
+      xml << "    <instanceable>#{portlet[:instanceable]}</instanceable>\n"
 
       # The default value of ajaxable is true. If set to false, then this portlet can never be displayed via Ajax.
       xml << "    <ajaxable>true</ajaxable>\n"

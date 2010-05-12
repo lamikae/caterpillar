@@ -112,6 +112,9 @@ module Caterpillar
         title = _title.gsub(/ä/,'a').gsub(/ö/,'o').gsub(/Ä/,'A').gsub(/Ö/,'O')
         portlet.update( :title => title )
 
+        portlet[:edit_mode] ||= nil
+        portlet[:instanceable] ||= false
+
         ### unless defined, use default javascripts
         portlet[:javascripts] ||= @config.javascripts
 
