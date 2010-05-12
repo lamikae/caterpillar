@@ -9,7 +9,7 @@
 #++
 
 module Caterpillar
-  VERSION='1.3.1'
+  VERSION='1.3.0'
 end
 
 this_file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
