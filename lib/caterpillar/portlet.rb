@@ -84,6 +84,16 @@ module Caterpillar
         xml << "      <portlet-mode>edit</portlet-mode>\n"
       end
       xml << "    </supports>\n"
+      
+      # Public Render Parameters
+      if portlet[:public_render_parameters] and portlet[:public_render_parameters].length > 0
+        portlet[:public_render_parameters].each do |param|
+          xml << "    <supported-public-render-parameter>\n"
+          xml << "      #{param}\n"
+          xml << "    </supported-public-render-parameter>\n"
+        end
+      end
+      
       ### title for portlet container
       xml << "    <portlet-info>\n"
       xml << "      <title>%s</title>\n" % portlet[:title]

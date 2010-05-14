@@ -20,7 +20,9 @@ module Caterpillar
 
     attr_accessor :edit_mode
     
-    attr_accessor :instanceable
+    attr_accessor :instanceable 
+    
+    attr_accessor :public_render_parameters
 
     attr_accessor :host
 
