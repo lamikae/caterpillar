@@ -126,10 +126,7 @@ module Caterpillar
         tasks << "#{@name}:liferaydisplay"
       end
 
-      # print produced portlets
-      #tasks << :portlets
-
-      task :xml => tasks
+      task :makexml => tasks
     end
 
     # Prints the list of portlets.
@@ -219,7 +216,7 @@ module Caterpillar
           f=File.open(file,'w')
           f.write Portlet.xml(@portlets)
           f.close
-          info '-> %s' % file
+          #info '-> %s' % file
         end
       end
     end
@@ -236,7 +233,7 @@ module Caterpillar
           f=File.open(file,'w')
           f.write config.container.portletapp_xml(@portlets)
           f.close
-          info '-> %s' % file
+          #info '-> %s' % file
         end
       end
     end
@@ -256,7 +253,7 @@ module Caterpillar
           f=File.open(file,'w')
           f.write config.container.display_xml(@portlets)
           f.close
-          info '-> %s' % file
+          #info '-> %s' % file
         end
       end
     end
@@ -491,15 +488,15 @@ module Caterpillar
       # only update the DB if the lportal gem is loaded
       tasks << 'db:update' if defined?(Lportal)
 
-      [:xml, :warble, 'deploy:xml', 'deploy:war'].each { |task| tasks << task }
+      ['deploy:xml', 'warble', 'deploy:war'].each { |task| tasks << task }
       task :deploy => tasks
     end
 
     def define_deploy_xml_task
       @name = :deploy
       with_namespace_and_config do |name, config|
-        desc 'Deploys the XML files'  
-        task :xml do                  
+        desc 'Builds and deploys the XML files'
+        task :xml => 'makexml' do
           unless deployment_requirements_met?
             info 'Deployment is only supported on Liferay on Tomcat. Patches are welcome.'
             info 'Copy these XML files into the portlet container\'s WEB-INF.'
@@ -508,11 +505,11 @@ module Caterpillar
           end
 
           target = @config.container.WEB_INF
-          info 'deploying XML files to %s' % target
+          info 'deploying XML files'
 
           @xml_files.each do |file|
-            exit 1 unless system('cp %s %s' % [file,target])
-            info ' %s' % [file]
+            FileUtils.cp(file,target)
+            info "-> " + File.join(target, File.basename(file))
           end
         end
       end
