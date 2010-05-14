@@ -109,9 +109,7 @@ module Caterpillar
           puts "I can't find a place to build my nest"
           puts "(directory 'vendor/plugins' is missing)"
         else
-          Dir.chdir("vendor/plugins") do
-            ruby "-S", "gem", "unpack", "caterpillar"
-          end
+          ruby "-S", "gem", "unpack", "caterpillar", "--target", "vendor/plugins"
           ruby "./script/generate caterpillar"
         end
       end
