@@ -1,6 +1,4 @@
 # encoding: utf-8
-
-
 #--
 # (c) Copyright 2008,2009,2010 Mikael Lammentausta
 #
@@ -414,10 +412,9 @@ module Caterpillar
           require 'find'
           Find.find(target) do |file|
             if File.basename(file) =~ /rails-portlet/
-              version = file[/(\d.\d.\d).jar/,1]
-              info 'Uninstalling Rails-portlet version %s from %s' % [version, target]
-              exit 1 unless system('rm -f %s' % file)
-              exit 0
+              version = file[/(\d.\d*.\d).jar/,1]
+              info 'Uninstalling Rails-portlet JAR version %s from %s' % [version, target]
+              exit File.delete(file)
             end
           end
 
@@ -430,7 +427,7 @@ module Caterpillar
     def define_jar_version_task
       @name = :jar
       with_namespace_and_config do |name, config|
-        desc 'Checks the installed Rails-portlet version'
+        desc 'Checks the installed Rails-portlet JAR version'
         task :version do
           raise 'Only Liferay is supported' unless deployment_requirements_met?
           require 'find'
@@ -438,13 +435,13 @@ module Caterpillar
 
           Find.find(target) do |file|
             if File.basename(file) =~ /rails-portlet/
-              version = file[/(\d.\d.\d).jar/,1]
-              info 'Rails-portlet version %s found in %s' % [version, target]
+              version = file[/(\d.\d*.\d).jar/,1]
+              info 'Rails-portlet version %s found: %s' % [version, file]
               exit 0
             end
           end
 
-          info 'Rails-portlet was not found in %s' % target
+          info 'Rails-portlet JAR was not found in %s' % target
           exit 1
         end
       end
