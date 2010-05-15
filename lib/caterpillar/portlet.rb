@@ -1,6 +1,4 @@
 # encoding: utf-8
-
-
 #--
 # (c) Copyright 2008, 2010 Mikael Lammentausta
 # See the file LICENSES.txt included with the distribution for
@@ -88,6 +86,8 @@ module Caterpillar
       xml << "    <portlet-info>\n"
       xml << "      <title>%s</title>\n" % portlet[:title]
       xml << "    </portlet-info>\n"
+      ### init parameters, XXX: fails xsd test
+#=begin
       # insert session key
       unless session.nil?
         xml << "    <init-param>\n"+\
@@ -102,6 +102,7 @@ module Caterpillar
                "      <value>#{session[:secret]}</value>\n"+\
                "    </init-param>\n"
       end
+#=end
       roles.each do |role|
         xml << "    <security-role-ref>\n"
         xml << "      <role-name>#{role}</role-name>\n"
@@ -116,6 +117,7 @@ module Caterpillar
       xml << "    <filter-class>%s</filter-class>\n" % self.portlet_filter_class
       xml << "    <lifecycle>RENDER_PHASE</lifecycle>\n"
       xml << "    <lifecycle>RESOURCE_PHASE</lifecycle>\n"
+
       # define host, servlet and route (path to be more precise)
       xml << "    <init-param>\n"
       xml << "      <name>host</name>\n"
@@ -129,6 +131,7 @@ module Caterpillar
       xml << "      <name>route</name>\n"
       xml << "      <value>%s</value>\n" % portlet[:path].gsub(/&/,"&amp;")
       xml << "    </init-param>\n"
+
       xml << "  </filter>\n\n"
 
       xml << "  <filter-mapping>\n"

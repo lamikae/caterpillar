@@ -19,13 +19,6 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     }
   end
 
-  def test_portlet_xml
-    xml = Caterpillar::Portlet.xml(@portlets)
-    assert_not_nil xml
-    assert !xml.empty?        
-    assert xml[/secret/]
-  end
-  
   def test_portlet_template
     portlet = {
       :name  => "some name",
@@ -53,7 +46,7 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     assert_not_nil xml
     assert !xml.empty?
 
-    assert xml[/#{session[:secret]}/]
+    assert xml[/#{session[:secret]}/], 'No secret'
   end
 
   def test_session_key
@@ -65,13 +58,22 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     secret = Caterpillar::Security.get_secret
     assert_not_nil secret
   end
-  
+
+  def test_portlet_xml
+    xml = Caterpillar::Portlet.xml(@portlets)
+
+    # parse xml document
+    doc = LibXML::XML::Parser.string(xml).parse
+
+    schema = LibXML::XML::Schema.new(File.join(@dtd_dir,'portlet-app_2_0.xsd'))
+    assert doc.validate_schema(schema)
+  end
 
   def test_liferay_display_xml
     @liferay_tld_table.each_pair do |version,tld|
       @config.container.version = version
       xml = @config.container.display_xml(@portlets)
-      assert !xml.empty?
+
       assert xml[/liferay-display.*#{tld}/],
         'Failed to create DTD with proper version; liferay %s' % version
 
@@ -91,7 +93,7 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     @liferay_tld_table.each_pair do |version,tld|
       @config.container.version = version
       xml = @config.container.portletapp_xml(@portlets)
-      assert !xml.empty?
+
       assert xml[/liferay-portlet-app.*#{tld}/],
         'Failed to create DTD with proper version; liferay %s' % version
 
