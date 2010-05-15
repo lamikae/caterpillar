@@ -280,26 +280,12 @@ module Caterpillar # :nodoc:
       '</%s>' % doctype
     end
 
-    # TODO: DTD version detection based on self.version
+    # DTD version detection based on self.version
     def dtd_version(type)
-      case type
-      when 'liferay-portlet-app'
-        if @version[/5.1/]
-          '5.1.0'
-        elsif @version[/5.2/]
-          '5.2.0'
-        else
-          @version
-        end
-      when 'display'
-        if @version[/5.1/]
-          '5.1.0'
-        elsif @version[/5.2/]
-          '5.2.0'
-        else
-          @version
-        end
-      end
+      #case type
+      #when 'liferay-portlet-app'
+      #when 'display'
+      self.version[/.../] + '.0'
     end
 
     # liferay-portlet-ext definition
