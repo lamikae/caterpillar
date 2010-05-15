@@ -1,10 +1,16 @@
 # encoding: utf-8
 
-
 require 'test_helper'
 require File.dirname(File.expand_path(__FILE__))+'/test_helper'
 
+require 'libxml'
+
 class XmlTest < Caterpillar::TestCase # :nodoc:
+
+  def setup
+    super
+    @dtd_dir = File.dirname(File.expand_path(__FILE__)) + '/dtd'
+  end
 
   def test_portlet_xml
     xml = Caterpillar::Portlet.xml(@portlets)
@@ -70,9 +76,17 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
       assert_not_nil xml
       assert !xml.empty?
       assert_not_nil xml[/liferay-portlet-app.*#{tld}/], 'Failed to create DTD with proper version; liferay %s' % version
+
+      # parse DTD
+      dtd_file = File.join(@dtd_dir,'liferay-portlet-app_%s.dtd' % tld.gsub('.','_'))
+      dtd = LibXML::XML::Dtd.new(File.read(dtd_file))
+
+      # parse xml document to be validated
+      doc = LibXML::XML::Parser.string(xml).parse
+
+      # validate
+      assert doc.validate(dtd)
     end
   end
-
-
 
 end
