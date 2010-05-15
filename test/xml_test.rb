@@ -10,6 +10,13 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
   def setup
     super
     @dtd_dir = File.dirname(File.expand_path(__FILE__)) + '/dtd'
+    # what DTD version to match against:
+    # Liferay version => DTD version
+    @liferay_tld_table = {
+      '5.1.1' => '5.1.0',
+      '5.2.0' => '5.2.0',
+      '6.0.1' => '6.0.0'
+    }
   end
 
   def test_portlet_xml
@@ -61,27 +68,38 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
   
 
   def test_liferay_display_xml
-# FIXME
-#    xml = @config.container.display_xml(@portlets)
-#    assert_not_nil xml
-#    assert !xml.empty?
+    @liferay_tld_table.each_pair do |version,tld|
+      @config.container.version = version
+      xml = @config.container.display_xml(@portlets)
+      assert !xml.empty?
+      assert xml[/liferay-display.*#{tld}/],
+        'Failed to create DTD with proper version; liferay %s' % version
+
+      # parse DTD
+      dtd_file = File.join(@dtd_dir,'liferay-display_%s.dtd' % tld.gsub('.','_'))
+      dtd = LibXML::XML::Dtd.new(File.read(dtd_file))
+
+      # parse xml document
+      doc = LibXML::XML::Parser.string(xml).parse
+
+      # validate
+      assert doc.validate(dtd)
+    end
   end
 
   def test_liferay_portlet_xml
-    { '5.1.1' => '5.1.0',
-      '5.2.0' => '5.2.0' }.each_pair do |version,tld|
-
+    @liferay_tld_table.each_pair do |version,tld|
       @config.container.version = version
       xml = @config.container.portletapp_xml(@portlets)
-      assert_not_nil xml
       assert !xml.empty?
-      assert_not_nil xml[/liferay-portlet-app.*#{tld}/], 'Failed to create DTD with proper version; liferay %s' % version
+      assert xml[/liferay-portlet-app.*#{tld}/],
+        'Failed to create DTD with proper version; liferay %s' % version
 
       # parse DTD
       dtd_file = File.join(@dtd_dir,'liferay-portlet-app_%s.dtd' % tld.gsub('.','_'))
       dtd = LibXML::XML::Dtd.new(File.read(dtd_file))
 
-      # parse xml document to be validated
+      # parse xml document
       doc = LibXML::XML::Parser.string(xml).parse
 
       # validate
