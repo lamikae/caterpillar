@@ -8,16 +8,17 @@ spec = Gem::Specification.new do |s|
   s.name = %q{caterpillar}
   s.authors = ["Mikael Lammentausta"]
   s.email = %q{mikael.lammentausta@gmail.com}
-  s.homepage = %q{http://rails-portlet.rubyforge.org}
+  s.homepage = %q{http://github.com/lamikae/caterpillar}
   s.version = Caterpillar::VERSION
 
-# lportal has broken system of requiring Rails gems....
-#  s.add_dependency("lportal", ">= 1.0.18")
   if RUBY_PLATFORM =~ /java/
 	# FIXME: Just make sure the hpricot-java gem is installed...
 #	 s.add_dependency("hpricot", ">= 0.6.164", 'java')
   else
-	 s.add_dependency("hpricot", ">= 0.6.164")
+	# hpricot for XML parsing
+	s.add_dependency("hpricot", ">= 0.6.164")
+	# libxml for DTD checks in tests
+	s.add_dependency("libxml-ruby")
   end
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
