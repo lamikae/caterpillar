@@ -19,7 +19,7 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     }
   end
 
-  def test_portlet_template
+  def test_portlet_elements
     portlet = {
       :name  => "some name",
       :title => "some title",
@@ -32,21 +32,17 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
       :secret => 'XXX'
     }
     
-    xml = Caterpillar::Portlet.template(portlet)
-    assert_not_nil xml
-    assert !xml.empty?
-
+    xml = Caterpillar::Portlet.portlet_element(portlet).to_s
     assert xml[/#{portlet[:name]}/]
     assert xml[/#{portlet[:title]}/]
-    assert xml[/#{portlet[:servlet]}/]
-    assert xml[/#{portlet[:path]}/]
     assert !xml[/secret/]
 
-    xml = Caterpillar::Portlet.template(portlet,session)
-    assert_not_nil xml
-    assert !xml.empty?
-
+    xml = Caterpillar::Portlet.portlet_element(portlet,session).to_s
     assert xml[/#{session[:secret]}/], 'No secret'
+
+    xml = Caterpillar::Portlet.filter_element(portlet).to_s
+    assert xml[/#{portlet[:servlet]}/]
+    assert xml[/#{portlet[:path]}/]
   end
 
   def test_session_key
