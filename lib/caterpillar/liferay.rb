@@ -1,12 +1,12 @@
 # encoding: utf-8
-
-
 #--
-# (c) Copyright 2008,2009 Mikael Lammentausta
+# (c) Copyright 2008-2010 Mikael Lammentausta
 #
 # See the file MIT-LICENSE included with the distribution for
 # software license details.
 #++
+
+require "rexml/document"
 
 module Caterpillar # :nodoc:
 
@@ -209,94 +209,78 @@ module Caterpillar # :nodoc:
 
     # liferay-portlet XML
     def portletapp_xml(portlets)
-      doctype = 'liferay-portlet-app'
-      xml = xml_header(doctype)
-      portlets.each do |p|
-        xml << portletapp_template(p)
+      doc = REXML::Document.new
+      doc << REXML::XMLDecl.new('1.0', 'utf-8') 
+      doc << REXML::DocType.new('liferay-portlet-app',
+        'PUBLIC  '+\
+        '"-//Liferay//DTD Portlet Application %s//EN"  ' % (self.dtd_version) +\
+        '"http://www.liferay.com/dtd/liferay-portlet-app_%s.dtd"' % self.dtd_version.gsub('.','_')
+        )
+      app = REXML::Element.new('liferay-portlet-app', doc)
+
+      portlets.each do |portlet|
+        # <portlet>
+        app.elements << self.portlet_element(portlet)
+        # <role-mapper>s
+        roles.each {|role| app.elements << role}
       end
-      xml << roles
-      xml << portlet_xml_footer(doctype)
+
+      xml = ''
+      doc.write(xml, 2) # indent by 2 spaces
+      return xml.gsub('\'', '"') # fix rexml attribute single quotes to double quotes
     end
 
     # liferay-display XML
     def display_xml(portlets)
-      xml = self.xml_header('display')
+      doc = REXML::Document.new
+      doc << REXML::XMLDecl.new('1.0', 'utf-8') 
+      doc << REXML::DocType.new('liferay-display',
+        'PUBLIC  '+\
+        '"-//Liferay//DTD Display %s//EN"  ' % (self.dtd_version) +\
+        '"http://www.liferay.com/dtd/liferay-display_%s.dtd"' % self.dtd_version.gsub('.','_')
+        )
+      display = REXML::Element.new('display', doc)
 
       categories = []
-      # process Rails portlets
-      Util.categorize(portlets).each_pair do |category,portlets|
-        categories << category
-        xml << self.display_template(category,portlets)
+      # include portlets
+      Util.categorize(portlets).each_pair do |category_name,portlets|
+        categories << category_name
+        category = REXML::Element.new('category', display)
+        category.attributes['name'] = category_name.to_s
+        portlets.each do |portlet|
+          category.add_element 'portlet', {'id' => portlet[:name]}
+        end
       end
 
       # include other native Liferay portlets and categories
       if self.WEB_INF
-        require 'hpricot'
+        filename = File.join(self.WEB_INF,'liferay-display.xml')
+        liferay_display = REXML::Document.new(File.new(filename))
 
-        filename = self.WEB_INF+'/liferay-display.xml'
-        f=File.open(filename,'r')
-        doc = Hpricot.XML(f.read)
-        f.close
-        (doc/"display/category").each do |el|
-          unless categories.include?(el.attributes['name'])
-            xml << '  ' + el.to_original_html + "\n"
+        liferay_display.elements.each("display/category") do |element|
+          # skip categories already included 
+          unless categories.include?(element.attributes['name'])
+            display << element
           end
         end
       end
 
-      xml << self.portlet_xml_footer('display')
-      return xml
+      xml = ''
+      doc.write(xml, 2) # indent by 2 spaces
+      return xml.gsub('\'', '"') # fix rexml attribute single quotes to double quotes
     end
 
     protected
 
-    # common XML header
-    def xml_header(doctype)
-      version = self.dtd_version(doctype)
-      xml =  '<?xml version="1.0" encoding="UTF-8"?>'
-      xml << "\n"
-      xml << '<!DOCTYPE %s PUBLIC' % doctype
-      case doctype
-
-      when 'liferay-portlet-app'
-        xml << '  "-//Liferay//DTD Portlet Application %s//EN"' % version
-        xml << '  "http://www.liferay.com/dtd/%s_%s.dtd">' % [
-        doctype, version.gsub('.','_') ]
-
-      when 'display'
-        xml << '  "-//Liferay//DTD Display %s//EN"' % version
-        xml << '  "http://www.liferay.com/dtd/liferay-%s_%s.dtd">' % [
-        doctype, version.gsub('.','_') ]
-
-      end
-      xml << "\n\n"
-      xml << '<%s>' % doctype
-      xml << "\n"
-      return xml
-    end
-
-    # common XML footer
-    def portlet_xml_footer(doctype)
-      '</%s>' % doctype
-    end
-
-    # DTD version detection based on self.version
-    def dtd_version(type)
-      #case type
-      #when 'liferay-portlet-app'
-      #when 'display'
-      self.version[/.../] + '.0'
-    end
-
-    # liferay-portlet-ext definition
+    # <portlet> element for liferay-portlet-ext.xml
     #
     # http://www.liferay.com/web/guest/community/wiki/-/wiki/Main/Liferay-portlet.xml
     #
-    # The content of element type "portlet" must match "(portlet-name,icon?,virtual-path?,struts-path?,configuration-path?,configuration-action-class?,indexer-class?,open-search-class?,scheduler-class?,portlet-url-class?,friendly-url-mapper-class?,url-encoder-class?,portlet-data-handler-class?,portlet-layout-listener-class?,poller-processor-class?,pop-message-listener-class?,social-activity-interpreter-class?,social-request-interpreter-class?,webdav-storage-token?,webdav-storage-class?,control-panel-entry-category?,control-panel-entry-weight?,control-panel-entry-class?,preferences-company-wide?,preferences-unique-per-layout?,preferences-owned-by-group?,use-default-template?,show-portlet-access-denied?,show-portlet-inactive?,action-url-redirect?,restore-current-view?,maximize-edit?,maximize-help?,pop-up-print?,layout-cacheable?,instanceable?,scopeable?,user-principal-strategy?,private-request-attributes?,private-session-attributes?,render-weight?,ajaxable?,header-portal-css*,header-portlet-css*,header-portal-javascript*,header-portlet-javascript*,footer-portal-css*,footer-portlet-css*,footer-portal-javascript*,footer-portlet-javascript*,css-class-wrapper?,facebook-integration?,add-default-resource?,system?,active?,include?)".
-    def portletapp_template(portlet)
-      xml =  "  <portlet>\n"
-      xml << "    <portlet-name>%s</portlet-name>\n" % portlet[:name]
-      xml << "    <icon>%s</icon>\n" % [
+    def portlet_element(portlet)
+      element = REXML::Element.new('portlet')
+
+      REXML::Element.new('portlet-name', element).text = portlet[:name]
+      REXML::Element.new('icon', element).text = [
           portlet[:host], portlet[:servlet], 'favicon.png' # .ico does not work on Firefox 3.0
         ].join('/').gsub(/([^:])\/\//,'\1/')
 
@@ -305,9 +289,8 @@ module Caterpillar # :nodoc:
       # Note that when the control panel settings are defined,
       # the portlet cannot be instanceable.
       unless @version[/5.1/]
-        xml << "    <control-panel-entry-category>#{portlet[:category]}</control-panel-entry-category>\n"
-        xml << "    <control-panel-entry-weight>420.0</control-panel-entry-weight>\n"
-        #xml << "    <control-panel-entry-class></control-panel-entry-class>\n"
+        REXML::Element.new('control-panel-entry-category', element).text = portlet[:category]
+        REXML::Element.new('control-panel-entry-weight', element).text = '420.0'
       end
 
       # Set the use-default-template value to true if the portlet uses the default template to decorate and wrap content. Setting this to false allows the developer to own and maintain the portlet's entire outputted content. The default value is true.
@@ -315,60 +298,52 @@ module Caterpillar # :nodoc:
       # The most common use of this is if you want the portlet to look different from the other portlets or if you want the portlet to not have borders around the outputted content.
       #
       # RD: This is a nice option except that if you set it, then you loose all border functionality including drag, drop, min,max,edit,conf,close These should be controlled by a separate property.
-      xml << "    <use-default-template>true</use-default-template>\n"
+      REXML::Element.new('use-default-template', element).text = 'true'
 
       # can there be several portlet instances on the same page?
-      xml << "    <instanceable>#{portlet[:instanceable]}</instanceable>\n"
+      REXML::Element.new('instanceable', element).text = portlet[:instanceable].to_s
 
       # The default value of ajaxable is true. If set to false, then this portlet can never be displayed via Ajax.
-      xml << "    <ajaxable>true</ajaxable>\n"
+      REXML::Element.new('ajaxable', element).text = 'true'
 
       # include javascripts?
       js_tag = (@version[/5.1/] ? 'header' : 'footer') + '-portal-javascript'
       portlet[:javascripts].each do |js|
-        xml << "    <#{js_tag}>"
-        xml << "/#{portlet[:servlet]}/javascripts/#{js}"
-        xml << "</#{js_tag}>\n"
+        REXML::Element.new(js_tag, element).text = "/#{portlet[:servlet]}/javascripts/#{js}"
       end
 
       # If the add-default-resource value is set to true, the default portlet resources and permissions are added to the page. The user can then view the portlet.
-      xml << "    <add-default-resource>true</add-default-resource>\n"
-      xml << "    <system>false</system>\n"
-      xml << "    <active>true</active>\n"
-      xml << "    <include>true</include>\n"
+      REXML::Element.new('add-default-resource', element).text = 'true'
+      REXML::Element.new('system', element).text = 'false'
+      REXML::Element.new('active', element).text = 'true'
+      REXML::Element.new('include', element).text = 'true'
 
-      xml << "  </portlet>\n\n"
+      return element
     end
 
-    def display_template(category,portlets)
-      xml = '  <category name="%s">' % category +"\n"
-      portlets.each do |p|
-        xml << '    <portlet id="%s" />' % p[:name] + "\n"
-      end
-      xml << "  </category>\n\n"
+    # DTD version based on self.version
+    def dtd_version
+      self.version[/.../] + '.0'
     end
 
     private
 
     # XML role-mapper.
-    # Has to be duplicated in -ext.xml
     def roles
-      xml =  "  <role-mapper>\n"
-      xml << "    <role-name>administrator</role-name>\n"
-      xml << "    <role-link>Administrator</role-link>\n"
-      xml << "  </role-mapper>\n"
-      xml << "  <role-mapper>\n"
-      xml << "    <role-name>guest</role-name>\n"
-      xml << "    <role-link>Guest</role-link>\n"
-      xml << "  </role-mapper>\n"
-      xml << "  <role-mapper>\n"
-      xml << "    <role-name>power-user</role-name>\n"
-      xml << "    <role-link>Power User</role-link>\n"
-      xml << "  </role-mapper>\n"
-      xml << "  <role-mapper>\n"
-      xml << "    <role-name>user</role-name>\n"
-      xml << "    <role-link>User</role-link>\n"
-      xml << "  </role-mapper>\n"
+      elements = []
+      # name => link
+      {
+        'administrator' => 'Administrator',
+        'guest' => 'Guest',
+        'power-user' => 'Power User',
+        'user' => 'User'
+      }.each_pair do |name,link|
+        mapper = REXML::Element.new('role-mapper')
+        REXML::Element.new('role-name', mapper).text = name
+        REXML::Element.new('role-link', mapper).text = link
+        elements << mapper
+      end
+      return elements
     end
 
     public
