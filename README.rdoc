@@ -178,9 +178,26 @@ In your erb file you will have a form like this, where each attribute (that has 
     <%= submit_tag "Salve" %>
   <% end %>
 
+== Public Render Parameters
+
+To enable public parameters to your portlets, you must create the array <em>public_render_parameters</em>,in your <em>portlets.rb</em> instance configuration, where you will add the public variables (in our example, <em>param1</em> and <em>param2</em>). 
+  portlet.instances << {   
+    :name => 'home',
+    :public_render_parameters => [:param1, :param2]
+  }
+
+In your erb file, for each public parameter, you must use the sufix <em>_prp</em> . For example, to use the public variable <em>param1</em> in a textfield: 
+  	<%= text_field_tag :param1_prp, '' %>
 
 
-
+<b> Watch it! </b> 
+* You should <b>not</b> use the sufix <em>_prp</em> in <em>portlet.erb</em>. 
+* You must use the public render parameters in your erb file, <b>in a form</b>, using POST method. [It has to go through processAction]
+* Even if you've got only one variable to add to <em>public_render_parameters</em>, you <b>have</b> to use the brackets. 
+  portlet.instances << {   
+	  :name => 'home',
+	  :public_render_parameters => [:param1]
+  }
 
 
 
