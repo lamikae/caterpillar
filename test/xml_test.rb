@@ -73,6 +73,70 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     end
   end
 
+  def test_public_render_parameters_xml
+    portlet = {
+      :name  => "test_portlet",
+      :path => "/test/path",
+      :public_render_parameters => [:tag, :folksonomy]
+    }
+    
+    xml = Caterpillar::Portlet.template(portlet)
+    assert_not_nil xml
+    assert !xml.empty?
 
+    assert xml[/#{portlet[:name]}/]
+    assert xml[/#{portlet[:title]}/]
+    assert xml[/#{portlet[:servlet]}/]
+    assert xml[/#{portlet[:path]}/]
+    assert !xml[/secret/]
+
+    xml = Caterpillar::Portlet.template(portlet)
+    assert_not_nil xml
+    assert !xml.empty?
+
+    portlet[:public_render_parameters].each do |param|
+      assert xml[/#{param}/]
+    end
+    
+    assert xml[/<supported-public-render-parameter>/]
+    assert xml[/<public-render-parameter>/]
+  end
 
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
