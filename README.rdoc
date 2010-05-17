@@ -195,10 +195,9 @@ In your erb file, for each public parameter, you must use the sufix <b>_prp</b> 
 * You must use the public render parameters in your erb file, <b>in a form</b>, using POST method. [It has to go through processAction]
 * Even if you've got only one variable to add to <em>public_render_parameters</em>, you <b>have</b> to use the brackets.
   portlet.instances << {   
-	  :name => 'home',
-	  :public_render_parameters => [:param1]
+    :name => 'home',
+    :public_render_parameters => [:param1, :param2]
   }
-
 
 
 
