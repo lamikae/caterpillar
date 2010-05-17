@@ -4,6 +4,9 @@
 # This generator installs the required files into the main Rails application.
 # This generator should always be run after upgrading the plugin.
 class CaterpillarGenerator < Rails::Generator::Base
+  
+  attr_accessor :project_name
+  
   def msg(txt)
     _txt = " *\n"
     txt.split("\n").each do |line|
@@ -28,15 +31,16 @@ class CaterpillarGenerator < Rails::Generator::Base
     this_dir = File.dirname(File.expand_path(file))
     tmpl = File.join(this_dir,'templates')
 
+    @project_name = RAILS_ROOT.split('/')[-1]
     msg 'Installing configuration file with images, stylesheets and javascripts.'
 
     record do |m|
 
       ### config ###
-      m.directory('config')
-      file = 'portlets.rb'
-      m.file(File.join('config',file), File.join('config',file))
-
+#     m.directory('config')
+#     file = 'portlets.rb'
+#     m.file(File.join('config',file), File.join('config',file))
+      m.template('config/portlets.rb','config/portlets.rb')
 
       ### Navigation ###
       target = File.join('public','images')
@@ -44,9 +48,9 @@ class CaterpillarGenerator < Rails::Generator::Base
       file = 'caterpillar.gif'
       m.file(File.join('images','caterpillar',file), File.join(target,file))
 
-
       ### Test bench ###
       testb = 'portlet_test_bench'
+      
       #
       # images
       #
@@ -61,6 +65,7 @@ class CaterpillarGenerator < Rails::Generator::Base
           m.file(File.join('images',testb,img), File.join(target,img))
         end
       end
+      
       #
       # stylesheets
       #
@@ -68,6 +73,7 @@ class CaterpillarGenerator < Rails::Generator::Base
       m.directory(target)
       file = 'main.css'
       m.file(File.join('stylesheets',testb,file), File.join(target,file))
+      
       #
       # javascripts
       #

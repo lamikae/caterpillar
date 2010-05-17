@@ -61,6 +61,7 @@ module Caterpillar
     private
 
     def define_tasks
+      define_version_task
       define_xml_task
       define_usage_task
       define_config_task
@@ -84,6 +85,12 @@ module Caterpillar
       define_deploy_xml_task
       define_deploy_war_task
       define_rails_task
+    end
+
+    def define_version_task
+      task :version do
+        puts Caterpillar::VERSION
+      end
     end
 
     def define_usage_task
@@ -581,6 +588,7 @@ module Caterpillar
         end
         exit 1 unless conferring_step 'Creating Rails project...' do
           create_rails_project
+          Dir.chdir("#{ARGV[1]}"){system("ruby script/generate html_template >/dev/null")}
         end
         exit 1 unless conferring_step 'Updating config/environment.rb...' do
           update_environment(ARGV[1] + '/config/environment.rb')
@@ -588,10 +596,11 @@ module Caterpillar
         exit 1 unless conferring_step 'Activating caterpillar...' do
           # Rake::Task['pluginize'].execute         
           Dir.chdir("#{ARGV[1]}/vendor/plugins"){system 'ruby -S gem unpack caterpillar >/dev/null'}
-          Dir.chdir("#{ARGV[1]}"){system 'script/generate caterpillar >/dev/null'}
+          Dir.chdir("#{ARGV[1]}"){system 'ruby script/generate caterpillar >/dev/null'}
         end
         exit 1 unless conferring_step 'Configuring warbler...' do
           Dir.chdir("#{ARGV[1]}"){system 'ruby -S warble config >/dev/null 2>&1'}
+          update_warble(ARGV[1] +'/config/warble.rb' , ARGV[1].split('/')[-1])
         end
       end
     end
@@ -697,10 +706,18 @@ module Caterpillar
 
     def update_environment(file_path)
       file = File.read(file_path).
-        sub(/([ ]*#[ ]*config\.gem)/,
+          sub(/([ ]*#[ ]*config\.gem)/,
             "  config.gem 'caterpillar', :version => '#{Caterpillar::VERSION}'\n" + '\1')
       File.open(file_path, 'w') {|f| f << file}
     end
+
+    def update_warble(file_path, project_name)
+      file = File.read(file_path).
+          sub(/([ ]*#[ ]*config\.war_name = \"mywar\")/,
+            "  config.war_name = '#{project_name}-portlet'\n")
+      File.open(file_path, 'w') {|f| f << file}
+    end
+    
 
     def conferring_step(message)
       STDOUT.print message

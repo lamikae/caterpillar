@@ -39,13 +39,13 @@ Caterpillar::Config.new do |portlet|
 
   # The hostname and port.
   # By default the values are taken from the request.
-  portlet.host = 'http://0.0.0.0:3000'
+  # portlet.host = 'http://0.0.0.0:3000'
  
   # If the Rails is running inside a servlet container such as Tomcat,
   # you can define the servlet here.
   # By default the servlet is the name of the Rails app.
   # Without Warbler this should be an empty string.
-  portlet.servlet = ''
+  portlet.servlet = '<%= project_name %>-portlet'
  
   # Portlet category. This is only available for Liferay.
   # By default this is the same as the servlet.

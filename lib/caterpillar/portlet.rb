@@ -119,6 +119,16 @@ module Caterpillar
       end
       xml << "  </portlet>\n\n"
 
+      # Public Render Parameters
+      if portlet[:public_render_parameters] and portlet[:public_render_parameters].length > 0
+        portlet[:public_render_parameters].each do |param|
+          xml << "  <public-render-parameter>\n"
+          xml << "    <identifier>#{param}</identifier>\n"
+          xml << "    <qname xmlns:x=\"http://www.liferay.com/public-render-parameters\">x:#{param}</qname>\n"
+          xml << "  </public-render-parameter>\n\n"
+        end
+      end
+      
       ### portlet filters
       xml << "  <filter>\n"
       # the filter reads the settings and sets the portlet session
