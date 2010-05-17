@@ -197,7 +197,7 @@ In your erb file, for each public parameter, you must use the sufix <b>_prp</b> 
   
     portlet.instances << {   
       :name => 'home',
-      :public_render_parameters => [:param1, :param2]
+      :public_render_parameters => [:param1]
     }
 
 
