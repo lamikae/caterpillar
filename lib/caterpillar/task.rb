@@ -333,13 +333,15 @@ module Caterpillar
 
           # detect the version of the JAR to install
           portlet_jar = nil
-          version = (
-            if container_v and container_v[/^5.1/]
-              '0.6.0' # FIXME: branch properly
-            else
-              '0.10.0'
-            end
-          )
+          # XXX: since the filter name has changed, the old JAR does not work
+          #version = (
+          #  if container_v and container_v[/^5.1/]
+          #    '0.6.0' # FIXME: branch properly
+          #  else
+          #    '0.10.0'
+          #  end
+          #)
+          version = '0.10.0'
           require 'find'
           Find.find(source) do |file|
             if File.basename(file) == "rails-portlet-#{version}.jar"
