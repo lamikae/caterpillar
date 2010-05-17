@@ -56,7 +56,7 @@ module Caterpillar
         app.elements << self.filter_mapping(portlet)
       end
       xml = ''
-      doc.write(xml, 2) # indent by 2 spaces
+      doc.write(xml, -1) # no indentation, tag and text should be on same line
       return xml.gsub('\'', '"') # fix rexml attribute single quotes to double quotes
     end
 

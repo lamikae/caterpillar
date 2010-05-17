@@ -226,7 +226,7 @@ module Caterpillar # :nodoc:
       end
 
       xml = ''
-      doc.write(xml, 2) # indent by 2 spaces
+      doc.write(xml, -1) # no indentation, tag and text should be on same line
       return xml.gsub('\'', '"') # fix rexml attribute single quotes to double quotes
     end
 
@@ -234,7 +234,7 @@ module Caterpillar # :nodoc:
     def display_xml(portlets)
       doc = REXML::Document.new
       doc << REXML::XMLDecl.new('1.0', 'utf-8') 
-      doc << REXML::DocType.new('liferay-display',
+      doc << REXML::DocType.new('display',
         'PUBLIC  '+\
         '"-//Liferay//DTD Display %s//EN"  ' % (self.dtd_version) +\
         '"http://www.liferay.com/dtd/liferay-display_%s.dtd"' % self.dtd_version.gsub('.','_')
@@ -266,7 +266,7 @@ module Caterpillar # :nodoc:
       end
 
       xml = ''
-      doc.write(xml, 2) # indent by 2 spaces
+      doc.write(xml, -1) # no indentation, tag and text should be on same line
       return xml.gsub('\'', '"') # fix rexml attribute single quotes to double quotes
     end
 
