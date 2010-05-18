@@ -20,7 +20,7 @@ describe Caterpillar::Task do
   end
 
   it "should print version" do
-    silence { Rake::Task["version"].invoke }
+    capture { Rake::Task["version"].invoke }.should =~ /Caterpillar #{Caterpillar::VERSION}/
   end
 
 end

@@ -34,20 +34,14 @@ module Caterpillar
     # The main task.
     # Reads the configuration file and launches appropriate tasks.
     def initialize(name = :usage, config = nil, tasks = :define_tasks)
-      #STDOUT.puts 'Caterpillar v.%s (c) Copyright 2008,2009 Mikael Lammentausta' % VERSION
-      #STDOUT.puts 'Provided under the terms of the MIT license.'
-      #STDOUT.puts
-
       @name   = name
       @config = Util.eval_configuration(config)
-      @logger = @config.logger
       @xml_files = []
 
       if name == 'rails'
         @required_gems = %w(rails caterpillar jruby-jars warbler)
       else
-        if not @config.rails_root and not %w{generate version}.include?(name)
-          # don't exit
+        if not @config and not %w{generate version}.include?(name)
           Usage.show()
           exit 1
         end
@@ -99,7 +93,7 @@ module Caterpillar
         if RUBY_PLATFORM =~ /java/
           version_str << "JRuby #{JRUBY_VERSION}"
         end
-        STDOUT.puts version_str
+        $stdout.puts version_str
       end
     end
 
@@ -194,13 +188,18 @@ module Caterpillar
 
     # reads Rails environment configuration
     def define_environment_task
-      task :default => :test
       task :environment do
-        require(File.join(@config.rails_root, 'config', 'environment'))
+        begin
+          require(File.join(@config.rails_root, 'config', 'environment'))
+        rescue
+          $stderr.puts 'Rails environment could not be loaded'
+          exit 1
+        end
+
         if @config.container.is_a?(Caterpillar::Liferay)
           if @config.container.version.nil? and !defined?(Lportal)
-            STDERR.puts 'Liferay version is undefined, and lportal gem is not present.'
-            STDERR.puts 'Please define portlet.container.version in %s.' % @config.class::FILE
+            $stderr.puts 'Liferay version is undefined, and lportal gem is not present.'
+            $stderr.puts 'Please define portlet.container.version in %s.' % @config.class::FILE
             raise 'Insufficient configuration'
           end
           @config.container.version ||= Lportal::Schema.version
@@ -631,7 +630,7 @@ module Caterpillar
       end
 
       _sorted.each_pair do |category,portlets|
-        STDOUT.puts category
+        $stdout.puts category
         portlets.each do |portlet|
           # spaces
           spaces = ''
@@ -641,13 +640,13 @@ module Caterpillar
 
           #field = :path
           #fields = [:name, :id]
-          STDOUT.puts "\t" + portlet[:title] +spaces+ portlet[:name].inspect # + "\t" + portlet[:vars].inspect
+          $stdout.puts "\t" + portlet[:title] +spaces+ portlet[:name].inspect # + "\t" + portlet[:vars].inspect
         end
       end
     end
 
     def info(msg)
-      STDOUT.puts ' * ' + msg
+      $stdout.puts ' * ' + msg
     end
 
     def portal_info(config=@config)
@@ -657,7 +656,7 @@ module Caterpillar
         config.container.version,
         config.container.root
       ]
-      @logger ? @logger.info(msg) : STDOUT.puts(msg)
+      info(msg)
     end
 
     private
@@ -717,16 +716,16 @@ module Caterpillar
     end
 
     def conferring_step(message)
-      STDOUT.print message
-      STDOUT.flush
+      $stdout.print message
+      $stdout.flush
       
       result = yield
       if result.class == String or result.class == NilClass
-        STDOUT.puts "\e[31mFAILED\e[0m"
+        $stdout.puts "\e[31mFAILED\e[0m"
         puts result unless result.nil?
         return false
       else
-        STDOUT.puts "\e[32mOK\e[0m"
+        $stdout.puts "\e[32mOK\e[0m"
         return true
       end
     end
