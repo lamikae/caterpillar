@@ -4,8 +4,30 @@ require 'rake/rdoctask'
 require 'rake/gempackagetask'
 load 'caterpillar.gemspec'
 
+# gem install rspec -v 1.3.0
+require 'spec/rake/spectask'
+# gem install rcov
+require 'spec/rake/verify_rcov'
+
 desc 'Default: create API doc.'
 task :default => :rdoc
+
+Spec::Rake::SpecTask.new do |t|
+  t.spec_opts ||= []
+  t.spec_opts << "--options" << "spec/spec.opts"
+end
+
+Spec::Rake::SpecTask.new("spec:rcov") do |t|
+  t.spec_opts ||= []
+  t.spec_opts << "--options" << "spec/spec.opts"
+  t.rcov = true
+#  t.rcov_opts = ['--text-report', '--exclude', "gems/,spec/,rcov.rb,#{File.expand_path(File.join(File.dirname(__FILE__),'../../..'))}"] 
+  t.rcov_opts = ['--exclude', 'diff-lcs,rake,spec,rcov']
+end
+
+RCov::VerifyTask.new(:rcov => "spec:rcov") do |t|
+  t.threshold = 100
+end
 
 desc 'Generate documentation for the example plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
