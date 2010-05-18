@@ -23,4 +23,13 @@ describe Caterpillar::Task do
     capture { Rake::Task["version"].invoke }.should =~ /Caterpillar #{Caterpillar::VERSION}/
   end
 
+  it "should create a conf file" do
+    Dir.chdir('/tmp')
+    fn = "portlets-config.rb"
+    File.exist?(fn).should == false
+    silence { Rake::Task["generate"].invoke }
+    File.exist?(fn).should == true
+    rm_f fn
+  end
+
 end
