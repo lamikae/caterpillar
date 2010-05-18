@@ -199,6 +199,7 @@ In your erb file, for each public parameter, you must use the sufix <b>_prp</b> 
       :name => 'home',
       :public_render_parameters => [:param1]
     }
+* And remember, the <b>_prp</b> sufix is <b>removed</b> when the param is published, so "tag_prp" become just "tag" for the portlets that are listening to this parameter.
 
 
 
