@@ -191,7 +191,7 @@ In your erb file, for each public parameter, you must use the sufix <b>_prp</b> 
 
 
 <b> Watch it! </b> 
-* You should <b>not</b> use the sufix <b>_prp</b> in <em>portlet.erb</em>. 
+* You should <b>not</b> use the sufix <b>_prp</b> in <em>portlet.rb</em>. 
 * You must use the public render parameters in your erb file, <b>in a form</b>, using POST method. [It has to go through processAction]
 * Even if you've got only one variable to add to <b>public_render_parameters</b>, you <b>have</b> to use the brackets.
   
