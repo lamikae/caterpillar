@@ -192,10 +192,8 @@ module Caterpillar
         begin
           require(File.join(@config.rails_root, 'config', 'environment'))
         rescue
-          $stderr.puts 'Rails environment could not be loaded'
-          exit 1
+          raise 'Rails environment could not be loaded'
         end
-
         if @config.container.is_a?(Caterpillar::Liferay)
           if @config.container.version.nil? and !defined?(Lportal)
             $stderr.puts 'Liferay version is undefined, and lportal gem is not present.'
@@ -210,8 +208,10 @@ module Caterpillar
 
     # collects Rails' routes and parses the config
     def define_parse_task
-      task :parse => :environment do
-        @config.routes = Util.parse_routes(@config)
+      task :parse do
+        if @config.rails_root
+          @config.routes = Util.parse_routes(@config)
+        end
         @portlets = Parser.new(@config).portlets
       end
     end

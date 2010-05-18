@@ -10,17 +10,18 @@ module Caterpillar
   class Util
     class << self
 
-    # Reads the configuration
-    def eval_configuration(config=nil)
-      cf = File.join([RAILS_ROOT,Caterpillar::Config::FILE])
-      #STDERR.puts 'Caterpillar configuration file could not be found' unless File.exists?(cf)
-
-      if config.nil? && File.exists?(cf)
-        config = eval(File.open(cf) {|f| f.read})
+    # Reads and evaluates the configuration.
+    # If parameter is not given, read from default location (RAILS_ROOT/config/portlets.rb)
+    def eval_configuration(conf_file=nil)
+      return Config.new if not (conf_file or defined?(RAILS_ROOT))
+      # else . . .
+      conf_file ||= File.join([RAILS_ROOT,Caterpillar::Config::FILE])
+      if File.exists?(conf_file)
+        #$stdout.puts "Reading configuration from #{conf_file}" 
+        config = eval(File.open(conf_file) {|f| f.read})
       end
-      config ||= Config.new
       unless config.kind_of? Config
-        warn "Portlet config not provided by override in initializer or #{Config::FILE}; using defaults"
+        $stderr.puts "Configuration was not parsed properly"
         config = Config.new
       end
       return config
@@ -28,39 +29,53 @@ module Caterpillar
 
     # Collects Rails' named routes
     def parse_routes(config)
-# taken from Rails' "routes" task
-#         routes = ActionController::Routing::Routes.routes.collect do |route|
-#           name = ActionController::Routing::Routes.named_routes.routes.index(route).to_s
-#           verb = route.conditions[:method].to_s.upcase
-#           segs = route.segments.inject("") { |str,s| str << s.to_s }
-#           segs.chop! if segs.length > 1
-#           reqs = route.requirements.empty? ? "" : route.requirements.inspect
-#           {:name => name, :verb => verb, :segs => segs, :reqs => reqs}
-#         end
+      require 'action_controller'
+      require File.join(CATERPILLAR_LIBS, '..','portlet_test_bench', 'routing')
+      ActionController::Routing::RouteSet::Mapper.send :include, Caterpillar::Routing::MapperExtensions
 
-      ActionController::Routing::Routes.named_routes.collect do |route|
+      routes = config.instances.each.collect do |portlet|
 
-        # Ruby 1.9
-        if route.class == Symbol
-          name = route
-          _route = ActionController::Routing::Routes.named_routes.routes[route]
-        # Ruby 1.8
-        elsif route.class == Array
-          name = route[0]
-          _route = route[1] # 'ActionController::Routing::Route'
+        # clear old routes from memory and reload ActionController
+        ActionController::Routing::Routes.clear!
+
+        # prefer portlet rails_root
+        if portlet[:rails_root]
+          rails_root = portlet[:rails_root]
+        else
+          rails_root = config.rails_root
         end
+        # load routes
+        f = File.open(
+          File.join(
+            rails_root,'config','routes.rb'
+            ))
+        eval(f.read())
+        f.close()
 
-        # segments; the path
-        segs = _route.segments.inject("") { |str,s| str << s.to_s }
-        segs.chop! if segs.length > 1
-        # controller and action
-        reqs = _route.requirements
-        # extra variables
-        keys = _route.significant_keys
-        vars = keys - [:action, :controller]
+          ActionController::Routing::Routes.named_routes.collect do |route|
+            # Ruby 1.9
+            if route.class == Symbol
+              name = route
+              _route = ActionController::Routing::Routes.named_routes.routes[route]
+            # Ruby 1.8
+            elsif route.class == Array
+              name = route[0]
+              _route = route[1] # 'ActionController::Routing::Route'
+            end
 
-        {:name => name, :path => segs, :reqs => reqs, :vars => vars}
+            # segments; the path
+            segs = _route.segments.inject("") { |str,s| str << s.to_s }
+            segs.chop! if segs.length > 1
+            # controller and action
+            reqs = _route.requirements
+            # extra variables
+            keys = _route.significant_keys
+            vars = keys - [:action, :controller]
+
+            {:name => name, :path => segs, :reqs => reqs, :vars => vars}
+          end
       end
+      return routes.flatten
     end
 
     # Reorganizes the portlets hash by category.
