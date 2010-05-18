@@ -32,9 +32,13 @@ class RailsGemChooser
   end
 
   # Load a specific GEM
-  def __load_gem(name,ver)
-    ver ? gem(name, '= '+ver) : gem(name)
-    require name
+  def __load_gem(require_name, gem_name, version)
+    version ? gem(gem_name, '= '+version) : gem(gem_name)
+    begin
+      require require_name
+    rescue LoadError
+      require gem_name
+    end
   end
 
   # Either define +rails_gem_version+ or +config_file+
@@ -48,15 +52,22 @@ class RailsGemChooser
     # the gem without underline will be removed in Rails3..
     #rails_gems = %w{ active_support action_pack active_record }
     # except that with the underline divider the gem is not found ..
-    rails_gems = %w{ activesupport actionpack activerecord }
+    #rails_gems = %w{ activesupport actionpack activerecord }
+    
+    rails_gems = {              
+      # require name      gem name
+      "active_support" => "activesupport",
+      "action_pack"    => "actionpack",
+      "active_record"  => "activerecord"
+    }
 
     # gem build fails when activesupport is loaded here
     # - except with Rails 2.3.5 where this needs to be added.
     if $0[/gem$/]
     #    rails_gems -= ['activesupport']
     end
-    rails_gems.each do |rg|
-      __load_gem(rg,rails_gem_version)
+    rails_gems.keys.each do |rg_key|
+      __load_gem(rg_key, rails_gems[rg_key], rails_gem_version)
     end
     require 'action_controller'
 

@@ -41,13 +41,13 @@ module Caterpillar
       #STDOUT.puts
 
       @name   = name
-      @config = Util.eval_configuration(config)
+      @config = (name == 'rails' or name == 'version' ) ? Config.new(false) : Util.eval_configuration(config)
       @logger = @config.logger
       @xml_files = []
 
       if name == 'rails'
         @required_gems = %w(rails caterpillar jruby-jars warbler)
-      else
+      elsif name != 'version'
         unless @config.rails_root
           Usage.show()
           exit 1

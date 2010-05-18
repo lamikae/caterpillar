@@ -12,8 +12,9 @@ module Caterpillar
     def self.show
       STDOUT.puts 'Usage:'
       STDOUT.puts '  See "%s --describe" for an overview of the tasks.' % $0
-      STDOUT.puts
-      STDOUT.puts '  cd to Rails root, and run the "%s pluginize" task' % $0
+      STDOUT.puts       
+      STDOUT.puts 'How to start up a new rails-portlet project?'
+      STDOUT.puts '  caterpillar rails project_name'
       STDOUT.puts
     end
   end

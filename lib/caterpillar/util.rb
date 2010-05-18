@@ -13,7 +13,7 @@ module Caterpillar
     class << self
 
     # Reads the configuration
-    def eval_configuration(config=nil)
+    def eval_configuration(config = nil)
       cf = File.join([RAILS_ROOT,Caterpillar::Config::FILE])
       STDERR.puts 'Caterpillar configuration file could not be found' unless File.exists?(cf)
 
