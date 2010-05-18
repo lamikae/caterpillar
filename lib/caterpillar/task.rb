@@ -209,9 +209,7 @@ module Caterpillar
     # collects Rails' routes and parses the config
     def define_parse_task
       task :parse do
-        if @config.rails_root
-          @config.routes = Util.parse_routes(@config)
-        end
+        @config.routes = Util.parse_routes(@config)
         @portlets = Parser.new(@config).portlets
       end
     end
@@ -640,7 +638,7 @@ module Caterpillar
 
           #field = :path
           #fields = [:name, :id]
-          $stdout.puts "\t" + portlet[:title] +spaces+ portlet[:name].inspect # + "\t" + portlet[:vars].inspect
+          $stdout.puts "\t" + portlet[:title] +spaces+ portlet[:path] # + "\t" + portlet[:vars].inspect
         end
       end
     end

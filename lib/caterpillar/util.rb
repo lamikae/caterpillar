@@ -41,8 +41,10 @@ module Caterpillar
         # prefer portlet rails_root
         if portlet[:rails_root]
           rails_root = portlet[:rails_root]
-        else
+        elsif config.rails_root
           rails_root = config.rails_root
+        else
+          next
         end
         # load routes
         f = File.open(
@@ -107,6 +109,12 @@ module Caterpillar
         end
 
         ret.update(category => _portlets)
+      end
+
+      # add portlets without category
+      uncategorized = portlets.select {|p| p[:category].nil?}
+      if uncategorized.any?
+        ret.update('undefined' => uncategorized)
       end
 
       return ret

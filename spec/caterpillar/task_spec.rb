@@ -52,6 +52,15 @@ describe Caterpillar::Task do
     capture { Rake::Task["portlets"].invoke }.should =~ /\/caterpillar\/test_bench/
   end
 
+  it "should parse routes without config.rails_root" do
+    portlet = {
+        :name     => 'portlet_test_bench',
+        :rails_root => File.join(File.dirname(__FILE__),'..','app1')
+    }
+    @task.config.instances << portlet
+    capture { Rake::Task["portlets"].invoke }.should =~ /\/caterpillar\/test_bench/
+  end
+
   it "should parse routes" do
     config = Caterpillar::Config.new
     config.rails_root = File.join(File.dirname(__FILE__),'..','app3')
@@ -77,13 +86,13 @@ describe Caterpillar::Task do
     routes[0][:reqs][:controller].should == 'Caterpillar::Application'
     routes[0][:reqs][:action].should == 'index'
 
-    routes[1][:path].should == '/caterpillar/test_bench'
-    routes[1][:reqs][:controller].should == 'Caterpillar::Application'
-    routes[1][:reqs][:action].should == 'index'
+    routes[1][:path].should == '/bear/hungry'
+    routes[1][:reqs][:controller].should == 'Bear'
+    routes[1][:reqs][:action].should == 'hungry'
 
-    routes[2][:path].should == '/bear/hungry'
-    routes[2][:reqs][:controller].should == 'Bear'
-    routes[2][:reqs][:action].should == 'hungry'
+    routes[2][:path].should == '/caterpillar/test_bench'
+    routes[2][:reqs][:controller].should == 'Caterpillar::Application'
+    routes[2][:reqs][:action].should == 'index'
 
     routes[3][:path].should == '/otters/adorable'
     routes[3][:reqs][:controller].should == 'Otter'
