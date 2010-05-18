@@ -82,6 +82,7 @@ module Caterpillar
       define_deploy_xml_task
       define_deploy_war_task
       define_rails_task
+      define_generate_task
     end
 
     def define_usage_task
@@ -167,6 +168,20 @@ module Caterpillar
             }.to_yaml
           end
         end
+      end
+    end
+
+    def define_generate_task
+      @name = :generate
+      desc 'Generates stand-alone configuration file'
+      task :generate do
+        filename = 'portlets-config.rb'
+        FileUtils.cp(
+          File.expand_path(File.join(__FILE__,
+            %w{.. .. .. generators caterpillar templates config portlets.rb})),
+          filename
+          )
+        info("Generated #{filename}")
       end
     end
 
