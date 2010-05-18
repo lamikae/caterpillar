@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
-#
 #--
-# (c) Copyright 2008 Mikael Lammentausta, Cel'Amanzi Ltd
-#               2010 Mikael Lammentausta, Youleaf Ltd
+# (c) Copyright 2008-2010 Mikael Lammentausta
 #
 # Constructed heavily upon Warbler's structure.
 # Thanks to Nick Sieger!
@@ -31,8 +29,11 @@ Rake.application = application
 application.standard_exception_handling do
   application.init
 
-  # Load the main tasks - choose the namespace
-  Caterpillar::Task.new(ARGV[0] ? ARGV[0].gsub(/:.*/,'') : :usage)
+  # Load the main tasks - 
+  # if first argument is a Ruby (config) file, take the task name from second arg
+  config = ARGV[0][/.rb$/] ? File.expand_path(ARGV.shift) : nil
+  name = ARGV[0] ? ARGV[0].gsub(/:.*/,'') : nil
+  Caterpillar::Task.new(name, config)
   
   task :default => :usage
 
