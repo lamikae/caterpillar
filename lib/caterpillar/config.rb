@@ -1,6 +1,4 @@
 # encoding: utf-8
-
-
 #--
 # (c) Copyright 2008 Mikael Lammentausta
 # See the file LICENSES.txt included with the distribution for
@@ -52,7 +50,7 @@ module Caterpillar
 
       rails_conf = File.join(@rails_root,'config','environment.rb')
       unless File.exists?(rails_conf)
-        STDERR.puts 'Rails configuration file could not be found'
+        #STDERR.puts 'Rails configuration file could not be found'
         @rails_root = nil
       else
         @servlet = File.basename(@rails_root)

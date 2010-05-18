@@ -95,7 +95,12 @@ module Caterpillar
 
     def define_version_task
       task :version do
-        STDOUT.puts "Caterpillar #{Caterpillar::VERSION}"
+        version_str = "Caterpillar #{Caterpillar::VERSION} "
+        version_str << "Ruby #{RUBY_VERSION} "
+        if RUBY_PLATFORM =~ /java/
+          version_str << "JRuby #{JRUBY_VERSION}"
+        end
+        STDOUT.puts version_str
       end
     end
 
