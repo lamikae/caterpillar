@@ -63,7 +63,6 @@ module Caterpillar
       define_version_task
       define_xml_task
       define_usage_task
-      define_config_task
       define_pluginize_task
       define_environment_task
       define_portletxml_task
@@ -101,13 +100,6 @@ module Caterpillar
           version_str << "JRuby #{JRUBY_VERSION}"
         end
         STDOUT.puts version_str
-      end
-    end
-
-    # TODO: copy and diff config file
-    def define_config_task
-      task :config do
-        STDOUT.puts 'TODO'
       end
     end
 
