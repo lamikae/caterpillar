@@ -46,7 +46,8 @@ module Caterpillar
       if name == 'rails'
         @required_gems = %w(rails caterpillar jruby-jars warbler)
       else
-        unless @config.rails_root
+        if not @config.rails_root and not %w{generate version}.include?(name)
+          # don't exit
           Usage.show()
           exit 1
         end
@@ -59,6 +60,7 @@ module Caterpillar
     private
 
     def define_tasks
+      define_version_task
       define_xml_task
       define_usage_task
       define_config_task
@@ -88,6 +90,12 @@ module Caterpillar
     def define_usage_task
       task :usage do
         Usage.show
+      end
+    end
+
+    def define_version_task
+      task :version do
+        STDOUT.puts "Caterpillar #{Caterpillar::VERSION}"
       end
     end
 
