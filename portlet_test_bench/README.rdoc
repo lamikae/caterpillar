@@ -9,17 +9,17 @@ Caterpillar includes this portlet into a vanilla Rails application:
   cd new_app
   caterpillar pluginize
 
-Edit the config/routes as instructed by the previous command.
+Add "map.caterpillar" to your config/routes.rb!
 
-The command
+Now the command
   caterpillar portlets
 
 Should output
 
  * Portlet configuration ***********************
-Caterpillar
-	Rails-portlet test bench      "portlet_test_bench"	[]
+ Caterpillar
+         Rails-portlet test bench      /caterpillar/test_bench
 
 
-Now launch the Webrick server and navigate to http://localhost:3000/caterpillar/test_bench
+Launch the Webrick server and navigate to http://localhost:3000/caterpillar/test_bench
 
