@@ -86,14 +86,17 @@ module Caterpillar # :nodoc:
 
       when 'Tomcat'
         root_dir = 'ROOT'
-        @deploy_dir = File.join(self.root,'webapps')
+        @deploy_dir = File.join(@root,'webapps')
 
       when 'JBoss/Tomcat'
         # detect server name if not configured
-        @server_dir ||= Dir.new(
-            File.join(self.root,'server')).entries.first
-        @deploy_dir = File.join(self.root,'server',@server_dir,'deploy')
+        jboss_servers = Dir.new(File.join(@root,'server'))
 
+        unless @server_dir
+          $stdout.puts 'Autodetecting JBoss server directory - if you are unhappy about this, configure it to Caterpillar config'
+          @server_dir = jboss_servers.entries.select {|file| ! %w{. ..}.include? file }.first
+        end
+        @deploy_dir = File.join(self.root,'server',@server_dir,'deploy')
       end
 
       unless File.exists?(@deploy_dir)
@@ -116,9 +119,9 @@ module Caterpillar # :nodoc:
       when 'JBoss/Tomcat'
         # detect lportal dir (ROOT.war or lportal.war)
         root_dir =
-          if File.exists?(File.join(self.deploy_dir,'ROOT.war'))
+          if File.exists?(File.join(@deploy_dir,'ROOT.war'))
             'ROOT.war'
-          elsif File.exists?(File.join(self.deploy_dir,'lportal.war'))
+          elsif File.exists?(File.join(@deploy_dir,'lportal.war'))
             'lportal.war'
           end
         unless root_dir
@@ -133,14 +136,9 @@ module Caterpillar # :nodoc:
     end
     
     # The rule by which the WEB-INF is constructed regardless of the server.
+    # This is where the XML files are housed.
     def web_inf_dir(root_dir)
-      # The @deploy_dir variable does not need checking,
-      # as the method deploy_dir() does that.
-      #if deploy_dir_defined?
-                                  
-      #self.deploy_dir(),    
-      # Xml files need to be in WEB-INF and not, for example, /opt/liferay/deploy
-      return File.join(File.join(self.root,'webapps'), root_dir,'WEB-INF')
+      return File.join(File.join(@root,'webapps'), root_dir,'WEB-INF')
     end
 
     # Reads Liferay portlet descriptor XML files and parses them with Hpricot.
@@ -253,9 +251,9 @@ module Caterpillar # :nodoc:
       end
 
       # include other native Liferay portlets and categories
-      if self.WEB_INF
-        filename = File.join(self.WEB_INF,'liferay-display.xml')
-        liferay_display = REXML::Document.new(File.new(filename))
+      liferay_display_file = File.join(self.WEB_INF,'liferay-display.xml')
+      if self.WEB_INF and File.exists?(liferay_display_file)
+        liferay_display = REXML::Document.new(File.new(liferay_display_file))
 
         liferay_display.elements.each("display/category") do |element|
           # skip categories already included 
