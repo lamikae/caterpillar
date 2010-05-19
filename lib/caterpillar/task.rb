@@ -43,8 +43,6 @@ module Caterpillar
 
       if name == 'rails'
         @required_gems = %w(rails caterpillar jruby-jars warbler)
-      elsif name != 'version'
-        unless @config.rails_root
       else
         if not @config and not %w{generate version}.include?(name)
           Usage.show()

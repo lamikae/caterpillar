@@ -87,20 +87,21 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
 
   def test_liferay_portlet_xml
     @liferay_tld_table.each_pair do |version,tld|
-    @config.container.version = version
-    xml = @config.container.portletapp_xml(@portlets)
-    assert xml[/liferay-portlet-app.*#{tld}/],
-      'Failed to create DTD with proper version; liferay %s' % version
+      @config.container.version = version
+      xml = @config.container.portletapp_xml(@portlets)
+      assert xml[/liferay-portlet-app.*#{tld}/],
+        'Failed to create DTD with proper version; liferay %s' % version
 
-    # parse DTD
-    dtd_file = File.join(@dtd_dir,'liferay-portlet-app_%s.dtd' % tld.gsub('.','_'))
-    dtd = LibXML::XML::Dtd.new(File.read(dtd_file))
+      # parse DTD
+      dtd_file = File.join(@dtd_dir,'liferay-portlet-app_%s.dtd' % tld.gsub('.','_'))
+      dtd = LibXML::XML::Dtd.new(File.read(dtd_file))
 
-    # parse xml document
-    doc = LibXML::XML::Parser.string(xml).parse
+      # parse xml document
+      doc = LibXML::XML::Parser.string(xml).parse
 
-    # validate
-    assert doc.validate(dtd)
+      # validate
+      assert doc.validate(dtd)
+    end
   end
 
   def test_public_render_parameters_xml
