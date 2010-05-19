@@ -33,7 +33,8 @@ module Caterpillar
       require File.join(CATERPILLAR_LIBS, '..','portlet_test_bench', 'routing')
       ActionController::Routing::RouteSet::Mapper.send :include, Caterpillar::Routing::MapperExtensions
 
-      routes = config.instances.each.collect do |portlet|
+      routes = []
+      config.instances.each do |portlet|
 
         # clear old routes from memory and reload ActionController
         ActionController::Routing::Routes.clear!
@@ -54,6 +55,7 @@ module Caterpillar
         eval(f.read())
         f.close()
 
+        routes <<
           ActionController::Routing::Routes.named_routes.collect do |route|
             # Ruby 1.9
             if route.class == Symbol
