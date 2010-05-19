@@ -79,68 +79,39 @@ module Caterpillar # :nodoc:
     # It can also be defined from the configuration file:
     # 	portlet.container.deploy_dir = '/opt/myDeployDir'
     def deploy_dir
-      return @deploy_dir unless @deploy_dir.nil?
+      return @deploy_dir if @deploy_dir # user configuration
 
-      raise 'Configure container root folder' unless self.root
       case @server
-
       when 'Tomcat'
-        root_dir = 'ROOT'
-        @deploy_dir = File.join(@root,'webapps')
+        raise 'Configure container root directory' unless @root
+        return File.join(@root,'webapps')
 
       when 'JBoss/Tomcat'
-        # detect server name if not configured
-        jboss_servers = Dir.new(File.join(@root,'server'))
+        raise "Please configure deploy directory for JBoss."
 
-        unless @server_dir
-          $stdout.puts 'Autodetecting JBoss server directory - if you are unhappy about this, configure it to Caterpillar config'
-          @server_dir = jboss_servers.entries.select {|file| ! %w{. ..}.include? file }.first
-        end
-        @deploy_dir = File.join(self.root,'server',@server_dir,'deploy')
       end
-
-      unless File.exists?(@deploy_dir)
-        raise 'Portal deployment directory does not exist: %s' % @deploy_dir
-      end
-
-      return @deploy_dir
     end
 
-    # The location of Liferay's WEB-INF folder for XML analyzation.
-    # This is relative to installation directory (self.root)
+    # The location of Liferay's WEB-INF folder,
+    # relative to installation directory (@root).
+    # This is where the XML files are housed.
     def WEB_INF
-      raise 'Configure container root folder' unless self.root
+      raise 'Configure container root directory' unless @root
       case @server
 
       when 'Tomcat'
-        root_dir = 'ROOT'
-        return web_inf_dir(root_dir)
+        return File.join(@root, %w{webapps ROOT WEB-INF})
 
       when 'JBoss/Tomcat'
-        # detect lportal dir (ROOT.war or lportal.war)
-        root_dir =
-          if File.exists?(File.join(@deploy_dir,'ROOT.war'))
-            'ROOT.war'
-          elsif File.exists?(File.join(@deploy_dir,'lportal.war'))
-            'lportal.war'
-          end
-        unless root_dir
-          STDERR.puts 'There seems to be a problem detecting the proper install paths.'
-          STDERR.puts 'Please file a bug on Caterpillar.'
-          raise 'Portal root directory not found at %s' % self.deploy_dir
+        # user should configure server_dir !!
+        unless @server_dir
+          raise 'Please configure server_dir for JBoss/Tomcat'
         end
-                
-        return web_inf_dir(root_dir)
+        return File.join(@root, @server_dir, 'WEB-INF')
 
       end
     end
     
-    # The rule by which the WEB-INF is constructed regardless of the server.
-    # This is where the XML files are housed.
-    def web_inf_dir(root_dir)
-      return File.join(File.join(@root,'webapps'), root_dir,'WEB-INF')
-    end
-
     # Reads Liferay portlet descriptor XML files and parses them with Hpricot.
     def analyze(type=:native)
       require 'hpricot'

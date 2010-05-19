@@ -1,9 +1,6 @@
 # encoding: utf-8
 Caterpillar::Config.new do |portlet|
 
-  # JRUBY_HOME can be set here, unless the environment variable can be used.
-  # portlet.class::JRUBY_HOME = '/usr/local/jruby'
-
   # The portlet container.
   # By default only portlet.xml is created.
   # Currently only Liferay is supported. You may optionally define the version.
@@ -26,14 +23,18 @@ Caterpillar::Config.new do |portlet|
   #  - 'JBoss/Tomcat'
   # portlet.container.server = 'JBoss/Tomcat'
 
-  # The server dir is only meaningful with JBoss.
-  # This is the name of the directory in server/.
-  # By default the first entry in the directory is chosen.
-  # portlet.container.server_dir = 'default'
+  # The server dir is only meaningful with JBoss, and is ignored with Tomcat.
+  # This should be set to the tree starting from container.root set above,
+  # and the top level should contain the WEB-INF directory.
+  # portlet.container.server_dir = 'server/default/deploy/ROOT.war'
 
-  # Allow to defining the deploy_dir - just the WAR file will be deployed under this directory.
-  # Since version 1.3.0
+  # Deploy directory for the WAR file.
+  # Please use absolute path.
+  # Not needed for Tomcat unless you have a complex setup.
   # portlet.container.deploy_dir = '/opt/myDeployDir'
+
+  # JRUBY_HOME can be set here, unless the environment variable can be used.
+  # portlet.class::JRUBY_HOME = '/usr/local/jruby'
 
   # The hostname and port.
   # By default the values are taken from the request.
