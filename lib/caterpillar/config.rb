@@ -74,7 +74,8 @@ module Caterpillar
     #
     # Possible values: Caterpillar::Liferay (default using Tomcat)
     def container
-      self._container || Caterpillar::Liferay.new
+      return self._container if self._container
+      self._container = Caterpillar::Liferay.new
     end
 
     # Accepts the configuration option, and instantates the container class.

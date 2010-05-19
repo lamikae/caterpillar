@@ -7,6 +7,7 @@
 
 require File.join(File.dirname(__FILE__),'..','spec_helper')
 require File.join(File.dirname(__FILE__),'..','..','lib','caterpillar')
+require 'tmpdir'
 
 describe Caterpillar::Task do
   before(:each) do
@@ -97,6 +98,34 @@ describe Caterpillar::Task do
     routes[3][:path].should == '/otters/adorable'
     routes[3][:reqs][:controller].should == 'Otter'
     routes[3][:reqs][:action].should == 'adorable'
+  end
+
+  it "should define Tomcat WEB-INF location" do
+    container_root = Dir.tmpdir
+
+    @task.config.container = Caterpillar::Liferay
+    @task.config.container.root = container_root
+    @task.config.container.root.should == container_root
+
+    @task.config.container.server = 'Tomcat'
+    FileUtils.mkdir_p(container_root+'/webapps')
+    @task.config.container.deploy_dir.should == container_root + '/webapps' 
+    @task.config.container.WEB_INF().should == container_root + '/webapps/ROOT/WEB-INF'
+  end
+
+  it "should define JBoss/Tomcat WEB-INF location" do
+    container_root = Dir.tmpdir
+
+    @task.config.container = Caterpillar::Liferay
+    @task.config.container.root = container_root
+    @task.config.container.root.should == container_root
+
+    @task.config.container.server = 'JBoss/Tomcat'
+    FileUtils.mkdir_p(container_root+'/server/ROOT.war/deploy')
+    @task.config.container.deploy_dir.should == container_root + '/server/ROOT.war/deploy' 
+    @task.config.container.server_dir.should == 'ROOT.war'
+    # XXX: this is broken
+    @task.config.container.WEB_INF.should == container_root + '/server/ROOT.war/deploy/WEB-INF'
   end
 
 end
