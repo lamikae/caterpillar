@@ -1,3 +1,4 @@
 Run the tests from Rails, by rake test:plugins.      
 
-You will need at least one portlet configured at config/routes.rb
+Spec tests should be run at Caterpillar root, by "spec ."
+
