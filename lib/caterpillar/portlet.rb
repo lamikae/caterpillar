@@ -43,7 +43,8 @@ module Caterpillar
             :key    => Caterpillar::Security.get_session_key(),
             :secret => Caterpillar::Security.get_secret()
           }
-        rescue nil
+        rescue
+          nil
         end
 
       # create XML element tree
