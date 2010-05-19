@@ -22,7 +22,7 @@ Spec::Rake::SpecTask.new("spec:rcov") do |t|
   t.spec_opts << "--options" << "spec/spec.opts"
   t.rcov = true
 #  t.rcov_opts = ['--text-report', '--exclude', "gems/,spec/,rcov.rb,#{File.expand_path(File.join(File.dirname(__FILE__),'../../..'))}"] 
-  t.rcov_opts = ['--exclude', 'diff-lcs,rake,spec,rcov']
+  t.rcov_opts = ['--exclude', 'diff-lcs,rake,spec,rcov,active_support,action_controller,action_view,json,rack']
 end
 
 RCov::VerifyTask.new(:rcov => "spec:rcov") do |t|
