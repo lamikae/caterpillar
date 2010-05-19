@@ -219,9 +219,9 @@ module Caterpillar
       @name = :xml
       # set the output filename
       if @config.container.kind_of? Liferay
-        file = File.join('tmp','portlet-ext.xml')
+        file = 'portlet-ext.xml'
       else
-        file = File.join('tmp','portlet.xml')
+        file = 'portlet.xml'
       end
       @xml_files << file
       with_namespace_and_config do |name, config|
@@ -229,7 +229,7 @@ module Caterpillar
         task :portlet do
           #portal_info
 
-          exit 1 unless system('touch %s' % file)
+          FileUtils.touch(file)
           f=File.open(file,'w')
           f.write Portlet.xml(@portlets)
           f.close
@@ -241,12 +241,12 @@ module Caterpillar
     # Writes liferay-portlet-ext.xml
     def define_liferayportletappxml_task
       @name = :xml
-      file = File.join('tmp','liferay-portlet-ext.xml')
+      file = 'liferay-portlet-ext.xml'
       @xml_files << file
       with_namespace_and_config do |name, config|
         desc 'Create Liferay portlet XML'
         task :liferayportletapp do
-          exit 1 unless system('touch %s' % file)
+          FileUtils.touch(file)
           f=File.open(file,'w')
           f.write config.container.portletapp_xml(@portlets)
           f.close
@@ -258,7 +258,7 @@ module Caterpillar
     # Writes liferay-display.xml
     def define_liferaydisplayxml_task
       @name = :xml
-      file = File.join('tmp','liferay-display.xml')
+      file = 'liferay-display.xml'
       @xml_files << file
 
       with_namespace_and_config do |name, config|
@@ -266,7 +266,7 @@ module Caterpillar
         task :liferaydisplay do
           raise 'Version 5.1.2 of Liferay is broken!' if config.container.version == '5.1.2'
 
-          exit 1 unless system('touch %s' % file)
+          FileUtils.touch(file)
           f=File.open(file,'w')
           f.write config.container.display_xml(@portlets)
           f.close
