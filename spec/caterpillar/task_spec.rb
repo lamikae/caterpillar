@@ -16,11 +16,13 @@ describe Caterpillar::Task do
     verbose(false)
     @task = Caterpillar::Task.new
     @pwd = Dir.pwd
+    @tmpdir = Dir.tmpdir + '/caterpillar'
+    Dir.mkdir(@tmpdir) unless File.exists?(@tmpdir)
   end
 
   after(:each) do
     @task = nil
-    rm_f '/tmp/portlets-config.rb'
+    FileUtils.rm_rf @tmpdir
     Dir.chdir @pwd
   end
 
@@ -29,7 +31,7 @@ describe Caterpillar::Task do
   end
 
   it "should create a conf file" do
-    Dir.chdir('/tmp')
+    Dir.chdir(@tmpdir)
     fn = "portlets-config.rb"
     File.exist?(fn).should == false
     silence { Rake::Task["generate"].invoke }
@@ -101,7 +103,7 @@ describe Caterpillar::Task do
   end
 
   it "should define Tomcat WEB-INF location" do
-    container_root = Dir.tmpdir
+    container_root = @tmpdir
 
     @task.config.container = Caterpillar::Liferay
     @task.config.container.root = container_root
@@ -114,7 +116,7 @@ describe Caterpillar::Task do
   end
 
   it "should define JBoss/Tomcat WEB-INF location" do
-    container_root = Dir.tmpdir
+    container_root = @tmpdir
 
     @task.config.container = Caterpillar::Liferay
     @task.config.container.root = container_root
@@ -126,6 +128,43 @@ describe Caterpillar::Task do
     @task.config.container.server_dir.should == 'ROOT.war'
     # XXX: this is broken
     @task.config.container.WEB_INF.should == container_root + '/server/ROOT.war/deploy/WEB-INF'
+  end
+
+  it "should make XML" do
+    portlet = {:name => 'portlet_test_bench'}
+    @task.config.instances << portlet
+
+    Dir.chdir(@tmpdir)
+    Dir.glob('*.xml').size.should == 0
+
+    silence { Rake::Task["makexml"].invoke }
+
+    File.exists?('portlet-ext.xml').should == true
+    File.exists?('liferay-portlet-ext.xml').should == true
+    File.exists?('liferay-display.xml').should == true
+  end
+
+  it "should deploy XML on Tomcat" do
+    portlet = {:name => 'portlet_test_bench'}
+    @task.config.instances << portlet
+
+    container_root = @tmpdir
+    @task.config.container.root = container_root
+    @task.config.container.server = 'Tomcat'
+
+    web_inf = container_root + '/webapps/ROOT/WEB-INF'
+    @task.config.container.WEB_INF.should == web_inf
+
+    File.exists?(web_inf).should == false
+    FileUtils.mkdir_p(web_inf)
+    File.exists?(web_inf).should == true
+
+    silence { Rake::Task["deploy:xml"].invoke }
+
+    Dir.chdir(web_inf)
+    File.exists?('portlet-ext.xml').should == true
+    File.exists?('liferay-portlet-ext.xml').should == true
+    File.exists?('liferay-display.xml').should == true
   end
 
 end
