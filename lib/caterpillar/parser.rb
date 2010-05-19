@@ -1,6 +1,4 @@
 # encoding: utf-8
-
-
 #--
 # (c) Copyright 2008 Mikael Lammentausta
 # See the file LICENSES.txt included with the distribution for
@@ -22,7 +20,6 @@ module Caterpillar
     # Changes the path variables to a format supported by the Rails-portlet.
     def portlets(routes=@routes)
       raise 'No configuration' unless @config
-      raise 'No routes provided' unless routes
       portlets = []
 
       @config.instances.flatten.each do |portlet|
@@ -49,7 +46,7 @@ module Caterpillar
           portlet.update( :reqs => {} )
           portlet.update( :vars => [] )
 
-        else
+        else # parse path from routes
           begin
             _r = routes.select{
               |route| route[:name]==portlet[:name].to_sym
@@ -57,7 +54,7 @@ module Caterpillar
             path = _r.first[:path] # take only the first segments
             raise if path.nil?
           rescue
-            STDERR.puts ' !! no route for %s' % portlet[:name]
+            $stderr.puts ' !! no route for %s' % portlet[:name]
             next
           end
 
@@ -74,9 +71,11 @@ module Caterpillar
           portlet.update( :vars => vars )
 
           # delete the route from routes
-          _r.each do |r|
-            routes.delete(r)
-          end
+	  if routes
+            _r.each do |r|
+              routes.delete(r)
+            end
+	  end
         end
         portlet.update( :path => path )
 
@@ -92,10 +91,11 @@ module Caterpillar
       # leftover named routes
       if @config.include_all_named_routes==true
         portlets << routes
-        portlets.flatten!
       end
 
       # sanity check
+      portlets.flatten!
+      portlets.compact!
       portlets.each do |portlet|
         ### hostname
         portlet[:host] ||= @config.host

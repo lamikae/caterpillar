@@ -1,8 +1,17 @@
+= 1.3.1
+	- rename xml task to makexml, and call it with deploy:xml
+	- many small fixes to various tasks
+	- XML is validated with Liferay DTD and portlet-app XSD
+	- silence deprecation warnings from Rails gem chooser
+
 = 1.3.0
 	- New helpers to generate resource urls (download) and get_liferay_preferences, to get the preferences
 	- edit_mode and instanceable working on portlet configuration
 	- Modifications on portlet-ext.xml (new filter and RESOURCE_PHASE)
 
+= 1.2.5
+	- Ruby 1.9 compatibility fix
+	- define utf8 encoding (thanks to Hendie Dijkman for mentioning about it)
 = 1.2.4
 	- use standalone Rails defaults in the installed config file
 	- updated xUnit tests in the portlet test bench

@@ -1,6 +1,4 @@
-Caterpillar is a developer tool to help building Rails applications for Liferay portlets.
-This is possible with the help of Rails-portlet[http://github.com/tulios/html2jsr286].
-
+Caterpillar is a developer tool to help building and deploying Rails applications for Liferay portlets.
 The aim is to minimize the needed additions to the Rails framework and interfere with the developer workflow.
 
 Main features:
@@ -28,11 +26,11 @@ Start up a new Rails project:
 
 It's all you need =].
 
-== The old way
-Rubygems does not seem to get the most uptodate version. The release should be >= 1.2.3.
-Please download the latest release from Rubyforge.
 
-  $ gem install caterpillar-1.2.3.gem
+== The old way
+Rubygems is fixed, but the most recent stable release is 1.2.5.
+
+  $ gem install caterpillar
 
 Start up a new Rails project:
 

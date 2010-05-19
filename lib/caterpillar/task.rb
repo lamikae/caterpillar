@@ -34,19 +34,19 @@ module Caterpillar
     # The main task.
     # Reads the configuration file and launches appropriate tasks.
     def initialize(name = :usage, config = nil, tasks = :define_tasks)
-      #STDOUT.puts 'Caterpillar v.%s (c) Copyright 2008,2009 Mikael Lammentausta' % VERSION
-      #STDOUT.puts 'Provided under the terms of the MIT license.'
-      #STDOUT.puts
-
       @name   = name
+
       @config = (name == 'rails' or name == 'version' ) ? Config.new(false) : Util.eval_configuration(config)
       @logger = @config.logger
+
       @xml_files = []
 
       if name == 'rails'
         @required_gems = %w(rails caterpillar jruby-jars warbler)
       elsif name != 'version'
         unless @config.rails_root
+      else
+        if not @config and not %w{generate version}.include?(name)
           Usage.show()
           exit 1
         end
@@ -82,17 +82,23 @@ module Caterpillar
       define_deploy_xml_task
       define_deploy_war_task
       define_rails_task
-    end
-
-    def define_version_task
-      task :version do
-        puts Caterpillar::VERSION
-      end
+      define_generate_task
     end
 
     def define_usage_task
       task :usage do
         Usage.show
+      end
+    end
+
+    def define_version_task
+      task :version do
+        version_str = "Caterpillar #{Caterpillar::VERSION} "
+        version_str << "Ruby #{RUBY_VERSION} "
+        if RUBY_PLATFORM =~ /java/
+          version_str << "JRuby #{JRUBY_VERSION}"
+        end
+        $stdout.puts version_str
       end
     end
 
@@ -169,17 +175,34 @@ module Caterpillar
       end
     end
 
+    def define_generate_task
+      @name = :generate
+      desc 'Generates stand-alone configuration file'
+      task :generate do
+        filename = 'portlets-config.rb'
+        FileUtils.cp(
+          File.expand_path(File.join(__FILE__,
+            %w{.. .. .. generators caterpillar templates config portlets.rb})),
+          filename
+          )
+        info("Generated #{filename}")
+      end
+    end
+
     ### SUB-TASKS
 
     # reads Rails environment configuration
     def define_environment_task
-      task :default => :test
       task :environment do
-        require(File.join(@config.rails_root, 'config', 'environment'))
+        begin
+          require(File.join(@config.rails_root, 'config', 'environment'))
+        rescue
+          raise 'Rails environment could not be loaded'
+        end
         if @config.container.is_a?(Caterpillar::Liferay)
           if @config.container.version.nil? and !defined?(Lportal)
-            STDERR.puts 'Liferay version is undefined, and lportal gem is not present.'
-            STDERR.puts 'Please define portlet.container.version in %s.' % @config.class::FILE
+            $stderr.puts 'Liferay version is undefined, and lportal gem is not present.'
+            $stderr.puts 'Please define portlet.container.version in %s.' % @config.class::FILE
             raise 'Insufficient configuration'
           end
           @config.container.version ||= Lportal::Schema.version
@@ -190,7 +213,7 @@ module Caterpillar
 
     # collects Rails' routes and parses the config
     def define_parse_task
-      task :parse => :environment do
+      task :parse do
         @config.routes = Util.parse_routes(@config)
         @portlets = Parser.new(@config).portlets
       end
@@ -332,13 +355,15 @@ module Caterpillar
 
           # detect the version of the JAR to install
           portlet_jar = nil
-          version = (
-            if container_v and container_v[/^5.1/]
-              '0.6.0' # FIXME: branch properly
-            else
-              '0.10.0'
-            end
-          )
+          # XXX: since the filter name has changed, the old JAR does not work
+          #version = (
+          #  if container_v and container_v[/^5.1/]
+          #    '0.6.0' # FIXME: branch properly
+          #  else
+          #    '0.10.0'
+          #  end
+          #)
+          version = '0.10.0'
           require 'find'
           Find.find(source) do |file|
             if File.basename(file) == "rails-portlet-#{version}.jar"
@@ -610,7 +635,7 @@ module Caterpillar
       end
 
       _sorted.each_pair do |category,portlets|
-        STDOUT.puts category
+        $stdout.puts category
         portlets.each do |portlet|
           # spaces
           spaces = ''
@@ -620,13 +645,13 @@ module Caterpillar
 
           #field = :path
           #fields = [:name, :id]
-          STDOUT.puts "\t" + portlet[:title] +spaces+ portlet[:name].inspect # + "\t" + portlet[:vars].inspect
+          $stdout.puts "\t" + portlet[:title] +spaces+ portlet[:path] # + "\t" + portlet[:vars].inspect
         end
       end
     end
 
     def info(msg)
-      STDOUT.puts ' * ' + msg
+      $stdout.puts ' * ' + msg
     end
 
     def portal_info(config=@config)
@@ -636,7 +661,7 @@ module Caterpillar
         config.container.version,
         config.container.root
       ]
-      @logger ? @logger.info(msg) : STDOUT.puts(msg)
+      info(msg)
     end
 
     private
@@ -704,16 +729,16 @@ module Caterpillar
     
 
     def conferring_step(message)
-      STDOUT.print message
-      STDOUT.flush
+      $stdout.print message
+      $stdout.flush
       
       result = yield
       if result.class == String or result.class == NilClass
-        STDOUT.puts "\e[31mFAILED\e[0m"
+        $stdout.puts "\e[31mFAILED\e[0m"
         puts result unless result.nil?
         return false
       else
-        STDOUT.puts "\e[32mOK\e[0m"
+        $stdout.puts "\e[32mOK\e[0m"
         return true
       end
     end

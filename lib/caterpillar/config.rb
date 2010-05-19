@@ -1,6 +1,4 @@
 # encoding: utf-8
-
-
 #--
 # (c) Copyright 2008 Mikael Lammentausta
 # See the file LICENSES.txt included with the distribution for
@@ -30,7 +28,7 @@ module Caterpillar
 
     attr_accessor :instances
 
-    attr_reader   :rails_root
+    attr_accessor :rails_root
 
     attr_accessor :_container
 
@@ -45,28 +43,32 @@ module Caterpillar
     # Sets sane defaults that are overridden in the config file.
     def initialize(detect_configuration_file = true)
       # RAILS_ROOT is at least defined in Caterpillar initialization
-      @rails_root  = File.expand_path(RAILS_ROOT)
+      if defined? RAILS_ROOT
+        @rails_root  = File.expand_path(RAILS_ROOT)
+      end
+
       @servlet = nil
       @category = nil
       @instances = []
       @javascripts = []
-      @include_all_named_routes = true
 
-      rails_conf = File.join(@rails_root,'config','environment.rb')
-      unless File.exists?(rails_conf)
-        if detect_configuration_file then STDERR.puts 'Rails configuration file could not be found' end
-        @rails_root = nil
-      else
-        @servlet = File.basename(@rails_root)
-        @category = @servlet
+      @include_all_named_routes = false
 
-        @warbler_conf = File.join(@rails_root,'config','warble.rb')
-        unless File.exists?(@warbler_conf)
-          #STDERR.puts 'Warbler configuration file could not be found'
-        end
+      if @rails_root
+          rails_conf = File.join(@rails_root,'config','environment.rb')
+          unless File.exists?(rails_conf)
+            #STDERR.puts 'Rails configuration file could not be found'
+            @rails_root = nil
+          else
+            @servlet = File.basename(@rails_root)
+            @category = @servlet
+
+            @warbler_conf = File.join(@rails_root,'config','warble.rb')
+            unless File.exists?(@warbler_conf)
+              #STDERR.puts 'Warbler configuration file could not be found'
+            end
+          end
       end
-
-      #@logger  = (defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : Logger.new)
 
       yield self if block_given?
     end
@@ -75,7 +77,8 @@ module Caterpillar
     #
     # Possible values: Caterpillar::Liferay (default using Tomcat)
     def container
-      self._container || Caterpillar::Liferay.new
+      return self._container if self._container
+      self._container = Caterpillar::Liferay.new
     end
 
     # Accepts the configuration option, and instantates the container class.

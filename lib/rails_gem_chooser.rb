@@ -1,34 +1,49 @@
 # encoding: utf-8
-
+#--
+# (c) Copyright 2009,2010 Mikael Lammentausta
+#
+# See the file MIT-LICENSE included with the distribution for
+# software license details.
+#++
 
 require 'rubygems'
 
-# Rails gem chooser
+# Rails gem chooser.
 #
-# Requires the proper Rails version by the +RAILS_ROOT/config/environment.rb+ file.
+# Selects RAILS_GEM_VERSION from ENV, or from RAILS_ROOT/config/environment.rb.
+# Returns nil otherwise.
 class RailsGemChooser
   class << self
 
   def version(config_file=nil)
-	unless config_file
-	  config_file = File.join(
-	  File.expand_path(RAILS_ROOT),
-        'config',
-        'environment.rb'
-        )
+    # detect from ENV
+    if ENV['RAILS_GEM_VERSION']
+      return ENV['RAILS_GEM_VERSION']
+    elsif not config_file
+      # load Rails config file
+      if RAILS_ROOT
+          config_file = File.join(
+          File.expand_path(RAILS_ROOT),
+            'config',
+            'environment.rb'
+            )
+      else
+        STDERR.puts 'Could not detect Rails version'
+        return nil
+      end
 	end
     # don't attempt to load Rails if building a Rubygem..!
     if $0[/gem$/] or !File.exist?(config_file)
-      rails_gem_version = nil
+      return nil
     else
-      # Attempt to guess proper Rails version by reading Rails' config file
+      # read from Rails config file
       f=File.open(config_file)
       config = f.read
-      rails_gem_version = config[/RAILS_GEM_VERSION.*(\d\.\d\.\d)/,1]
       f.close
-      #STDOUT.puts 'Detected Rails version %s from the config file %s' % [rails_gem_version,config_file]
+      rails_gem_version = config[/^RAILS_GEM_VERSION.*(\d\.\d\.\d)/,1]
+      STDOUT.puts 'Detected Rails version %s from the config file %s' % [rails_gem_version,config_file]
+      return rails_gem_version
     end
-    return rails_gem_version
   end
 
   # Load a specific GEM
@@ -42,11 +57,10 @@ class RailsGemChooser
   end
 
   # Either define +rails_gem_version+ or +config_file+
-  # Without any parameters, the config_file is detected from RAILS_ROOT.
   def __load(rails_gem_version=nil,config_file=nil)
     raise 'oops' if config_file and rails_gem_version
 
-    rails_gem_version ||= version(config_file)
+    rails_gem_version ||= version(config_file) # also detects ENV['RAILS_GEM_VERSION']
 
     #STDOUT.puts 'Loading Rails version %s' % rails_gem_version
     # the gem without underline will be removed in Rails3..
@@ -61,11 +75,6 @@ class RailsGemChooser
       "active_record"  => "activerecord"
     }
 
-    # gem build fails when activesupport is loaded here
-    # - except with Rails 2.3.5 where this needs to be added.
-    if $0[/gem$/]
-    #    rails_gems -= ['activesupport']
-    end
     rails_gems.keys.each do |rg_key|
       __load_gem(rg_key, rails_gems[rg_key], rails_gem_version)
     end
