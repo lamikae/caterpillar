@@ -86,13 +86,13 @@ describe Caterpillar::Task do
     routes[0][:reqs][:controller].should == 'Caterpillar::Application'
     routes[0][:reqs][:action].should == 'index'
 
-    routes[1][:path].should == '/bear/hungry'
-    routes[1][:reqs][:controller].should == 'Bear'
-    routes[1][:reqs][:action].should == 'hungry'
+    routes[1][:path].should == '/caterpillar/test_bench'
+    routes[1][:reqs][:controller].should == 'Caterpillar::Application'
+    routes[1][:reqs][:action].should == 'index'
 
-    routes[2][:path].should == '/caterpillar/test_bench'
-    routes[2][:reqs][:controller].should == 'Caterpillar::Application'
-    routes[2][:reqs][:action].should == 'index'
+    routes[2][:path].should == '/bear/hungry'
+    routes[2][:reqs][:controller].should == 'Bear'
+    routes[2][:reqs][:action].should == 'hungry'
 
     routes[3][:path].should == '/otters/adorable'
     routes[3][:reqs][:controller].should == 'Otter'
