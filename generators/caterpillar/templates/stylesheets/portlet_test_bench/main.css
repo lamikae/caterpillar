@@ -78,18 +78,18 @@ padding: 30px;
 padding-top: 0px;
 }
 /* form input label */
-#http_postform span {
+.http_postform span {
 margin-left: 10px;
 margin-right: 5px;
 }
 /* form input paragraph */
-#http_postform p {
+.http_postform p {
 padding: 4px;
 margin: 3px;
 /* border: 1px dotted gray; */
 }
 /* form submit */
-#submit_tags {
+.submit_tags {
 margin-left: 10px;
 margin-right: 5px;
 }
@@ -99,7 +99,7 @@ font: 21px Times New Roman;
 padding: 3px;
 }
 #http_post h2 {
-font: 12px Times New Roman;
+font: 15px Times New Roman;
 border-bottom: 1px dashed gray;
 padding: 3px;
 }
