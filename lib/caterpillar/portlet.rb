@@ -127,7 +127,7 @@ module Caterpillar
       # the filter reads the settings and sets the portlet session
       element = REXML::Element.new('filter')
 
-      REXML::Element.new('filter-name', element).text = portlet[:name] + '_filter'
+      REXML::Element.new('filter-name', element).text = "#{portlet[:name]}_filter"
       REXML::Element.new('filter-class', element).text = self.portlet_filter_class
       REXML::Element.new('lifecycle', element).text = 'RENDER_PHASE'
       REXML::Element.new('lifecycle', element).text = 'RESOURCE_PHASE'
@@ -152,7 +152,7 @@ module Caterpillar
     def filter_mapping(portlet)
       element = REXML::Element.new('filter-mapping')
 
-      REXML::Element.new('filter-name', element).text = portlet[:name] + '_filter'
+      REXML::Element.new('filter-name', element).text = "#{portlet[:name]}_filter"
       REXML::Element.new('portlet-name', element).text = portlet[:name]
 
       return element

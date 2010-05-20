@@ -253,7 +253,7 @@ module Caterpillar # :nodoc:
       # include other native Liferay portlets and categories
       liferay_display_file = File.join(self.WEB_INF,'liferay-display.xml')
       if self.WEB_INF and File.exists?(liferay_display_file)
-        liferay_display = REXML::Document.new(File.new(liferay_display_file))
+        liferay_display = REXML::Document.new(liferay_display_file)
 
         liferay_display.elements.each("display/category") do |element|
           # skip categories already included 
