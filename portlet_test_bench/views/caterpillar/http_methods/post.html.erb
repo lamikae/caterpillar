@@ -51,9 +51,9 @@
   </div>
 
 
-  <h2>POST with awkward field names</h2>
+  <h2>POST with awkward field names sent as ISO-8859-1</h2>
   <div class="http_postform">
-    <% form_tag({ :action => "post" }, {:'accept-charset' => "UTF-8"} ) do %>
+    <% form_tag({ :action => "post" }, {:'accept-charset' => "ISO-8859-1"} ) do %>
       <p>
 			  <%= text_field_tag "postcode[#{@postcode}][]", "è"  %>
       </p>
