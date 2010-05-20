@@ -11,11 +11,11 @@
     </span>
   <% end -%>
 
-    <% if @checkbox -%>
-      <span id="post_info">
-      Checkbox was checked
-      </span>
-    <% end -%>
+	<% if @checkbox -%>
+		<span id="post_info">
+		Checkbox was checked
+		</span>
+	<% end -%>
 
 
   <div class="http_postform">
@@ -49,6 +49,20 @@
       </p>
     <% end %>
   </div>
+
+
+  <h2>POST with awkward field names</h2>
+  <div class="http_postform">
+    <% form_tag({ :action => "post" }, {:'accept-charset' => "UTF-8"} ) do %>
+      <p>
+			  <%= text_field_tag "postcode[#{@postcode}][]", "è"  %>
+      </p>
+      <p class="submit_tags">
+        <%= submit_tag 'Submit' %>
+      </p>
+    <% end %>
+  </div>
+
 
 
   <h2>Exit portlet w/ POST:</h2>

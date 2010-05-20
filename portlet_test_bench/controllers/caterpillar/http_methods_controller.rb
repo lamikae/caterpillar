@@ -4,8 +4,16 @@
 class Caterpillar::HttpMethodsController < Caterpillar::ApplicationController
 
   def post
-    @msg      = params[:msg] if request.post?
-    @checkbox = params[:checkbox]
+    @postcode = 'SW1A 0AA'
+
+    if request.post?
+      @msg      = params[:msg]
+      @checkbox = params[:checkbox]
+      if params[:postcode]
+        @msg = params[:postcode][@postcode]
+      end
+    end
+ 
     render :action => :post
   end
 
