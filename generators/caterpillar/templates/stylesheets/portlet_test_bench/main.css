@@ -97,6 +97,7 @@ margin-right: 5px;
 #http_post h1 {
 font: 21px Times New Roman;
 padding: 3px;
+border-bottom: 1px dotted gray;
 }
 #http_post h2 {
 font: 15px Times New Roman;
@@ -106,12 +107,12 @@ padding: 3px;
 #post_msg {
 font: 21px Arial;
 font-style: italic;
-padding-left: 20px;
+padding-left: 0px;
 }
 #post_info {
 font: 14px Arial;
 font-style: italic;
-padding-left: 20px;
+padding: 0 0.1em 1.5em;
 }
 
 /* login */

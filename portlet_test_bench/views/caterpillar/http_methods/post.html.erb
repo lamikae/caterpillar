@@ -1,12 +1,29 @@
 <div id="http_post">
-  <h1>POST test</h1>
+  <h1>POST tests</h1>
+
+  <%# information of received POST -%>
+  <% if @msg -%>
+    <span id="post_info">
+    Message from last POST:
+      <span id="post_msg">
+        <%= @msg -%>
+      </span>
+    </span>
+  <% end -%>
+
+    <% if @checkbox -%>
+      <span id="post_info">
+      Checkbox was checked
+      </span>
+    <% end -%>
+
 
   <div class="http_postform">
   <h2>Regular POST</h2>
     <%= form_tag :action => "post" %>
       <p>
         <span>Input text:</span>
-        <%= text_field_tag "msg", "The Java language was created by James Gosling in June 1991", :size => 42 %>
+        <%= text_field_tag "msg", "The Java language was created by James Gosling in June 1991", :size => 89 %>
       </p>
 
       <p>
@@ -21,14 +38,14 @@
   </div>
 
 
-  <h2>POST with accept-charset</h2>
+  <h2>POST with accept-charset="UTF-8"</h2>
   <div class="http_postform">
     <% form_tag({ :action => "post" }, {:'accept-charset' => "UTF-8"} ) do %>
       <p>
         <%= text_field_tag "msg", "å ä ö ♥", :size => 12 %>
       </p>
       <p class="submit_tags">
-        <%= submit_tag 'Submit as utf8' %>
+        <%= submit_tag 'Submit' %>
       </p>
     <% end %>
   </div>
@@ -47,26 +64,5 @@
       </p>
     </form>
   </div>
-
-
-  <hr />
-
-
-  <h2>Message from last POST:</h2>
-  <span id="post_msg">
-    <%= @msg -%>
-  </span>
-  <br />
-  <span id="post_info">
-    <% if @checkbox -%>
-      Checkbox was checked
-    <% else -%>
-      <% if @checkbox == false %>
-<!--
-        Checkbox was unchecked
--->
-      <% end %>
-    <% end -%>
-  </span>
 
 </div>
