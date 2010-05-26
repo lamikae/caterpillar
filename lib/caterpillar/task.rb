@@ -128,8 +128,9 @@ module Caterpillar
         tasks << "#{@name}:liferayportletapp"
         tasks << "#{@name}:liferaydisplay"
       end
-
+                 
       task :makexml => tasks
+      puts 'Done!'
     end
 
     # Prints the list of portlets.

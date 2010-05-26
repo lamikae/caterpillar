@@ -31,7 +31,7 @@ class RailsGemChooser
         STDERR.puts 'Could not detect Rails version'
         return nil
       end
-	end
+	  end
     # don't attempt to load Rails if building a Rubygem..!
     if $0[/gem$/] or !File.exist?(config_file)
       return nil

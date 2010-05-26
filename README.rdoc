@@ -86,7 +86,7 @@ Maybe caterpillar could have an upgrade task to handle this?
 == Useful tasks 
 Here are the most useful tasks; see the rdoc documentation and caterpillar --describe for the full feature list.
 
-<tt>xml</tt>::  processes the portlet XML configuration in accordance with the named routes
+<tt>makexml</tt>::  processes the portlet XML configuration in accordance with the named routes
 
 <tt>xml:deploy</tt>::  deploys the created XML to the J2EE portlet container 
 
