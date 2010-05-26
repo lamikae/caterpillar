@@ -8,7 +8,7 @@
           
 if RUBY_PLATFORM =~ /java/
   gem 'jrexml'
-  require 'jrexml/document'
+  require 'jrexml'
 else
   require "rexml/document"
 end
