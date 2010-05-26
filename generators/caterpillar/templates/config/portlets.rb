@@ -63,12 +63,12 @@ Caterpillar::Config.new do |portlet|
   #  - :name                     -- named route
   #  - :category                 -- portlet category (Liferay only)
   #  - :title                    -- the title in portlet container's category (Liferay only)
-  #  - :edit_mode                -- enables edit mode for the portlet, adds <portlet-mode>edit</portlet-mode> to portlet-ext.xml
-  #                                 Default value is false
+  #  - :edit_mode                -- enables edit mode for the portlet, adds <portlet-mode>edit</portlet-mode> 
+  #                                 to portlet-ext.xml. Default value is false
   #  - :instanceable             -- enables instanceable for the portlet, add <instanceable>true</instanceable> to
   #                                 liferay-portlet-ext.xml. Default value is false
-  #  - :public_render_parameters -- enables public render parameters. The variables should not have the sufix '_prp', they have to be
-  #                                 the same as requested by portlets.
+  #  - :public_render_parameters -- enables public render parameters. The variables should not have the sufix '_prp', 
+  #                                 they have to be the same as requested by portlets.
   #                                 Ex: portlets.instances << {
   #                                       :name => 'portlet_name',
   #                                       :public_render_parameters => [:tag, :param2, :param3]
