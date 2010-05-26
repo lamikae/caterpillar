@@ -17,11 +17,13 @@ module Caterpillar
     attr_accessor :category
 
     attr_accessor :edit_mode
+
+    attr_accessor :preferences_route
     
     attr_accessor :instanceable 
     
     attr_accessor :public_render_parameters
-
+    
     attr_accessor :host
 
     attr_accessor :servlet

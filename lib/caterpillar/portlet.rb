@@ -151,7 +151,21 @@ module Caterpillar
 
       param = REXML::Element.new('init-param', element)
       REXML::Element.new('name', param).text = 'route'
-      REXML::Element.new('value', param).text =  portlet[:path].gsub(/&/,"&amp;")
+      portlet_path = portlet[:path].gsub(/&/,"&amp;")
+      REXML::Element.new('value', param).text = portlet_path
+                                  
+      if portlet[:edit_mode] == true
+        param = REXML::Element.new('init-param', element)
+        REXML::Element.new('name', param).text = 'preferences_route'
+        
+        if portlet[:preferences_route]
+          preferences_route = portlet[:preferences_route]
+        else
+          preferences_route = portlet_path.gsub(':controller', portlet[:defaults][:controller])
+          preferences_route = preferences_route.gsub(':action', 'preferences')
+        end
+        REXML::Element.new('value', param).text = preferences_route
+      end
 
       return element
     end

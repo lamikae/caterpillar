@@ -127,8 +127,8 @@ module Caterpillar
       if @config.container.kind_of? Liferay
         tasks << "#{@name}:liferayportletapp"
         tasks << "#{@name}:liferaydisplay"
-      end
-                 
+      end              
+      
       task :makexml => tasks
       puts 'Done!'
     end

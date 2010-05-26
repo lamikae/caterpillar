@@ -67,6 +67,7 @@ Caterpillar::Config.new do |portlet|
   #                                 to portlet-ext.xml. Default value is false
   #  - :instanceable             -- enables instanceable for the portlet, add <instanceable>true</instanceable> to
   #                                 liferay-portlet-ext.xml. Default value is false
+  #  - :preferences_route        -- To customize the preferences route for the portlet
   #  - :public_render_parameters -- enables public render parameters. The variables should not have the sufix '_prp', 
   #                                 they have to be the same as requested by portlets.
   #                                 Ex: portlets.instances << {
