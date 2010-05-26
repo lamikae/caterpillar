@@ -10,16 +10,19 @@ spec = Gem::Specification.new do |s|
   s.email = %q{mikael.lammentausta@gmail.com}
   s.homepage = %q{http://github.com/lamikae/caterpillar}
   s.version = Caterpillar::VERSION
-
-  if RUBY_PLATFORM =~ /java/
-	# FIXME: Just make sure the hpricot-java gem is installed...
-#	 s.add_dependency("hpricot", ">= 0.6.164", 'java')
-  else
-	# hpricot for XML parsing
-	s.add_dependency("hpricot", ">= 0.6.164")
-	# libxml for DTD checks in tests
-	s.add_dependency("libxml-ruby")
-  end
+    
+  #if RUBY_PLATFORM =~ /java/
+	  # FIXME: Just make sure the hpricot-java gem is installed...
+    #	s.add_dependency("hpricot", ">= 0.6.164", 'java')
+  #else
+	  # hpricot for XML parsing
+	  s.add_dependency("hpricot", ">= 0.6.164")
+	  s.add_dependency("jrexml")
+	  
+	  # Problems with the instalation on JRuby ('WARNING: JRuby does not support native extensions or the `mkmf' library.')
+	  # libxml for DTD checks in tests
+	  #s.add_dependency("libxml-ruby")
+  #end
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.description = %q{= Caterpillar}
