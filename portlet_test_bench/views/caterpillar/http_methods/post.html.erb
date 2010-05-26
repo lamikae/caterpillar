@@ -64,6 +64,31 @@
   </div>
 
 
+  <h2>POST as ISO-8859-1, with IE hack</h2>
+    <script type="text/javascript">
+	function isIE() {
+	  return /msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent);
+	}
+	function formEncodingIEHack(form) {
+	  if (isIE()) {
+		form.appendChild(
+		  document.createElement("<input name='_encoding_' value='CP1252' type='hidden' />")
+          );
+      }
+      return true;
+    }
+    </script>
+  <div class="http_postform">
+    <% form_tag({ :action => "post" }, {:'accept-charset' => "ISO-8859-1", :onsubmit => "return formEncodingIEHack(this);"} ) do %>
+      <p>
+        <%= text_field_tag "postcode[#{@postcode}][]", "è"  %>
+      </p>
+      <p class="submit_tags">
+        <%= submit_tag 'Submit' %>
+      </p>
+    <% end %>
+  </div>
+
 
   <h2>Exit portlet w/ POST:</h2>
   <p>

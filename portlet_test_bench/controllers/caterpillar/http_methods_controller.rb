@@ -12,6 +12,9 @@ class Caterpillar::HttpMethodsController < Caterpillar::ApplicationController
       if params[:postcode]
         @msg = params[:postcode][@postcode]
       end
+	  if params[:'_encoding_']
+	    @msg << " with IE hack"
+	  end
     end
  
     render :action => :post
