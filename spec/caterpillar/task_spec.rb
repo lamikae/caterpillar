@@ -110,9 +110,8 @@ describe Caterpillar::Task do
     @task.config.container.root.should == container_root
 
     @task.config.container.server = 'Tomcat'
-    FileUtils.mkdir_p(container_root+'/webapps')
     @task.config.container.deploy_dir.should == container_root + '/webapps' 
-    @task.config.container.WEB_INF().should == container_root + '/webapps/ROOT/WEB-INF'
+    @task.config.container.WEB_INF.should == container_root + '/webapps/ROOT/WEB-INF'
   end
 
   it "should define JBoss/Tomcat WEB-INF location" do
@@ -123,11 +122,11 @@ describe Caterpillar::Task do
     @task.config.container.root.should == container_root
 
     @task.config.container.server = 'JBoss/Tomcat'
-    FileUtils.mkdir_p(container_root+'/server/ROOT.war/deploy')
-    @task.config.container.deploy_dir.should == container_root + '/server/ROOT.war/deploy' 
-    @task.config.container.server_dir.should == 'ROOT.war'
-    # XXX: this is broken
-    @task.config.container.WEB_INF.should == container_root + '/server/ROOT.war/deploy/WEB-INF'
+    # no server_dir!
+    lambda { @task.config.container.WEB_INF }.should raise_error(RuntimeError, /Please configure server_dir/)
+
+    @task.config.container.server_dir = 'server/default/deploy/ROOT.war'
+    @task.config.container.WEB_INF.should == container_root + '/server/default/deploy/ROOT.war/WEB-INF'
   end
 
   it "should make XML" do
