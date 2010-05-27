@@ -134,13 +134,22 @@ We have two kinds of portlets, the instanceable ones and not instaceables ones. 
     :instanceable => false
   }
 
-Each mapped portlet requires a <b>preferences</b> method which will handle the edit mode features. 
+Each mapped portlet requires a <b>preferences</b> method, by convention, which will handle the edit mode features.
 For example:
   def preferences
     if request.post?
       flash[:notice] = 'Success!'
     end
   end
+                                                                                                                  
+If you want is possible to set the <b>preferences_route</b> in <b>portlets.rb</b> file.
+For example:
+  portlet.instances << {
+    :name => 'test',
+    :edit_mode => true,
+    :instanceable => true,
+    :preferences_route => '/my_portlet/test/preferences'
+  }
 
 Rails-portlet will provide us a hash with all saved preferences, to access this method we need to include the Caterpillar::PortletSupport module, like:
   include Caterpillar::PortletSupport

@@ -218,7 +218,8 @@ module Caterpillar # :nodoc:
         end
         
         portlets.each do |portlet|
-          if category.has_elements?              
+          if category.has_elements?
+            # unless he holds does not add again              
             category.each_element do |e|
               unless e.attributes['id'] == portlet[:name]
                 category.add_element 'portlet', {'id' => portlet[:name]}
