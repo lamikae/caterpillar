@@ -715,7 +715,7 @@ module Caterpillar
     def update_environment(file_path)
       file = File.read(file_path).
           sub(/([ ]*#[ ]*config\.gem)/,
-            "  config.gem 'caterpillar', :version => '#{Caterpillar::VERSION}'\n" + '\1')
+            "  config.gem 'caterpillar', :version => '>= #{Caterpillar::VERSION}'\n" + '\1')
       File.open(file_path, 'w') {|f| f << file}
     end
 
