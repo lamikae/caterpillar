@@ -362,7 +362,7 @@ module Caterpillar
           #    '0.10.0'
           #  end
           #)
-          version = '0.10.0'
+          version = '0.10.1'
           require 'find'
           Find.find(source) do |file|
             if File.basename(file) == "rails-portlet-#{version}.jar"
