@@ -206,14 +206,30 @@ module Caterpillar # :nodoc:
       
       doc = REXML::Document.new File.new(liferay_display_file)
       display = doc.root
-      
+                    
       # include portlets
       Util.categorize(portlets).each_pair do |category_name, portlets|
-        category = REXML::Element.new('category', display)
-        category.attributes['name'] = category_name.to_s
-        portlets.each do |portlet|
-          category.add_element 'portlet', {'id' => portlet[:name]}
+        category = nil
+        display.each_element {|e| if e.attributes['name'] == category_name.to_s then category = e; break end}
+        
+        unless category
+          category = REXML::Element.new('category', display)
+          category.attributes['name'] = category_name.to_s
         end
+        
+        portlets.each do |portlet|
+          if category.has_elements?              
+            category.each_element do |e|
+              unless e.attributes['id'] == portlet[:name]
+                category.add_element 'portlet', {'id' => portlet[:name]}
+                break
+              end
+            end
+          else
+            category.add_element 'portlet', {'id' => portlet[:name]}
+          end
+        end                         
+        
       end
 
       xml = ''
