@@ -38,7 +38,7 @@ Caterpillar::Config.new do |portlet|
 
   # The hostname and port.
   # By default the values are taken from the request.
-  portlet.host = 'http://0.0.0.0:3000'
+  portlet.host = 'http://localhost:3000'
  
   # If the Rails is running inside a servlet container such as Tomcat,
   # you can define the servlet here.
