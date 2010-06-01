@@ -1,11 +1,17 @@
 # encoding: utf-8
 #--
 # (c) Copyright 2008, 2010 Mikael Lammentausta
+#                     2010 Tulio Ornelas
 # See the file LICENSES.txt included with the distribution for
 # software license details.
 #++
-
-require "rexml/document"
+          
+if RUBY_PLATFORM =~ /java/
+  gem 'jrexml'
+  require 'jrexml'
+else
+  require "rexml/document"
+end
 
 module Caterpillar
   # Formulates generic JSR286 portlet XML
@@ -50,23 +56,24 @@ module Caterpillar
       # create XML element tree
       portlets.each do |portlet|
         # <portlet>
-        app.elements << self.portlet_element(portlet,session)
+        app.elements << self.portlet_element(portlet, session, app)
         # <filter>
         app.elements << self.filter_element(portlet)
         # filter mapping
         app.elements << self.filter_mapping(portlet)
       end
       xml = ''
-      doc.write(xml, -1) # no indentation, tag and text should be on same line
+      #doc.write(xml, -1) # no indentation, tag and text should be on same line
+      doc.write(xml, 4) # without identation is very dificult to reconfigure those files in production
       return xml.gsub('\'', '"') # fix rexml attribute single quotes to double quotes
     end
 
     # <portlet> element.
     # session is a hash containing session key and secret from Rails.
-    def portlet_element(portlet,session=nil)
+    def portlet_element(portlet, session = nil, app = nil)            
       element = REXML::Element.new('portlet')
       # NOTE: to pass validation, the elements need to be in proper order!
-
+                                                              
       REXML::Element.new('portlet-name', element).text = portlet[:name]
       REXML::Element.new('portlet-class', element).text = self.portlet_class
 
@@ -88,6 +95,13 @@ module Caterpillar
       if portlet[:edit_mode] == true
         REXML::Element.new('portlet-mode', supports).text = 'edit'
       end
+                           
+      # Public Render Parameters
+      if portlet[:public_render_parameters] and portlet[:public_render_parameters].length > 0
+        portlet[:public_render_parameters].each do |param|
+          REXML::Element.new('supported-public-render-parameter', element).text = param
+        end
+      end
 
       info = REXML::Element.new('portlet-info', element)
       ### title for portlet container
@@ -102,6 +116,17 @@ module Caterpillar
         REXML::Element.new('role-name', ref).text = role
       end
 
+      # Public Render Parameters
+      if (not app.nil?) and portlet[:public_render_parameters] and portlet[:public_render_parameters].length > 0
+        portlet[:public_render_parameters].each do |param|
+          prp = REXML::Element.new('public-render-parameter', app)
+          REXML::Element.new('identifier', prp).text = param
+          qname = REXML::Element.new('qname', prp)
+          qname.text = "x:#{param}"
+          qname.attributes['xmlns:x'] = 'http://www.liferay.com/public-render-parameters' 
+        end
+      end
+      
       return element
     end
 
@@ -110,7 +135,7 @@ module Caterpillar
       # the filter reads the settings and sets the portlet session
       element = REXML::Element.new('filter')
 
-      REXML::Element.new('filter-name', element).text = portlet[:name] + '_filter'
+      REXML::Element.new('filter-name', element).text = "#{portlet[:name]}_filter"
       REXML::Element.new('filter-class', element).text = self.portlet_filter_class
       REXML::Element.new('lifecycle', element).text = 'RENDER_PHASE'
       REXML::Element.new('lifecycle', element).text = 'RESOURCE_PHASE'
@@ -126,7 +151,21 @@ module Caterpillar
 
       param = REXML::Element.new('init-param', element)
       REXML::Element.new('name', param).text = 'route'
-      REXML::Element.new('value', param).text =  portlet[:path].gsub(/&/,"&amp;")
+      portlet_path = portlet[:path].gsub(/&/,"&amp;")
+      REXML::Element.new('value', param).text = portlet_path
+                                  
+      if portlet[:edit_mode] == true
+        param = REXML::Element.new('init-param', element)
+        REXML::Element.new('name', param).text = 'preferences_route'
+        
+        if portlet[:preferences_route]
+          preferences_route = portlet[:preferences_route]
+        else
+          preferences_route = portlet_path.gsub(':controller', portlet[:defaults][:controller])
+          preferences_route = preferences_route.gsub(':action', 'preferences')
+        end
+        REXML::Element.new('value', param).text = preferences_route
+      end
 
       return element
     end
@@ -135,7 +174,7 @@ module Caterpillar
     def filter_mapping(portlet)
       element = REXML::Element.new('filter-mapping')
 
-      REXML::Element.new('filter-name', element).text = portlet[:name] + '_filter'
+      REXML::Element.new('filter-name', element).text = "#{portlet[:name]}_filter"
       REXML::Element.new('portlet-name', element).text = portlet[:name]
 
       return element

@@ -26,12 +26,12 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
       :servlet => "Test",
       :path => "/test/path"
     }
-    
+
     session = {
       :key    => '_test_session',
       :secret => 'XXX'
     }
-    
+
     xml = Caterpillar::Portlet.portlet_element(portlet).to_s
     assert xml[/#{portlet[:name]}/]
     assert xml[/#{portlet[:title]}/]
@@ -49,7 +49,7 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     key = Caterpillar::Security.get_session_key
     assert_not_nil key
   end
-  
+
   def test_secret
     secret = Caterpillar::Security.get_secret
     assert_not_nil secret
@@ -89,7 +89,6 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     @liferay_tld_table.each_pair do |version,tld|
       @config.container.version = version
       xml = @config.container.portletapp_xml(@portlets)
-
       assert xml[/liferay-portlet-app.*#{tld}/],
         'Failed to create DTD with proper version; liferay %s' % version
 
@@ -104,5 +103,80 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
       assert doc.validate(dtd)
     end
   end
+  
+  def test_public_render_parameters_xml
+    doc = REXML::Document.new
+    doc << REXML::XMLDecl.new('1.0', 'utf-8') 
+    app = REXML::Element.new('portlet-app', doc)
+    app.attributes['version'] = '2.0'
+    app.attributes['xmlns'] = 'http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd'
+    app.attributes['xmlns:xsi'] = 'http://www.w3.org/2001/XMLSchema-instance'
+    app.attributes['xsi:schemaLocation'] = 'http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd'
+    
+    portlet = {
+      :name  => "test_portlet",
+      :path => "/test/path",
+      :public_render_parameters => [:tag, :folksonomy]
+    }
+          
+    element = Caterpillar::Portlet.portlet_element(portlet, nil, app)
+    xml = element.to_s
+    assert_not_nil xml
+    assert !xml.empty?
+
+    assert xml[/#{portlet[:name]}/]
+    assert xml[/#{portlet[:title]}/]
+    assert xml[/#{portlet[:servlet]}/]
+    assert !xml[/secret/]
+          
+    element = Caterpillar::Portlet.portlet_element(portlet, nil, app)
+    xml = element.to_s
+    assert_not_nil xml
+    assert !xml.empty?
+
+    portlet[:public_render_parameters].each do |param|
+      assert xml[/#{param}/]
+    end
+    
+    assert xml[/<supported-public-render-parameter>/]
+    assert app.to_s[/<public-render-parameter>/]
+  end
 
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

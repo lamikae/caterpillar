@@ -195,47 +195,47 @@ module Caterpillar # :nodoc:
       end
 
       xml = ''
-      doc.write(xml, -1) # no indentation, tag and text should be on same line
+      #doc.write(xml, -1) # no indentation, tag and text should be on same line
+      doc.write(xml, 4) # without identation is very dificult to reconfigure those files in production
       return xml.gsub('\'', '"') # fix rexml attribute single quotes to double quotes
     end
 
     # liferay-display XML
     def display_xml(portlets)
-      doc = REXML::Document.new
-      doc << REXML::XMLDecl.new('1.0', 'utf-8') 
-      doc << REXML::DocType.new('display',
-        'PUBLIC  '+\
-        '"-//Liferay//DTD Display %s//EN"  ' % (self.dtd_version) +\
-        '"http://www.liferay.com/dtd/liferay-display_%s.dtd"' % self.dtd_version.gsub('.','_')
-        )
-      display = REXML::Element.new('display', doc)
-
-      categories = []
-      # include portlets
-      Util.categorize(portlets).each_pair do |category_name,portlets|
-        categories << category_name
-        category = REXML::Element.new('category', display)
-        category.attributes['name'] = category_name.to_s
-        portlets.each do |portlet|
-          category.add_element 'portlet', {'id' => portlet[:name]}
-        end
-      end
-
-      # include other native Liferay portlets and categories
       liferay_display_file = File.join(self.WEB_INF,'liferay-display.xml')
-      if self.WEB_INF and File.exists?(liferay_display_file)
-        liferay_display = REXML::Document.new(File.new(liferay_display_file))
-
-        liferay_display.elements.each("display/category") do |element|
-          # skip categories already included 
-          unless categories.include?(element.attributes['name'])
-            display << element
-          end
+      
+      doc = REXML::Document.new File.new(liferay_display_file)
+      display = doc.root
+                    
+      # include portlets
+      Util.categorize(portlets).each_pair do |category_name, portlets|
+        category = nil
+        display.each_element {|e| if e.attributes['name'] == category_name.to_s then category = e; break end}
+        
+        unless category
+          category = REXML::Element.new('category', display)
+          category.attributes['name'] = category_name.to_s
         end
+        
+        portlets.each do |portlet|
+          if category.has_elements?
+            # unless he holds does not add again              
+            category.each_element do |e|
+              unless e.attributes['id'] == portlet[:name]
+                category.add_element 'portlet', {'id' => portlet[:name]}
+                break
+              end
+            end
+          else
+            category.add_element 'portlet', {'id' => portlet[:name]}
+          end
+        end                         
+        
       end
 
       xml = ''
-      doc.write(xml, -1) # no indentation, tag and text should be on same line
+      #doc.write(xml, -1) # no indentation, tag and text should be on same line
+      doc.write(xml, 4) # without identation is very dificult to reconfigure those files in production
       return xml.gsub('\'', '"') # fix rexml attribute single quotes to double quotes
     end
 

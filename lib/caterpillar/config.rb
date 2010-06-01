@@ -8,8 +8,8 @@
 module Caterpillar
   # Portlet configuration. The config file 'config/portlets.rb' should be installed in your Rails application. See the comments in the configuration file for more specific information about each option.
   class Config
-    FILE = File.join('config','portlets.rb')
-    JRUBY_HOME = nil # override in the config file if necessary
+    FILE = File.join('config','portlets.rb') unless defined? Caterpillar::Config::FILE
+    JRUBY_HOME = nil unless defined? Caterpillar::Config::JRUBY_HOME # override in the config file if necessary
 
     # Are all named routes used, or only the ones specifically defined in the config FILE?
     attr_accessor :include_all_named_routes
@@ -17,9 +17,13 @@ module Caterpillar
     attr_accessor :category
 
     attr_accessor :edit_mode
-    
-    attr_accessor :instanceable
 
+    attr_accessor :preferences_route
+    
+    attr_accessor :instanceable 
+    
+    attr_accessor :public_render_parameters
+    
     attr_accessor :host
 
     attr_accessor :servlet
@@ -39,7 +43,7 @@ module Caterpillar
     attr_accessor :logger
 
     # Sets sane defaults that are overridden in the config file.
-    def initialize
+    def initialize(detect_configuration_file = true)
       # RAILS_ROOT is at least defined in Caterpillar initialization
       if defined? RAILS_ROOT
         @rails_root  = File.expand_path(RAILS_ROOT)
@@ -49,6 +53,7 @@ module Caterpillar
       @category = nil
       @instances = []
       @javascripts = []
+
       @include_all_named_routes = false
 
       if @rails_root

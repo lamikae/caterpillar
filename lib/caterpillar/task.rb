@@ -35,7 +35,10 @@ module Caterpillar
     # Reads the configuration file and launches appropriate tasks.
     def initialize(name = :usage, config = nil, tasks = :define_tasks)
       @name   = name
-      @config = Util.eval_configuration(config)
+
+      @config = (name == 'rails' or name == 'version' ) ? Config.new(false) : Util.eval_configuration(config)
+      @logger = @config.logger
+
       @xml_files = []
 
       if name == 'rails'
@@ -124,9 +127,10 @@ module Caterpillar
       if @config.container.kind_of? Liferay
         tasks << "#{@name}:liferayportletapp"
         tasks << "#{@name}:liferaydisplay"
-      end
-
+      end              
+      
       task :makexml => tasks
+      puts 'Done!'
     end
 
     # Prints the list of portlets.
@@ -358,7 +362,7 @@ module Caterpillar
           #    '0.10.0'
           #  end
           #)
-          version = '0.10.0'
+          version = '0.10.1'
           require 'find'
           Find.find(source) do |file|
             if File.basename(file) == "rails-portlet-#{version}.jar"
@@ -592,6 +596,7 @@ module Caterpillar
         end
         exit 1 unless conferring_step 'Creating Rails project...' do
           create_rails_project
+          Dir.chdir("#{ARGV[1]}"){system("ruby script/generate html_template >/dev/null")}
         end
         exit 1 unless conferring_step 'Updating config/environment.rb...' do
           update_environment(ARGV[1] + '/config/environment.rb')
@@ -599,10 +604,11 @@ module Caterpillar
         exit 1 unless conferring_step 'Activating caterpillar...' do
           # Rake::Task['pluginize'].execute         
           Dir.chdir("#{ARGV[1]}/vendor/plugins"){system 'ruby -S gem unpack caterpillar >/dev/null'}
-          Dir.chdir("#{ARGV[1]}"){system 'script/generate caterpillar >/dev/null'}
+          Dir.chdir("#{ARGV[1]}"){system 'ruby script/generate caterpillar >/dev/null'}
         end
         exit 1 unless conferring_step 'Configuring warbler...' do
           Dir.chdir("#{ARGV[1]}"){system 'ruby -S warble config >/dev/null 2>&1'}
+          update_warble(ARGV[1] +'/config/warble.rb' , ARGV[1].split('/')[-1])
         end
       end
     end
@@ -708,10 +714,18 @@ module Caterpillar
 
     def update_environment(file_path)
       file = File.read(file_path).
-        sub(/([ ]*#[ ]*config\.gem)/,
-            "  config.gem 'caterpillar', :version => '#{Caterpillar::VERSION}'\n" + '\1')
+          sub(/([ ]*#[ ]*config\.gem)/,
+            "  config.gem 'caterpillar', :version => '>= #{Caterpillar::VERSION}'\n" + '\1')
       File.open(file_path, 'w') {|f| f << file}
     end
+
+    def update_warble(file_path, project_name)
+      file = File.read(file_path).
+          sub(/([ ]*#[ ]*config\.war_name = \"mywar\")/,
+            "  config.war_name = '#{project_name}-portlet'\n")
+      File.open(file_path, 'w') {|f| f << file}
+    end
+    
 
     def conferring_step(message)
       $stdout.print message

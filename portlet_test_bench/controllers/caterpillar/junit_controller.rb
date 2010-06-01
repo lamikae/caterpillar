@@ -104,7 +104,7 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   
   def preferences
     render :text => "Preferences view"
-  end
+  end    
   
   # Sets a session value so the single SESSION_KEY cookie is set.
   # The output XML prints the session ID and the JUnit test compares this

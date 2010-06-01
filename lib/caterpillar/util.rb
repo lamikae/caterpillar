@@ -56,15 +56,17 @@ module Caterpillar
         f.close()
 
         routes <<
-          ActionController::Routing::Routes.named_routes.collect do |route|
+          ActionController::Routing::Routes.named_routes.collect do |route| 
             # Ruby 1.9
             if route.class == Symbol
               name = route
               _route = ActionController::Routing::Routes.named_routes.routes[route]
+              defaults = {} #TODO: Get default values in ruby 1.9
             # Ruby 1.8
             elsif route.class == Array
               name = route[0]
               _route = route[1] # 'ActionController::Routing::Route'
+              defaults = route[-1].defaults
             end
 
             # segments; the path
@@ -76,7 +78,7 @@ module Caterpillar
             keys = _route.significant_keys
             vars = keys - [:action, :controller]
 
-            {:name => name, :path => segs, :reqs => reqs, :vars => vars}
+            {:name => name, :path => segs, :reqs => reqs, :vars => vars, :defaults => defaults}
           end
       end
       return routes.flatten

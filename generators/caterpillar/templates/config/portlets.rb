@@ -44,7 +44,7 @@ Caterpillar::Config.new do |portlet|
   # you can define the servlet here.
   # By default the servlet is the name of the Rails app.
   # Without Warbler this should be an empty string.
-  portlet.servlet = ''
+  portlet.servlet = '<%= project_name %>-portlet'
  
   # Portlet category. This is only available for Liferay.
   # By default this is the same as the servlet.
@@ -60,18 +60,25 @@ Caterpillar::Config.new do |portlet|
   # Most likely you will want to let ActionController::Routing to set the route.
   #
   # Available keys are:
-  #  - :name         -- named route
-  #  - :category     -- portlet category (Liferay only)
-  #  - :title        -- the title in portlet container's category (Liferay only)
-  #  - :edit_mode    -- enables edit mode for the portlet, adds <portlet-mode>edit</portlet-mode> to portlet-ext.xml
-  #                     Default value is false
-  #  - :instanceable -- enables instanceable for the portlet, add <instanceable>true</instanceable> to
-  #                     liferay-portlet-ext.xml. Default value is false
-  #  - :javascripts  -- portlet-specific javascripts that are included at
-  #                     the head of master HTML, such as body onload functions (Liferay only)
-  #  - :host         -- hostname:port of the deployment server
-  #  - :servlet      -- by default, the name of the Rails app (= name of the WAR package)
-  #  - :path         -- unless you're using named routes, you can define the path here
+  #  - :name                     -- named route
+  #  - :category                 -- portlet category (Liferay only)
+  #  - :title                    -- the title in portlet container's category (Liferay only)
+  #  - :edit_mode                -- enables edit mode for the portlet, adds <portlet-mode>edit</portlet-mode> 
+  #                                 to portlet-ext.xml. Default value is false
+  #  - :instanceable             -- enables instanceable for the portlet, add <instanceable>true</instanceable> to
+  #                                 liferay-portlet-ext.xml. Default value is false
+  #  - :preferences_route        -- To customize the preferences route for the portlet
+  #  - :public_render_parameters -- enables public render parameters. The variables should not have the sufix '_prp', 
+  #                                 they have to be the same as requested by portlets.
+  #                                 Ex: portlets.instances << {
+  #                                       :name => 'portlet_name',
+  #                                       :public_render_parameters => [:tag, :param2, :param3]
+  #                                     }
+  #  - :javascripts              -- portlet-specific javascripts that are included at
+  #                                 the head of master HTML, such as body onload functions (Liferay only)
+  #  - :host                     -- hostname:port of the deployment server
+  #  - :servlet                  -- by default, the name of the Rails app (= name of the WAR package)
+  #  - :path                     -- unless you're using named routes, you can define the path here
 
   # Rails-portlet testing application.
   # NOTE: this needs to be activated by 'map.caterpillar' in RAILS_ROOT/config/routes.rb

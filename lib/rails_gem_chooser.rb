@@ -31,7 +31,7 @@ class RailsGemChooser
         STDERR.puts 'Could not detect Rails version'
         return nil
       end
-	end
+	  end
     # don't attempt to load Rails if building a Rubygem..!
     if $0[/gem$/] or !File.exist?(config_file)
       return nil
@@ -47,10 +47,13 @@ class RailsGemChooser
   end
 
   # Load a specific GEM
-  def __load_gem(name,version)
-    #p 'require gem %s v%s' % [name,version]
-    version ? gem(name, '= '+version) : gem(name)
-    require name
+  def __load_gem(require_name, gem_name, version)
+    version ? gem(gem_name, '= '+version) : gem(gem_name)
+    begin
+      require require_name
+    rescue LoadError
+      require gem_name
+    end
   end
 
   # Either define +rails_gem_version+ or +config_file+
@@ -60,19 +63,20 @@ class RailsGemChooser
     rails_gem_version ||= version(config_file) # also detects ENV['RAILS_GEM_VERSION']
 
     #STDOUT.puts 'Loading Rails version %s' % rails_gem_version
+    # the gem without underline will be removed in Rails3..
+    #rails_gems = %w{ active_support action_pack active_record }
+    # except that with the underline divider the gem is not found ..
+    #rails_gems = %w{ activesupport actionpack activerecord }
+    
+    rails_gems = {              
+      # require name      gem name
+      "active_support" => "activesupport",
+      "action_pack"    => "actionpack",
+      "active_record"  => "activerecord"
+    }
 
-    # XXX: silly hack because gem loading seems to have a problem..
-    # >> gem('active_support', '=2.3.5')
-    # Gem::LoadError: Could not find RubyGem active_support (= 2.3.5)
-    # >> require 'activesupport'
-    # DEPRECATION WARNING: require "activesupport" is deprecated and will be removed in Rails 3. Use require "active_support" instead..
-    require 'active_support' 
-    rails_gems = %w{ actionpack activerecord }
-
-    ActiveSupport::Deprecation.silence do
-      rails_gems.each do |rg|
-        __load_gem(rg,rails_gem_version)
-      end
+    rails_gems.keys.each do |rg_key|
+      __load_gem(rg_key, rails_gems[rg_key], rails_gem_version)
     end
     require 'action_controller'
 

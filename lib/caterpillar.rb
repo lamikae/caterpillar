@@ -1,20 +1,20 @@
 # encoding: utf-8
 #--
 # (c) Copyright 2008-2010 Mikael Lammentausta
-#                    2010 Túlio Ornelas
+#                    2010 Tulio Ornelas
 #
 # See the file MIT-LICENSE included with the distribution for
 # software license details.
 #++
 
-module Caterpillar
-  VERSION='1.3.2'
+module Caterpillar   
+  VERSION = '1.3.2' unless defined? Caterpillar::VERSION
 end
 
 this_file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
 this_dir = File.dirname(File.expand_path(this_file))
 
-CATERPILLAR_LIBS=this_dir unless defined?(CATERPILLAR_LIBS)
+CATERPILLAR_LIBS = this_dir unless defined? CATERPILLAR_LIBS
 
 # detect if running in Rails directory
 if not defined? RAILS_ROOT
