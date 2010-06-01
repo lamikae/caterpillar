@@ -1,8 +1,4 @@
 # encoding: utf-8
-
-
-# encoding: utf-8
-
 class Caterpillar::JunitController < Caterpillar::ApplicationController
 
   layout false
@@ -16,7 +12,13 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     render :nothing => true
   end
 
-  def basic_tags
+  def images
+    @host = request.host
+    @port = request.port
+    @netloc = 'http://%s:%s' % [@host, @port]
+  end
+
+  def links
     @host = request.host
     @port = request.port
     @netloc = 'http://%s:%s' % [@host, @port]
