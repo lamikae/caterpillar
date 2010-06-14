@@ -15,20 +15,7 @@ For developers:
 
 
 = Quickstart
-== The new path
-You'll need at least the version 1.3.0.
-
-  $ gem install caterpillar-1.3.0.gem
-
-Start up a new Rails project:
-
-  $ caterpillar rails example
-
-It's all you need =].
-
-
-== The old way
-Rubygems is fixed, but the most recent stable release is 1.2.5.
+Install the Caterpillar gem from rubygems.org:
 
   $ gem install caterpillar
 
