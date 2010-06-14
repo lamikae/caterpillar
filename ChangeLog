@@ -1,3 +1,6 @@
+= 1.4.1
+	- small warning fix
+
 = 1.4.0
 	- create Liferay XML with REXML
 	- Caterpillar works outside of RAILS_ROOT
