@@ -1,3 +1,17 @@
+	- create Liferay XML with REXML
+	- Caterpillar works outside of RAILS_ROOT
+	- accept Ruby config file as the first parameter, for generating the XML (undocumented feature)
+	- write XML files to working directory
+	- create and deploy XML files with the task deploy:xml
+	- rename xml task to makexml
+	- introduced rspec and rcov tests
+	- set default Liferay version to 5.2.3
+	- small change to route parsing
+	- fix some deprecation warnings
+	- updated JBoss configuration handling
+	- fix the preferences route generation (by tulios)
+	- numerous small updates to portlet test bench
+
 = 1.3.2
 	- Adding public render parameters, to control liferay portlets
 	- Fixing a bug in edit_mode that caused the "rails-portlet" received 404 to access the method preferences
