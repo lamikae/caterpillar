@@ -101,16 +101,26 @@ module Caterpillar
     end
 
     def define_pluginize_task
-      desc "Unpack Caterpillar as a plugin in your Rails application"
+      desc "Unpack Caterpillar to your Rails application"
       task :pluginize do
-        if !Dir["vendor/plugins/caterpillar*"].empty?
-          puts "I found an old nest in vendor/plugins; please trash it so I can make a new one"
-          puts "(directory vendor/plugins/caterpillar* exists)"
+        if !Dir["vendor/plugins/caterpillar*"].empty? && ENV["FORCE"].nil?
+          puts "I found an old pupa"
+          puts "(directory vendor/plugins/caterpillar* exists);"
+          puts "please trash it so I can make a new one,"
+          puts "or prepend the command with environment variable FORCE=1."
+          exit 1
         elsif !File.directory?("vendor/plugins")
-          puts "I can't find a place to build my nest"
+          puts "I can't find a place to build my pupa"
           puts "(directory 'vendor/plugins' is missing)"
+          exit 1
         else
+          rm_rf FileList["vendor/plugins/caterpillar*"], :verbose => false
           ruby "-S", "gem", "unpack", "caterpillar", "--target", "vendor/plugins"
+          # rename the versioned name to plain "caterpillar",
+          # since Rails has trouble loading some helper files without so
+          File.rename(
+            "vendor/plugins/caterpillar-#{Caterpillar::VERSION}",
+            "vendor/plugins/caterpillar")
           ruby "./script/generate caterpillar"
         end
       end
