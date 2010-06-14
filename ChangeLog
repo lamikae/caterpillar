@@ -1,9 +1,11 @@
+= 1.4.0
 	- create Liferay XML with REXML
 	- Caterpillar works outside of RAILS_ROOT
 	- accept Ruby config file as the first parameter, for generating the XML (undocumented feature)
 	- write XML files to working directory
 	- create and deploy XML files with the task deploy:xml
 	- rename xml task to makexml
+	- update pluginize task (rename versioned caterpillar directory, accept FORCE env variable)
 	- introduced rspec and rcov tests
 	- set default Liferay version to 5.2.3
 	- small change to route parsing
