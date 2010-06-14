@@ -10,6 +10,11 @@ require File.join(File.dirname(__FILE__),'..','..','lib','caterpillar')
 require 'tmpdir'
 
 describe Caterpillar::Task do
+
+  before(:all) do
+    @liferay_xml_dir = File.dirname(File.expand_path(__FILE__)) + '/../xml'
+  end
+
   before(:each) do
     @rake = Rake::Application.new
     Rake.application = @rake
@@ -85,21 +90,25 @@ describe Caterpillar::Task do
     routes = Caterpillar::Util.parse_routes(config)
     routes.size.should == 4 # test bench twice
 
-    routes[0][:path].should == '/caterpillar/test_bench'
-    routes[0][:reqs][:controller].should == 'Caterpillar::Application'
-    routes[0][:reqs][:action].should == 'index'
+    paths = routes.map {|r| r[:path]}
+    paths.each do |path|
+      route = routes.select {|r| r[:path] == path }.first
 
-    routes[1][:path].should == '/caterpillar/test_bench'
-    routes[1][:reqs][:controller].should == 'Caterpillar::Application'
-    routes[1][:reqs][:action].should == 'index'
+      case path
+      when '/caterpillar/test_bench'
+        route[:reqs][:controller].should == 'Caterpillar::Application'
+        route[:reqs][:action].should == 'index'
 
-    routes[2][:path].should == '/bear/hungry'
-    routes[2][:reqs][:controller].should == 'Bear'
-    routes[2][:reqs][:action].should == 'hungry'
+      when '/bear/hungry'
+        route[:reqs][:controller].should == 'Bear'
+        route[:reqs][:action].should == 'hungry'
 
-    routes[3][:path].should == '/otters/adorable'
-    routes[3][:reqs][:controller].should == 'Otter'
-    routes[3][:reqs][:action].should == 'adorable'
+      when '/otters/adorable'
+        route[:reqs][:controller].should == 'Otter'
+        route[:reqs][:action].should == 'adorable'
+
+      end
+    end
   end
 
   it "should define Tomcat WEB-INF location" do
@@ -141,6 +150,9 @@ describe Caterpillar::Task do
     File.exists?('portlet-ext.xml').should == true
     File.exists?('liferay-portlet-ext.xml').should == true
     File.exists?('liferay-display.xml').should == true
+    File.size('portlet-ext.xml').should > 0
+    File.size('liferay-portlet-ext.xml').should > 0
+    File.size('liferay-display.xml').should > 0
   end
 
   it "should deploy XML on Tomcat" do
@@ -155,7 +167,9 @@ describe Caterpillar::Task do
     @task.config.container.WEB_INF.should == web_inf
 
     File.exists?(web_inf).should == false
-    FileUtils.mkdir_p(web_inf)
+    FileUtils.cp_r(
+      @liferay_xml_dir + '/liferay-portal-5.2.3/tomcat-6.0.18/webapps',
+      container_root)
     File.exists?(web_inf).should == true
 
     silence { Rake::Task["deploy:xml"].invoke }
@@ -164,6 +178,9 @@ describe Caterpillar::Task do
     File.exists?('portlet-ext.xml').should == true
     File.exists?('liferay-portlet-ext.xml').should == true
     File.exists?('liferay-display.xml').should == true
+    File.size('portlet-ext.xml').should > 0
+    File.size('liferay-portlet-ext.xml').should > 0
+    File.size('liferay-display.xml').should > 0
   end
 
 end

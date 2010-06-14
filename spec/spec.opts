@@ -1,5 +1,5 @@
 --colour
---format progress
+--format nested
 --loadby mtime
 --reverse
 --diff unified
