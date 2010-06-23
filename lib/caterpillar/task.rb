@@ -168,10 +168,18 @@ module Caterpillar
         ActiveRecord::Base.establish_connection
         info 'Creating YAML fixtures from %s database' % RAILS_ENV
 
+        # define and create the target directory
+        target = 
+          (defined? RAILS_ROOT) ?
+            File.join(RAILS_ROOT,'test','fixtures') : 'fixtures'
+        if !File.exists?(target)
+          FileUtils.mkdir_p(target)
+        end
+
         (ActiveRecord::Base.connection.tables - skip_tables).each do |table|
           i = "000"
           File.open(
-            File.join(RAILS_ROOT,'test','fixtures',table+'.yml'), 'w'
+            File.join(target,table+'.yml'), 'w'
           ) do |file|
             info file.inspect
             data = ActiveRecord::Base.connection.select_all(sql % table)
