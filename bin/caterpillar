@@ -31,11 +31,14 @@ application.standard_exception_handling do
 
   # Load the main tasks - 
   # if first argument is a Ruby (config) file, take the task name from second arg
-  config = ARGV[0][/.rb$/] ? File.expand_path(ARGV.shift) : nil
-  name = ARGV[0] ? ARGV[0].gsub(/:.*/,'') : nil
-  Caterpillar::Task.new(name, config)
-  
-  task :default => :usage
+  if ARGV[0]
+    config = ARGV[0][/.rb$/] ? File.expand_path(ARGV.shift) : nil
+    name = ARGV[0] ? ARGV[0].gsub(/:.*/,'') : nil
+    Caterpillar::Task.new(name, config)
+  else
+    Caterpillar::Task.new(:usage)
+  end
 
+  task :default => :usage
   application.top_level
 end
