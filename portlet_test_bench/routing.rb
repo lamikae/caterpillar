@@ -44,6 +44,10 @@ module Caterpillar #:nodoc:
           'caterpillar/test_bench/liferay/:action',
           {:controller => 'Caterpillar::Liferay'})
 
+        @set.add_route(
+          'caterpillar/test_bench/xhr/:action',
+          {:controller => 'Caterpillar::Xhr'})
+
         # Liferay GID
         @set.add_route(
           'caterpillar/test_bench/liferay/:action/gid/:gid',
