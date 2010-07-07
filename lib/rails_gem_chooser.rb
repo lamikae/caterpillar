@@ -41,7 +41,7 @@ class RailsGemChooser
       config = f.read
       f.close
       rails_gem_version = config[/^RAILS_GEM_VERSION.*(\d\.\d\.\d)/,1]
-      STDOUT.puts 'Detected Rails version %s from the config file %s' % [rails_gem_version,config_file]
+      #STDOUT.puts 'Detected Rails version %s from the config file %s' % [rails_gem_version,config_file]
       return rails_gem_version
     end
   end

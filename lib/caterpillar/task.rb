@@ -140,7 +140,7 @@ module Caterpillar
       end              
       
       task :makexml => tasks
-      puts 'Done!'
+      #puts 'Done!'
     end
 
     # Prints the list of portlets.
