@@ -190,9 +190,10 @@ module Caterpillar # :nodoc:
       portlets.each do |portlet|
         # <portlet>
         app.elements << self.portlet_element(portlet)
-        # <role-mapper>s
-        roles.each {|role| app.elements << role}
       end
+
+      # define role-mappers only once, at the end
+      roles.each {|role| app.elements << role}
 
       return Caterpillar::Util.xml_to_s(doc)
     end
