@@ -112,11 +112,12 @@ module Caterpillar # :nodoc:
       else
         key = ActionController::Base.session_options[:key]
         return key unless key.nil?
-        # XXX: read from config file
-        STDERR.puts 'Failed to read session key - consider this a bug'
         # try session_key
-        ActionController::Base.session_options[:session_key]
-        # nil
+        key = ActionController::Base.session_options[:session_key]
+        return key unless key.nil?
+        # XXX: Rails changed sometime during 2.3.8 ..
+        STDERR.puts 'Failed to read session key - consider this a bug'
+        return nil
       end
     end
 
