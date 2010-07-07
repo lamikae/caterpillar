@@ -55,11 +55,16 @@ module Caterpillar
         end
 
       # create XML element tree
+      # (in proper order so the validation passes)
       portlets.each do |portlet|
         # <portlet>
         app.elements << self.portlet_element(portlet, session, app)
+      end
+      portlets.each do |portlet|
         # <filter>
         app.elements << self.filter_element(portlet)
+      end
+      portlets.each do |portlet|
         # filter mapping
         app.elements << self.filter_mapping(portlet)
       end
