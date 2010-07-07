@@ -165,9 +165,6 @@ module Caterpillar # :nodoc:
             else
               _p.update(:category => categories.first)
             end
-            # debug
-            #puts _p.inspect
-
           end
         end
 
@@ -195,13 +192,14 @@ module Caterpillar # :nodoc:
       # define role-mappers only once, at the end
       roles.each {|role| app.elements << role}
 
-      return Caterpillar::Util.xml_to_s(doc)
+      return Util.xml_to_s(doc)
     end
 
     # liferay-display XML
     def display_xml(portlets)
       liferay_display_file = File.join(self.WEB_INF,'liferay-display.xml')
-      
+
+      # read existing configuration
       _doc = REXML::Document.new File.new(liferay_display_file)
       display = _doc.root
 
@@ -213,18 +211,17 @@ module Caterpillar # :nodoc:
         '"http://www.liferay.com/dtd/liferay-display_%s.dtd"' % self.dtd_version.gsub('.','_')
         )
       doc << display
-      #p doc
-                    
+
       # include portlets
       Util.categorize(portlets).each_pair do |category_name, portlets|
         category = nil
         display.each_element {|e| if e.attributes['name'] == category_name.to_s then category = e; break end}
-        
+
         unless category
           category = REXML::Element.new('category', display)
           category.attributes['name'] = category_name.to_s
         end
-        
+
         portlets.each do |portlet|
           if category.has_elements?
             # unless he holds does not add again              
@@ -237,11 +234,10 @@ module Caterpillar # :nodoc:
           else
             category.add_element 'portlet', {'id' => portlet[:name]}
           end
-        end                         
-        
+        end
       end
 
-      return Caterpillar::Util.xml_to_s(doc)
+      return Util.xml_to_s(doc)
     end
 
     protected

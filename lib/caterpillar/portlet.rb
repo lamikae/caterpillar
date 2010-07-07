@@ -68,7 +68,7 @@ module Caterpillar
         # filter mapping
         app.elements << self.filter_mapping(portlet)
       end
-      return Caterpillar::Util.xml_to_s(doc)
+      return Util.xml_to_s(doc)
     end
 
     # <portlet> element.
