@@ -1,6 +1,5 @@
 # encoding: utf-8
 
-
 module Caterpillar #:nodoc:
   # Routes for Portlet Test Bench.
   module Routing
@@ -10,7 +9,7 @@ module Caterpillar #:nodoc:
         @set.add_named_route(
           'portlet_test_bench',
           'caterpillar/test_bench',
-          {:controller => 'Caterpillar::Application'})
+          {:controller => 'Caterpillar::Application', :action => 'portlet_test_bench'})
 
         @set.add_route(
           'caterpillar/test_bench/http_methods/:action',
@@ -57,6 +56,12 @@ module Caterpillar #:nodoc:
         @set.add_route(
           'caterpillar/test_bench/junit/:action',
           {:controller => 'Caterpillar::Junit'})
+
+        # index
+        @set.add_named_route(
+          'caterpillar',
+          'caterpillar/',
+          {:controller => 'Caterpillar::Application'})
 
       end
     end
