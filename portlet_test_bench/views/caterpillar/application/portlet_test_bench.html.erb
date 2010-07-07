@@ -3,14 +3,14 @@
 body {
 background: white;
 }
-#testBenchContainer {
+.testBenchContainer {
   background: #FFFFCC;
   border: 1px solid #B9B9B9;
   padding: 8px;
   font-size: 11px;
   line-height: 15px;
 }
-h1#testBenchContainer {
+.testBenchHeader {
   border-bottom: 1px solid #B9B9B9;
   color: #990000;
   font-size: 18px;
@@ -18,7 +18,7 @@ h1#testBenchContainer {
   margin-bottom: 20px;
   padding: 0 0 0 15px;
 }
-h2#testBenchContainer {
+.testBenchSuite {
   border: 1px solid #B9B9B9;
   color: #990000;
   font-size: 14px;
@@ -31,15 +31,15 @@ h2#testBenchContainer {
 }
 </style>
 
-<div id="testBenchContainer">
+<div class="testBenchContainer">
 
-<h1>Rails-portlet test bench</h1>
+<div class="testBenchHeader">Rails-portlet test bench</div>
 
 <p style="font-size: 14px;">
 These are isolated test cases of the Rails-portlet, for manual testing in the browser. The <%= link_to_exit_portlet 'source code', 'http://rails-portlet.rubyforge.org/svn/trunk/caterpillar/portlet_test_bench/' -%> can be used as a reference for using the same features in other Rails apps.
 </p>
 
-<h2>HTTP</h2>
+<div class="testBenchSuite">HTTP</div>
 <div class="testContainer">
 
   <%= link_to 'URL parameter passing',
@@ -60,7 +60,7 @@ These are isolated test cases of the Rails-portlet, for manual testing in the br
 </div>
 
 
-<h2>JavaScripts</h2>
+<div class="testBenchSuite">JavaScripts</div>
 <div class="testContainer">
 
   <%= link_to 'Simple JavaScript',
@@ -84,7 +84,7 @@ These are isolated test cases of the Rails-portlet, for manual testing in the br
 </div>
 
 
-<h2>CSS</h2>
+<div class="testBenchSuite">CSS</div>
 <div class="testContainer">
 
   <%= link_to 'Simple CSS',
@@ -96,7 +96,7 @@ These are isolated test cases of the Rails-portlet, for manual testing in the br
 </div>
 
 
-<h2>XHR</h2>
+<div class="testBenchSuite">XHR</div>
 <div class="testContainer">
 
   <%= link_to 'Get time (Prototype)',
@@ -108,7 +108,7 @@ These are isolated test cases of the Rails-portlet, for manual testing in the br
 </div>
 
 
-<h2>Misc</h2>
+<div class="testBenchSuite">Misc</div>
 <div class="testContainer">
 
   <%= link_to 'Image resources',
@@ -133,7 +133,7 @@ These are isolated test cases of the Rails-portlet, for manual testing in the br
 </div>
 
 
-<h2>JUnit</h2>
+<div class="testBenchSuite">JUnit</div>
 
 The JUnit tests are used for automatic testing and they output XML. 
 
