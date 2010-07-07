@@ -88,16 +88,20 @@ describe Caterpillar::Task do
     }
     ]
     routes = Caterpillar::Util.parse_routes(config)
-    routes.size.should == 4 # test bench twice
+    routes.size.should == 6 # "/caterpillar" and "/test_bench" twice
 
     paths = routes.map {|r| r[:path]}
     paths.each do |path|
       route = routes.select {|r| r[:path] == path }.first
 
       case path
-      when '/caterpillar/test_bench'
+      when '/caterpillar'
         route[:reqs][:controller].should == 'Caterpillar::Application'
         route[:reqs][:action].should == 'index'
+
+      when '/caterpillar/test_bench'
+        route[:reqs][:controller].should == 'Caterpillar::Application'
+        route[:reqs][:action].should == 'portlet_test_bench'
 
       when '/bear/hungry'
         route[:reqs][:controller].should == 'Bear'
