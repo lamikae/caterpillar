@@ -125,8 +125,12 @@ module Caterpillar
     end
 
     def xml_to_s(doc)
+      # Serializes the REXML::Document to String.
+      # It has to pass Ruby unit test validation and Liferay runtime validation.
+      # The XML requires strict ordering of the child nodes,
+      # and also tags and values have to be on a single line.
       require 'rexml/formatters/pretty'
-      str = ''
+      str = String.new
       fmt = REXML::Formatters::Pretty.new(4)
       fmt.compact = true
       fmt.write(doc,str)
