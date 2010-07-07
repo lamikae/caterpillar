@@ -124,6 +124,15 @@ module Caterpillar
       return ret
     end
 
+    def xml_to_s(doc)
+      require 'rexml/formatters/pretty'
+      str = ''
+      fmt = REXML::Formatters::Pretty.new(4)
+      fmt.compact = true
+      fmt.write(doc,str)
+      return str.gsub('\'', '"') # fix rexml attribute single quotes to double quotes
+    end
+
     end # static
   end
 end

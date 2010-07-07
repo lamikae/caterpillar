@@ -194,10 +194,7 @@ module Caterpillar # :nodoc:
         roles.each {|role| app.elements << role}
       end
 
-      xml = ''
-      doc.write(xml, -1) # no indentation, tag and text should be on same line
-      #doc.write(xml, 4) # without identation is very dificult to reconfigure those files in production
-      return xml.gsub('\'', '"') # fix rexml attribute single quotes to double quotes
+      return Caterpillar::Util.xml_to_s(doc)
     end
 
     # liferay-display XML
@@ -233,10 +230,7 @@ module Caterpillar # :nodoc:
         
       end
 
-      xml = ''
-      doc.write(xml, -1) # no indentation, tag and text should be on same line
-      #doc.write(xml, 4) # without identation is very dificult to reconfigure those files in production
-      return xml.gsub('\'', '"') # fix rexml attribute single quotes to double quotes
+      return Caterpillar::Util.xml_to_s(doc)
     end
 
     protected
