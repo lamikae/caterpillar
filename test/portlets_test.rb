@@ -15,6 +15,13 @@ class PortletsTest < Caterpillar::TestCase # :nodoc:
 #     end
 #   end
 
+  def test_session
+    key = Caterpillar::Security.get_session_key()
+    assert_not_nil key
+    secret = Caterpillar::Security.get_secret()
+    assert_not_nil secret
+  end
+
   def test_name
     @portlets.each do |portlet|
       assert_not_nil portlet[:name], '%s has no name' % portlet
