@@ -15,6 +15,7 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     @liferay_tld_table = {
       '5.1.1' => '5.1.0',
       '5.2.0' => '5.2.0',
+      '5.2.3' => '5.2.0',
       '6.0.1' => '6.0.0'
     }
   end
@@ -70,8 +71,8 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
       @config.container.version = version
       xml = @config.container.display_xml(@portlets)
 
-      assert xml[/liferay-display.*#{tld}/],
-        'Failed to create DTD with proper version; liferay %s' % version
+      dtd_v = xml[/liferay-display_(._._.)/,1]
+      assert_equal(tld.gsub('.','_'), dtd_v, 'Failed to create DTD with proper version')
 
       # parse DTD
       dtd_file = File.join(@dtd_dir,'liferay-display_%s.dtd' % tld.gsub('.','_'))
@@ -89,8 +90,8 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     @liferay_tld_table.each_pair do |version,tld|
       @config.container.version = version
       xml = @config.container.portletapp_xml(@portlets)
-      assert xml[/liferay-portlet-app.*#{tld}/],
-        'Failed to create DTD with proper version; liferay %s' % version
+      dtd_v = xml[/liferay-portlet-app_(._._.)/,1]
+      assert_equal(tld.gsub('.','_'), dtd_v, 'Failed to create DTD with proper version')
 
       # parse DTD
       dtd_file = File.join(@dtd_dir,'liferay-portlet-app_%s.dtd' % tld.gsub('.','_'))

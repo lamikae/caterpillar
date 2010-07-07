@@ -202,8 +202,18 @@ module Caterpillar # :nodoc:
     def display_xml(portlets)
       liferay_display_file = File.join(self.WEB_INF,'liferay-display.xml')
       
-      doc = REXML::Document.new File.new(liferay_display_file)
-      display = doc.root
+      _doc = REXML::Document.new File.new(liferay_display_file)
+      display = _doc.root
+
+      doc = REXML::Document.new
+      doc << REXML::XMLDecl.new('1.0', 'utf-8') 
+      doc << REXML::DocType.new('display',
+        'PUBLIC  '+\
+        '"-//Liferay//DTD Display %s//EN"  ' % (self.dtd_version) +\
+        '"http://www.liferay.com/dtd/liferay-display_%s.dtd"' % self.dtd_version.gsub('.','_')
+        )
+      doc << display
+      #p doc
                     
       # include portlets
       Util.categorize(portlets).each_pair do |category_name, portlets|
