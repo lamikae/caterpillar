@@ -24,6 +24,18 @@ module Caterpillar
   
       nil
     end
+       
+    # Send the rendered page in a file to serveResource method
+    #
+    def ajax_response params = {}
+      if params[:template]
+        content = render_to_string :template => params[:template]
+      else
+        content = render_to_string
+      end
+
+      send_data resposta, :type => 'text/html', :filename => "content_#{request.session_options[:id]}.html"
+    end
 
   end
 end
