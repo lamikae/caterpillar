@@ -22,7 +22,6 @@ module Helpers # :nodoc:
   # link_to_liferay is deprecated, and is clearly a wrong way to solve the problem in question.
   # A better way has been constructed, but it is not perfect due to its dependency on a specific portlet.
   module Liferay
-    include ActionView::Helpers::UrlHelper
     include ActionView::Helpers::TagHelper
     include Portlet
     
