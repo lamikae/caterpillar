@@ -14,6 +14,7 @@ module Caterpillar
   
     # Gets portlet preferences from a cookie (Liferay_preferences) and generates
     # a hash with it. Returns nil if cookie do not exists or the value is nil.
+    # XXX: should not this be moved to Helpers::Liferay ?
     #
     def get_liferay_preferences(value = cookies[:Liferay_preferences])
       preferences = {}
