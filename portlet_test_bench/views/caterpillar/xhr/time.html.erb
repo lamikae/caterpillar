@@ -1,9 +1,8 @@
 <% if @javascripts.include? 'prototype' %>
 <h2>Prototype</h2>
 <p>
-	<%= link_to_remote 'What time it is?', :update => 'result1', :url => {:action => 'get_time'} %>
+	<%= link_to_remote 'What time it is?', :update => 'result', :url => {:action => 'get_time'} %>
 </p>
-<div id="result1"></div>
 
 
 <% else %>
@@ -17,13 +16,15 @@
       type: 'POST',
       data: '',
       success: function(data) {
-        $('#result2').html(data);
+        $('#result').html(data);
       }
     });
   });
   </script>
 </p>
-<div id="result2"></div>
-
 
 <% end %>
+
+<div id="result"></div>
+
+
