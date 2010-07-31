@@ -1,0 +1,15 @@
+<% if cookies[:Liferay_resourceUrl]  %>
+
+  <p>
+    <%= link_to 'resource url', liferay_resource_url(params) %>
+    stored to cookie:<br />
+    <span style="font-size:1.2em; text-style: italic;">
+      <%= cookies[:Liferay_resourceUrl] %>
+    </span>
+  </p>
+
+<% else %>
+
+Sorry, the cookie "Liferay_resourceUrl" is not set.
+
+<% end %>

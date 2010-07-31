@@ -105,6 +105,9 @@ These are isolated test cases of the Rails-portlet, for manual testing in the br
   <%= link_to 'Get time (jQuery)',
         :controller => 'Caterpillar::Xhr', :action => :jquery  -%><br />
 
+  <%= link_to 'Liferay resource URL',
+        :controller => 'Caterpillar::Xhr', :action => :resource  -%><br />
+
 </div>
 
 
@@ -129,6 +132,11 @@ These are isolated test cases of the Rails-portlet, for manual testing in the br
 
   <%= link_to 'Flash message',
         :controller => 'Caterpillar::Session', :action => :flash_msg -%><br />
+
+  <%= link_to 'Cookies set by rails-portlet',
+        :controller => 'Caterpillar::Session', :action => :cookies -%><br />
+
+
 
 </div>
 
