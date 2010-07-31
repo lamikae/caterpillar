@@ -9,8 +9,8 @@
 require 'rubygems'
 require 'action_controller'
 
-module Caterpillar
-module Helpers
+module Caterpillar # :nodoc:
+module Helpers # :nodoc:
   
   # This module contains Rails helpers that provide methods to deal with various aspects
   # of portlet functionality in Liferay.
@@ -24,6 +24,10 @@ module Helpers
     include ActionView::Helpers::UrlHelper
     include ActionView::Helpers::TagHelper
 
+    # Formulate resource URL for Liferay.
+    # The request will be handled by serveResource().
+    # The cookie "Liferay_resourceUrl" should be automatically included into 
+    # available cookies by "rails-portlet".
     def liferay_resource_url(_params, resource_url = cookies[:Liferay_resourceUrl])
       if resource_url.nil? then return raise "resource_url is needed!" end
       params = _params.dup # create duplicate params, do not modify originals!
