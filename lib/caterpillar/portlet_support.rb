@@ -11,6 +11,6 @@ module Caterpillar
   # Add some portlet support (DEPRECATED)
   #
   module PortletSupport
-    include Caterpillar::Helpers::Liferay
+    #include Caterpillar::Helpers::Liferay
   end
 end

@@ -7,6 +7,7 @@
 
 require File.join(File.dirname(__FILE__),'..','spec_helper')
 require File.join(File.dirname(__FILE__),'..','..','lib','caterpillar')
+require File.join(File.dirname(__FILE__),'..','..','lib','caterpillar','helpers','portlet')
 require File.join(File.dirname(__FILE__),'..','..','lib','caterpillar','helpers','liferay')
 
 class MockController
@@ -30,37 +31,39 @@ describe Caterpillar::Task do
   after(:each) do
     @task = nil
   end
-
+  
   it "should form resource url" do
     mock = MockController.new
-    params = {:controller => MockController}
-    resource_url = 'http://liferay-resource.url/'
+    resource_url = 'http://liferay-resource.url:80/'
+    mock.cookies = {
+      :Liferay_resourceUrl => resource_url,
+      :Portlet_namespace => '_test_'
+    }
 
+=begin
+    params = {:route => '/MockController/index'}
     given_params = params.dup
-    url = mock.liferay_resource_url(params, resource_url)
+    url = mock.liferay_resource_url(params)
     params.should == given_params # original params should not change
-    url.should == resource_url + '&railsRoute=/MockController/index'
+    url.should == resource_url + '&__test__railsRoute=/MockController/index'
+=end
 
     # test action
-    params.update(:action => 'moo_action')
+    params = {:route => '/MockController/moo_action'}
+    #params.update(:action => 'moo_action')
     given_params = params.dup
-    url = mock.liferay_resource_url(params, resource_url)
+    url = mock.liferay_resource_url(params)
     params.should == given_params # original params should not change
-    url.should == resource_url + '&railsRoute=/MockController/moo_action'
+    url.should == resource_url + '?__test__railsRoute=/MockController/moo_action'
 
     # test extra keys
     params.update(:foo => :bar, :baz => 3)
     given_params = params.dup
-    url = mock.liferay_resource_url(params, resource_url)
+    url = mock.liferay_resource_url(params)
     params.should == given_params # original params should not change
-    url.should == resource_url + '&railsRoute=/MockController/moo_action?foo=bar&baz=3'
+    url.should == resource_url + '?__test__railsRoute=/MockController/moo_action&__test__foo=bar&__test__baz=3'
 
-    # test resource url in cookie
-    mock.cookies = {:Liferay_resourceUrl => resource_url}
-    _url = mock.liferay_resource_url(params)
-    url.should == _url
   end
-
 
 
 end
