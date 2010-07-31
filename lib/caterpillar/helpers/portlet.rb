@@ -13,6 +13,11 @@ module Caterpillar # :nodoc:
 module Helpers # :nodoc:
   module Portlet
 
+    # Get portlet namespace from cookie set by rails-portlet
+    def get_namespace
+      @namespace = cookies[:Portlet_namespace]
+    end
+
     # Send the rendered page in a file to serveResource method
     #
     def ajax_response params = {}

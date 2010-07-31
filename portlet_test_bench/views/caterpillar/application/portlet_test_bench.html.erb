@@ -105,11 +105,22 @@ These are isolated test cases of the Rails-portlet, for manual testing in the br
   <%= link_to 'Get time (jQuery)',
         :controller => 'Caterpillar::Xhr', :action => :jquery  -%><br />
 
+</div>
+
+<div class="testBenchSuite">Liferay</div>
+<div class="testContainer">
+
+  <%= link_to 'Liferay session variables',
+        url_for(
+          :controller => 'Caterpillar::Liferay',
+          :action => :session_variables
+        )+'/uid/%UID%/gid/%GID%'
+  -%><br />
+
   <%= link_to 'Liferay resource URL',
         :controller => 'Caterpillar::Xhr', :action => :resource  -%><br />
 
 </div>
-
 
 <div class="testBenchSuite">Misc</div>
 <div class="testContainer">
@@ -123,20 +134,14 @@ These are isolated test cases of the Rails-portlet, for manual testing in the br
   <%= link_to 'Link outside the portlet',
         :controller => 'Caterpillar::Resource', :action => :exit_portlet  -%><br />
 
-  <%= link_to 'Liferay session variables',
-        url_for(
-          :controller => 'Caterpillar::Liferay',
-          :action => :session_variables
-        )+'/uid/%UID%/gid/%GID%'
-  -%><br />
-
   <%= link_to 'Flash message',
         :controller => 'Caterpillar::Session', :action => :flash_msg -%><br />
 
   <%= link_to 'Cookies set by rails-portlet',
         :controller => 'Caterpillar::Session', :action => :cookies -%><br />
 
-
+  <%= link_to 'Portlet namespace',
+        :controller => 'Caterpillar::Session', :action => :namespace -%><br />
 
 </div>
 

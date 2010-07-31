@@ -2,6 +2,9 @@
 
 
 class Caterpillar::SessionController < Caterpillar::ApplicationController
+  include Caterpillar::Helpers::Portlet
+
+  before_filter :get_namespace, :only => :namespace
 
   # flash message.
   def flash_msg
