@@ -1,4 +1,10 @@
 # encoding: utf-8
+#--
+# Copyright (c) 2010 Tulio Ornelas dos Santos
+#
+# See the file LICENSES.txt included with the distribution for
+# software license details.
+#++
 
 module Caterpillar
   
