@@ -138,12 +138,12 @@ For example:
     :preferences_route => '/my_portlet/test/preferences'
   }
 
-Rails-portlet will provide us a hash with all saved preferences, to access this method we need to include the Caterpillar::PortletSupport module, like:
-  include Caterpillar::PortletSupport
+Rails-portlet will provide us a hash with all saved preferences, to access this method we need to include the Caterpillar::Helpers::Liferay module, like:
+  include Caterpillar::Helpers::Liferay
 
 This module will provide <b>get_liferay_preferences</b> method which returns the preferences hash. A good approach is to include this module on <i>ApplicationController</i>, like:
   class ApplicationController < ActionController::Base
-    include Caterpillar::PortletSupport
+    include Caterpillar::Helpers::Liferay
 
     helper :all # include all helpers, all the time
     protect_from_forgery # See ActionController::RequestForgeryProtection for details
