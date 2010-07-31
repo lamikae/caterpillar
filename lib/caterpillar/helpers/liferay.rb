@@ -1,6 +1,7 @@
 # encoding: utf-8
 #--
 # Copyright (c) 2007-2010 Mikael Lammmentausta
+#               2010 Tulio Ornelas dos Santos
 #
 # See the file MIT-LICENSE included with the distribution for
 # software license details.
