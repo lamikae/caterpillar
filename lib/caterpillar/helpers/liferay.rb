@@ -24,22 +24,33 @@ module Helpers # :nodoc:
   module Liferay
     include ActionView::Helpers::UrlHelper
     include ActionView::Helpers::TagHelper
-
+    include Portlet
+    
+    def resource_url_cookie
+      cookies[:Liferay_resourceUrl]
+    end
+    
+    def preferences_cookie
+      cookies[:Liferay_preferences]
+    end
+    
     # Formulate resource URL for Liferay.
     # The request will be handled by serveResource().
     # The cookie "Liferay_resourceUrl" should be automatically included into 
     # available cookies by "rails-portlet".
-    def liferay_resource_url(_params, resource_url = cookies[:Liferay_resourceUrl])
+    def liferay_resource_url(_params, resource_url = resource_url_cookie)
       if resource_url.nil? then return raise "resource_url is needed!" end
       params = _params.dup # create duplicate params, do not modify originals!
-
+      
       controller = params.delete :controller
       action = params.delete :action
+      
+      namespace = @namespace || namespace_cookie
       
       if controller.nil? then return resource_url end
       if action.nil? then action = :index end
       
-      url = "#{resource_url}&railsRoute=/#{controller}/#{action}"
+      url = "#{resource_url}&#{namespace}railsRoute=/#{controller}/#{action}"
       
       unless params.empty?
         url += '?'
@@ -55,7 +66,7 @@ module Helpers # :nodoc:
     # Gets portlet preferences from a cookie (Liferay_preferences) and generates
     # a hash with it. Returns nil if cookie do not exists or the value is nil.
     #
-    def get_liferay_preferences(value = cookies[:Liferay_preferences])
+    def get_liferay_preferences(value = preferences_cookie)
       preferences = {}
       if value and (not value.empty?)
         value.split(";").each do |pair|

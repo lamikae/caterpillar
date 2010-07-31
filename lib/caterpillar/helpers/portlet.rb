@@ -14,8 +14,13 @@ module Helpers # :nodoc:
   module Portlet
 
     # Get portlet namespace from cookie set by rails-portlet
+    def namespace_cookie
+      cookies[:Portlet_namespace]
+    end
+
+    # Set instance variable @namespace
     def get_namespace
-      @namespace = cookies[:Portlet_namespace]
+      @namespace = namespace_cookie
     end
 
     # Send the rendered page in a file to serveResource method
