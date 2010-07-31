@@ -2,7 +2,7 @@
 #--
 # Copyright (c) 2010 Tulio Ornelas dos Santos
 #
-# See the file LICENSES.txt included with the distribution for
+# See the file MIT-LICENSE included with the distribution for
 # software license details.
 #++
 

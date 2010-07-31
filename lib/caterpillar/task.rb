@@ -4,7 +4,7 @@
 #
 # Thanks to Nick Sieger for the rake structure!
 #
-# See the file LICENSES.txt included with the distribution for
+# See the file MIT-LICENSE included with the distribution for
 # software license details.
 #++
 
