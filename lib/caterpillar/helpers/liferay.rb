@@ -24,9 +24,10 @@ module Helpers
     include ActionView::Helpers::UrlHelper
     include ActionView::Helpers::TagHelper
 
-    def liferay_resource_url(params, resource_url = cookies[:Liferay_resourceUrl])
+    def liferay_resource_url(_params, resource_url = cookies[:Liferay_resourceUrl])
       if resource_url.nil? then return raise "resource_url is needed!" end
-      
+      params = _params.dup # create duplicate params, do not modify originals!
+
       controller = params.delete :controller
       action = params.delete :action
       
