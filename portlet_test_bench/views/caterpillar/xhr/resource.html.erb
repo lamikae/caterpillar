@@ -1,10 +1,10 @@
-<% if cookies[:Liferay_resourceUrl]  %>
+<% if @resource_url  %>
 
   <p>
-    <%= link_to 'resource url', liferay_resource_url(params) %>
+    <%= link_to 'resource url (with params)', liferay_resource_url(@r_u_params) %>
     stored to cookie:<br />
     <span style="font-size:1.2em; text-style: italic;">
-      <%= cookies[:Liferay_resourceUrl] %>
+      <%= @resource_url %>
     </span>
   </p>
 
