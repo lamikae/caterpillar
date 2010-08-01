@@ -1,14 +1,14 @@
 <% if @javascripts.include? 'prototype' %>
 <h2>Prototype</h2>
 <p>
-	<%= link_to_remote 'What time it is?', :update => 'result', :url => {:action => 'get_time'} %>
+	<%= link_to_remote 'What time is it?', :update => 'result', :url => {:action => 'get_time'} %>
 </p>
 
 
 <% else %>
 <h2>jQuery</h2>
 <p>
-  <a href="#" id="jq_link">What time it is?</a>
+  <a href="#" id="jq_link">What time is it?</a>
   <script type="text/javascript">
   $('#jq_link').click(function(){
     $.ajax({
