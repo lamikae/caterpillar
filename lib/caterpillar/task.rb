@@ -84,7 +84,7 @@ module Caterpillar
     end
 
     def define_usage_task
-      task :usage do
+      task :usage => :version do
         Usage.show
       end
     end
