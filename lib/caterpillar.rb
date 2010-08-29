@@ -8,7 +8,7 @@
 #++
 
 module Caterpillar   
-  VERSION = '1.4.4' unless defined? Caterpillar::VERSION
+  VERSION = '1.5.0-git' unless defined? Caterpillar::VERSION
 end
 
 this_file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
