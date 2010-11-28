@@ -4,6 +4,7 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   layout false
 
   def index
+    logger.debug request.inspect
     render :text => "", :layout => 'bare'
   end
 
