@@ -12,6 +12,12 @@ require 'spec/rake/verify_rcov'
 desc 'Default: create API doc.'
 task :default => :rdoc
 
+desc "Create the caterpillar gem file"
+task :gem do
+  spec = eval(IO.read("caterpillar.gemspec"))
+  Gem::Builder.new(spec).build
+end
+
 Spec::Rake::SpecTask.new do |t|
   t.spec_opts ||= []
   t.spec_opts << "--options" << "spec/spec.opts"
