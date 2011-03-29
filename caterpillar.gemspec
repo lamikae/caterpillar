@@ -1,7 +1,4 @@
 require 'rubygems'
-require 'rake'
-require 'rake/rdoctask'
-require 'rake/gempackagetask'
 require 'lib/caterpillar'
 
 Gem::Specification.new do |s|
