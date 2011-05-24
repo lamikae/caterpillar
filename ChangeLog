@@ -1,3 +1,6 @@
+= 1.4.5
+  - Compatibility with rails 2.3.10
+  
 = 1.4.4
 	- XML fixes
 	- added /caterpillar view

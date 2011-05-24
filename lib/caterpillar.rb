@@ -7,7 +7,7 @@
 # software license details.
 #++
 
-module Caterpillar   
+module Caterpillar
   VERSION = '1.5.0-git' unless defined? Caterpillar::VERSION
 end
 
