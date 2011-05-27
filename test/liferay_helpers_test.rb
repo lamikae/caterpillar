@@ -27,7 +27,20 @@ class LiferayHelpersTest < ActionController::TestCase # :nodoc:
   end
 
   def test_liferay_ResourceUrl_model
-    resource_url_cookie = 'http://localhost:8080/web/guest/test?p_p_id=portlet_test_bench&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2&p_p_col_count=1&_portlet_test_bench_railsRoute=caterpillar/test_bench/xhr/resource'
+    resource_url_cookie = "http://localhost:8080/web/guest/test?p_p_id=portlet_test_bench&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2&p_p_col_count=1&_portlet_test_bench_railsRoute=caterpillar/test_bench/xhr/resource"
+
+    asserted_path = "http://localhost:8080/web/guest/test"
+    asserted_params = %w{
+      p_p_id=portlet_test_bench
+      p_p_lifecycle=2
+      p_p_state=normal
+      p_p_mode=view
+      p_p_cacheability=cacheLevelPage
+      p_p_col_id=column-2
+      p_p_col_count=1
+      _portlet_test_bench_railsRoute=caterpillar/test_bench/xhr/resource
+      }
+
     #options = {
     #  :controller => 'Caterpillar::XhrController',
     #  :action     => :resource
@@ -39,21 +52,52 @@ class LiferayHelpersTest < ActionController::TestCase # :nodoc:
     res = Caterpillar::Helpers::Liferay::ResourceUrl.new(
       resource_url_cookie, namespace)
     res.options = options
-    assert_equal(resource_url_cookie, res.to_s)
+
+    path, _params = res.to_s.split('?')
+    assert_equal path, asserted_path
+
+    params = _params.split('&')
+    assert_equal 8, params.size
+    asserted_params.each do |param|
+      assert params.include? param
+    end
   end
 
   def test_liferay_ResourceUrl_model_with_params
     resource_url_cookie = 'http://localhost:8080/web/guest/test?p_p_id=portlet_test_bench&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2&p_p_col_count=1&_portlet_test_bench_railsRoute=caterpillar/test_bench/xhr/resource'
+    asserted_path = "http://localhost:8080/web/guest/test"
+    asserted_params = %w{
+      p_p_id=portlet_test_bench
+      p_p_lifecycle=2
+      p_p_state=normal
+      p_p_mode=view
+      p_p_cacheability=cacheLevelPage
+      p_p_col_id=column-2
+      p_p_col_count=1
+      _portlet_test_bench_railsRoute=caterpillar/test_bench/xhr/index
+      _portlet_test_bench_foo=bar
+      }
+    # test that _portlet_test_bench_railsRoute was updated
+    # and _portlet_test_bench_foo was inserted
+
     #url_for in ResourceUrl can't handle modularized controllers..
     options = { :route => 'caterpillar/test_bench/xhr/index' }
-    params = {:foo => :bar}
+    portlet_params = {:foo => :bar}
     namespace = 'portlet_test_bench'
     
     res = Caterpillar::Helpers::Liferay::ResourceUrl.new(
       resource_url_cookie, namespace)
     res.options = options
-    res.params = params
-    assert_equal('http://localhost:8080/web/guest/test?p_p_id=portlet_test_bench&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2&p_p_col_count=1&_portlet_test_bench_railsRoute=caterpillar/test_bench/xhr/index&_portlet_test_bench_foo=bar', res.to_s)
+    res.params = portlet_params
+
+    path, _params = res.to_s.split('?')
+    assert_equal path, asserted_path
+
+    params = _params.split('&')
+    assert_equal 9, params.size
+    asserted_params.each do |param|
+      assert params.include?(param), 'missing parameter: '+param
+    end
   end
   
   def test_liferay_resource_url
