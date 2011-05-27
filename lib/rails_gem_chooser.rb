@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-# (c) Copyright 2009,2010 Mikael Lammentausta
+# (c) Copyright 2009 - 2011 Mikael Lammentausta
 #
 # See the file MIT-LICENSE included with the distribution for
 # software license details.
@@ -48,6 +48,7 @@ class RailsGemChooser
 
   # Load a specific GEM
   def __load_gem(require_name, gem_name, version)
+    #STDOUT.puts 'Loading gem: %s v %s' % [require_name, version]
     version ? gem(gem_name, '= '+version) : gem(gem_name)
     begin
       require require_name
@@ -58,7 +59,9 @@ class RailsGemChooser
 
   # Either define +rails_gem_version+ or +config_file+
   def __load(rails_gem_version=nil,config_file=nil)
-    raise 'oops' if config_file and rails_gem_version
+    if (config_file and rails_gem_version) and (version != rails_gem_version)
+      raise 'oops: Rails version mismatch'
+    end
 
     rails_gem_version ||= version(config_file) # also detects ENV['RAILS_GEM_VERSION']
 
@@ -68,7 +71,7 @@ class RailsGemChooser
     # except that with the underline divider the gem is not found ..
     #rails_gems = %w{ activesupport actionpack activerecord }
     
-    rails_gems = {              
+    rails_gems = {
       # require name      gem name
       "active_support" => "activesupport",
       "action_pack"    => "actionpack",
@@ -78,9 +81,13 @@ class RailsGemChooser
     rails_gems.keys.each do |rg_key|
       __load_gem(rg_key, rails_gems[rg_key], rails_gem_version)
     end
-    require 'action_controller'
+    require 'action_controller' # action_controller lives in action_pack
 
-    #STDOUT.puts 'Loaded Rails version %s' % Rails::VERSION::STRING
+    #STDOUT.puts "Loaded gems:"
+    #STDOUT.puts "ActiveRecord: %s" % ActiveRecord::VERSION::STRING
+    #STDOUT.puts "ActionPack: %s" %  ActionPack::VERSION::STRING
+    #require 'active_support/version'
+    #STDOUT.puts "ActiveSupport: %s" %  ActiveSupport::VERSION::STRING
   end
 
   end
