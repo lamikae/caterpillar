@@ -1,6 +1,18 @@
-= 1.4.5
-  - Compatibility with rails 2.3.10
-  
+= 1.5.0
+This version contains a number of changes over a long period of time.
+Tested to work on Rails 2.3.8 and 2.3.10.
+Major changes include:
+  - compatibility with rails 2.3.10
+  - added PortletSupport#ajax_response method
+  - introduce ResourceUrl
+
+Smaller changes include:
+
+  - fixed return link in test bench
+  - some new test cases
+  - removed rake related libraries from gemspec
+  - pruning of the Rakefile: removing the RDoc task that was broken, add a 'gem' task
+
 = 1.4.4
 	- XML fixes
 	- added /caterpillar view
