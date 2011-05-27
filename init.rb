@@ -21,16 +21,29 @@ require File.join(this_dir, 'lib', 'caterpillar')
 # Add Caterpillar portlet navigation to views paths
 ActionController::Base.append_view_path File.join(this_dir, 'views')
 
+# Detect Rails version to use proper load commands
+rails_version = RailsGemChooser.version.gsub('.','').to_i
+
 ### Initialize the portlet test bench
 
 # Adding directories to the load path makes them appear just like files in the the main app directory.
 %w{ controllers helpers }.each do |path|
-  ActiveSupport::Dependencies.autoload_paths << File.join(this_dir, 'portlet_test_bench', path)
+  if rails_version > 238
+    # this changed between 2.3.8 and 2.3.10
+    ActiveSupport::Dependencies.autoload_paths << File.join(this_dir, 'portlet_test_bench', path)
+  else
+    ActiveSupport::Dependencies.load_paths << File.join(this_dir, 'portlet_test_bench', path)
+  end
 end
 
 # Removing a directory from the load once paths allow changes
 # to be picked up as soon as you save the file – without having to restart the web server.
-ActiveSupport::Dependencies.autoload_once_paths.delete(File.join(this_dir, 'portlet_test_bench'))
+if rails_version > 238
+  # this changed between 2.3.8 and 2.3.10
+  ActiveSupport::Dependencies.autoload_once_paths.delete(File.join(this_dir, 'portlet_test_bench'))
+else
+  ActiveSupport::Dependencies.load_once_paths.delete(File.join(this_dir, 'portlet_test_bench'))
+end
 
 # Add views
 ActionController::Base.append_view_path File.join(this_dir, 'portlet_test_bench','views')
