@@ -1,14 +1,13 @@
 # encoding: utf-8
-
-
 #--
-# (c) Copyright 2008,2009 Mikael Lammentausta
+# (c) Copyright 2008 - 2011 Mikael Lammentausta
+#               2010 - 2011 Tulio Ornelas dos Santos
 #
 # See the file MIT-LICENSE included with the distribution for
 # software license details.
 #++
 
-### Initialize the Rails plugin.
+### Initializes the Rails2 plugin
 
 file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
 this_dir = File.dirname(File.expand_path(file))
@@ -16,13 +15,13 @@ this_dir = File.dirname(File.expand_path(file))
 # load the main file
 require File.join(this_dir, 'lib', 'caterpillar')
 
-#STDERR.puts 'Caterpillar: version %s' % Caterpillar::VERSION
-
 # Add Caterpillar portlet navigation to views paths
 ActionController::Base.append_view_path File.join(this_dir, 'views')
 
 # Detect Rails version to use proper load commands
-rails_version = RailsGemChooser.version.gsub('.','').to_i
+v = RailsGemChooser.version
+raise 'Unable to detect available Rails version' unless v
+rails_version = v.gsub('.','').to_i
 
 ### Initialize the portlet test bench
 

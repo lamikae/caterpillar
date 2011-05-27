@@ -1,7 +1,7 @@
 # encoding: utf-8
 #--
-# (c) Copyright 2008-2011 Mikael Lammentausta
-#                    2010 Tulio Ornelas
+# (c) Copyright 2008 - 2011 Mikael Lammentausta
+#               2010 Tulio Ornelas dos Santos
 #
 # See the file MIT-LICENSE included with the distribution for
 # software license details.
@@ -10,6 +10,8 @@
 module Caterpillar
   VERSION = '1.9.9' unless defined? Caterpillar::VERSION
 end
+
+STDOUT.puts 'Caterpillar: version %s' % Caterpillar::VERSION
 
 this_file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
 this_dir = File.dirname(File.expand_path(this_file))
@@ -32,30 +34,34 @@ require 'find'
 require 'rake'
 require 'rake/tasklib'
 
-if defined? RAILS_ROOT
-	# NOTE: During normal startup (not while building the gem),
-	# ActiveRecord should be loaded at this point, before loading any of the models.
-	# However, this may conflict later when Rails' rake task activates the boot process.
-	# The correct versions should be loaded at this point.
-	require File.join(this_dir,'rails_gem_chooser')
-	RailsGemChooser.__load # detects the Rails config file from RAILS_ROOT
+require File.join(this_dir,'rails_gem_chooser')
+
+if (defined? RAILS_ROOT)
+  # ActiveRecord should be loaded at this point, before loading any of the models.
+  # However, this may conflict later when Rails' rake task activates the boot process.
+  # The correct versions should be loaded at this point.
+  RailsGemChooser.__load # detects the Rails config file from RAILS_ROOT
 end
 
 # include all ruby files
-Find.find(this_dir) do |file|
-  if FileTest.directory?(file)
-    if File.basename(file) == 'deprecated'
-      Find.prune # Don't look any further into this directory.
+%w{
+  config
+  util
+  usage
+  task
+  security
+  portlet_support
+  portlet
+  parser
+  navigation
+  liferay
+}.each do |src|
+  require File.join(this_dir, 'caterpillar', src+'.rb')
+end
 
-    # load helpers only in Rails environment
-    elsif (not defined?(RAILS_ENV) and %w{web helpers}.include?(File.basename(file)))
-      Find.prune
-
-    else
-      next
-    end
-  else
-    # do not require this file twice
-    require file if file[/.rb$/] and File.basename(file) != File.basename(this_file)
-  end
+# these are used in Rails environment
+if (defined? RAILS_ENV)
+  require File.join(this_dir, 'web', 'portlet.rb')
+  require File.join(this_dir, 'caterpillar', 'helpers', 'portlet.rb')
+  require File.join(this_dir, 'caterpillar', 'helpers', 'liferay.rb')
 end
