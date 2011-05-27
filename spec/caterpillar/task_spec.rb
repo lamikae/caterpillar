@@ -145,6 +145,7 @@ describe Caterpillar::Task do
   it "should make XML" do
     portlet = {:name => 'portlet_test_bench'}
     @task.config.instances << portlet
+    @task.config.session_secret = {:key => 'test', :secret => 'test_secret'}
 
     Dir.chdir(@tmpdir)
     Dir.glob('*.xml').size.should == 0
@@ -162,6 +163,7 @@ describe Caterpillar::Task do
   it "should deploy XML on Tomcat" do
     portlet = {:name => 'portlet_test_bench'}
     @task.config.instances << portlet
+    @task.config.session_secret = {:key => 'test', :secret => 'test_secret'}
 
     container_root = @tmpdir
     @task.config.container.root = container_root

@@ -143,6 +143,11 @@ These are isolated test cases of the Rails-portlet, for manual testing in the br
   <%= link_to 'Portlet namespace',
         :controller => 'Caterpillar::Session', :action => :namespace -%><br />
 
+
+  <%= link_to 'Portlet request authorization via shared secret',
+        :controller => 'Caterpillar::Liferay', :action => :authorized_sessions  -%><br />
+
+
 </div>
 
 

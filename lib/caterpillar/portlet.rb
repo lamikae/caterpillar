@@ -32,8 +32,9 @@ module Caterpillar
     # Creates <portlet-app> XML document for portlet-ext.xml.
     #
     # @param portlets is an Array of Hashes
+    # @param session_secret is a generated String that authorizes requests from portlet clients
     # @returns String
-    def xml(portlets)
+    def xml(portlets, session_secret=nil)
       # create a new XML document
       doc = REXML::Document.new
       doc << REXML::XMLDecl.new('1.0', 'utf-8') 
@@ -43,22 +44,22 @@ module Caterpillar
       app.attributes['xmlns:xsi'] = 'http://www.w3.org/2001/XMLSchema-instance'
       app.attributes['xsi:schemaLocation'] = 'http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd'
 
-      # create session values, common for all portlets
-      session = 
-        begin
-          {
-            :key    => Caterpillar::Security.get_session_key(),
-            :secret => Caterpillar::Security.get_secret()
-          }
-        rescue
-          nil
-        end
+      unless session_secret
+        STDERR.puts %{WARNING: shared session secret not found from portlets.rb config.
+This feature was added in version 2.0.0. Please update your config file:
+
+  portlet.session_secret = {
+    :key    => '_rails_portlet',
+    :secret => '%s'
+  }
+        } % Security::random_secret
+      end
 
       # create XML element tree
       # (in proper order so the validation passes)
       portlets.each do |portlet|
         # <portlet>
-        app.elements << self.portlet_element(portlet, session, app)
+        app.elements << self.portlet_element(portlet, session_secret, app)
       end
       portlets.each do |portlet|
         # <filter>
@@ -72,23 +73,23 @@ module Caterpillar
     end
 
     # <portlet> element.
-    # session is a hash containing session key and secret from Rails.
-    def portlet_element(portlet, session = nil, app = nil)            
+    # session_secret is a hash containing session key and secret.
+    def portlet_element(portlet, session_secret = nil, app = nil)
       element = REXML::Element.new('portlet')
       # NOTE: to pass validation, the elements need to be in proper order!
                                                               
       REXML::Element.new('portlet-name', element).text = portlet[:name]
       REXML::Element.new('portlet-class', element).text = self.portlet_class
 
-      # insert session key
-      unless session.nil?
+      # insert shared secret
+      unless session_secret.nil?
         param = REXML::Element.new('init-param', element)
         REXML::Element.new('name', param).text = 'session_key'
-        REXML::Element.new('value', param).text = session[:key]
+        REXML::Element.new('value', param).text = session_secret[:key]
 
         param = REXML::Element.new('init-param', element)
         REXML::Element.new('name', param).text = 'secret'
-        REXML::Element.new('value', param).text = session[:secret]
+        REXML::Element.new('value', param).text = session_secret[:secret]
       end
 
       supports = REXML::Element.new('supports', element)

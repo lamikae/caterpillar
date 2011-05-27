@@ -10,11 +10,6 @@ class Caterpillar::ApplicationController < ActionController::Base
   # Rails-portlet has session cookie support.
   #session :disabled => true
 
-  # Import security filters
-  include Caterpillar::Security
-  secure_portlet_sessions
-
-
   ### Used for navigating the test bench
 
   # If controller is not ApplicationController, test is selected.

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-# (c) Copyright 2010 Mikael Lammentausta
+# (c) Copyright 2010 - 2011 Mikael Lammentausta
 #
 # See the file MIT-LICENSE included with the distribution for
 # software license details.
@@ -28,10 +28,18 @@ module Caterpillar # :nodoc:
       base.extend(ClassMethods)
     end
     
+    def self.random_secret(len=64)
+      chars = ('a'..'z').to_a + ('A'..'Z').to_a + (0..9).to_a
+      (0...len).collect { chars[Kernel.rand(chars.length)] }.join
+    end
+    
     module ClassMethods # :nodoc:
+      # Inserts a before_filter that verifies user agent and checks the shared secret.
+      # Pass options for before_filter (eg. :only => [:secured_action])
       def secure_portlet_sessions(options = {})
         class_eval <<-EOV
           include Caterpillar::Security::InstanceMethods
+          before_filter [:authorize_agent, :authorize_request], options
         EOV
       end
     end
@@ -75,7 +83,8 @@ module Caterpillar # :nodoc:
     #
     def authorize_request
       if !cookies.nil? and !cookies[:session_secret].nil?
-      	if cookies[:session_secret] == Caterpillar::Security.get_secret
+        config = Util.eval_configuration
+        if cookies[:session_secret] == config.session_secret[:secret]
           logger.debug "Passes security check"
           return true
         end
@@ -100,35 +109,6 @@ module Caterpillar # :nodoc:
 
     end # module
 
-
-    # Return Rails' session key    
-    def self.get_session_key
-      # Rails before 2.3 had a different way
-      if defined?(RAILS_GEM_VERSION) and RAILS_GEM_VERSION.gsub('.','').to_i < 230
-        ActionController::Base.session_options_for(nil,nil)[:session_key]
-      # On Rails 2.3:
-      else
-        key = ActionController::Base.session_options[:key]
-        return key unless key.nil?
-        # try session_key
-        key = ActionController::Base.session_options[:session_key]
-        return key unless key.nil?
-        # XXX: Rails changed sometime during 2.3.8 ..
-        STDERR.puts 'Failed to read session key - consider this a bug'
-        return nil
-      end
-    end
-
-    # Return Rails' secret    
-    def self.get_secret
-      # Rails before 2.3 had a different way
-      if RAILS_GEM_VERSION.gsub('.','').to_i < 230
-        ActionController::Base.session_options_for(nil,nil)[:secret]
-      # On Rails 2.3:
-      else
-        ActionController::Base.session_options[:secret]
-      end
-    end
 
   end
 end

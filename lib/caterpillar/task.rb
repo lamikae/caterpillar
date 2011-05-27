@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-# (c) Copyright 2008,2009,2010 Mikael Lammentausta
+# (c) Copyright 2008 - 2011 Mikael Lammentausta
 #
 # Thanks to Nick Sieger for the rake structure!
 #
@@ -253,7 +253,7 @@ module Caterpillar
 
           FileUtils.touch(file)
           f=File.open(file,'w')
-          f.write Portlet.xml(@portlets)
+          f.write Portlet.xml(@portlets,@config.session_secret)
           f.close
           #info '-> %s' % file
         end

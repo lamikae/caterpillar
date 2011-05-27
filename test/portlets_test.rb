@@ -6,20 +6,15 @@ require File.dirname(File.expand_path(__FILE__))+'/test_helper'
 
 class PortletsTest < Caterpillar::TestCase # :nodoc:
 
-#   def test_get
-#     @portlets.each do |portlet|
-#       next if portlet[:reqs].empty?
-#       @controller = portlet[:reqs][:controller]
-#       action = portlet[:reqs][:action]
-#       get action
-#     end
-#   end
-
   def test_session
-    key = Caterpillar::Security.get_session_key()
+    assert_not_nil @config.session_secret, 'No session secret in portlets.rb config'
+
+    key = @config.session_secret[:key]
     assert_not_nil key
-    secret = Caterpillar::Security.get_secret()
+    secret = @config.session_secret[:secret]
     assert_not_nil secret
+    assert_not_equal 'somereallylongrandomkey', secret,
+      'Please generate your private random shared secret!'
   end
 
   def test_name

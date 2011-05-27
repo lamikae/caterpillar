@@ -18,6 +18,16 @@ class CaterpillarGenerator < Rails::Generator::Base
   end
 
   def after_generate
+    # generate random shared secret
+    msg(
+      "Generating new random shared secret to config/portlets.rb"
+    )
+    File.open(File.join('config','portlets.rb'), "r+") do |f|
+      newconf = f.read().sub('somereallylongrandomkey', Caterpillar::Security::random_secret)
+      f.seek 0
+      f.write newconf
+    end
+
     msg(
       "If you want to use the portlet test bench,\n" + \
       "put the following line in your config/routes.rb before other routes.\n" + \
@@ -37,10 +47,8 @@ class CaterpillarGenerator < Rails::Generator::Base
     record do |m|
 
       ### config ###
-#     m.directory('config')
-#     file = 'portlets.rb'
-#     m.file(File.join('config',file), File.join('config',file))
-      m.template('config/portlets.rb','config/portlets.rb')
+      file = File.join('config','portlets.rb')
+      m.template(file,file)
 
       ### Navigation ###
       target = File.join('public','images')

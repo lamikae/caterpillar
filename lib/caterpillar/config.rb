@@ -41,6 +41,8 @@ module Caterpillar
     attr_accessor :warbler_conf
 
     attr_accessor :logger
+    
+    attr_accessor :session_secret
 
     # Sets sane defaults that are overridden in the config file.
     def initialize(detect_configuration_file = true)

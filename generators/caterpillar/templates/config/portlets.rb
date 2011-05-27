@@ -87,6 +87,14 @@ Caterpillar::Config.new do |portlet|
     :title    => 'Rails-portlet test bench',
     :category => 'Caterpillar'
   }
+  
+  # This secret string is shared between the portlets and the Rails server,
+  # and passed in a cookie with every request.
+  # It is used to prevent spoofed requests from unauthorized clients.
+  portlet.session_secret = {
+    :key    => '_rails_portlet',
+    :secret => 'somereallylongrandomkey'
+  }
 
   # this will include all named routes without further configuration
   portlet.include_all_named_routes = true

@@ -28,7 +28,7 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
       :path => "/test/path"
     }
 
-    session = {
+    session_secret = {
       :key    => '_test_session',
       :secret => 'XXX'
     }
@@ -38,26 +38,16 @@ class XmlTest < Caterpillar::TestCase # :nodoc:
     assert xml[/#{portlet[:title]}/]
     assert !xml[/secret/]
 
-    xml = Caterpillar::Portlet.portlet_element(portlet,session).to_s
-    assert xml[/#{session[:secret]}/], 'No secret'
+    xml = Caterpillar::Portlet.portlet_element(portlet,session_secret).to_s
+    assert xml[/#{session_secret[:secret]}/], 'No secret'
 
     xml = Caterpillar::Portlet.filter_element(portlet).to_s
     assert xml[/#{portlet[:servlet]}/]
     assert xml[/#{portlet[:path]}/]
   end
 
-  def test_session_key
-    key = Caterpillar::Security.get_session_key
-    assert_not_nil key
-  end
-
-  def test_secret
-    secret = Caterpillar::Security.get_secret
-    assert_not_nil secret
-  end
-
   def test_portlet_xml
-    xml = Caterpillar::Portlet.xml(@portlets)
+    xml = Caterpillar::Portlet.xml(@portlets,{})
 
     # parse xml document
     doc = LibXML::XML::Parser.string(xml).parse

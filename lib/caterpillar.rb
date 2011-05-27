@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-# (c) Copyright 2008-2010 Mikael Lammentausta
+# (c) Copyright 2008-2011 Mikael Lammentausta
 #                    2010 Tulio Ornelas
 #
 # See the file MIT-LICENSE included with the distribution for
@@ -8,7 +8,7 @@
 #++
 
 module Caterpillar
-  VERSION = '1.5.0' unless defined? Caterpillar::VERSION
+  VERSION = '1.9.9' unless defined? Caterpillar::VERSION
 end
 
 this_file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
