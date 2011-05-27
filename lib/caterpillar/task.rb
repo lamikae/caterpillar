@@ -217,12 +217,13 @@ module Caterpillar
           raise 'Rails environment could not be loaded'
         end
         if @config.container.is_a?(Caterpillar::Liferay)
-          if @config.container.version.nil? and !defined?(Lportal)
-            $stderr.puts 'Liferay version is undefined, and lportal gem is not present.'
-            $stderr.puts 'Please define portlet.container.version in %s.' % @config.class::FILE
-            raise 'Insufficient configuration'
-          end
-          @config.container.version ||= Lportal::Schema.version
+          # since Caterpillar version 1.6.0, Liferay version is not required
+          #if @config.container.version.nil? and !defined?(Lportal)
+          #  $stderr.puts 'Liferay version is undefined, and lportal gem is not present.'
+          #  $stderr.puts 'Please define portlet.container.version in %s.' % @config.class::FILE
+          #  raise 'Insufficient configuration'
+          #end
+          #@config.container.version ||= Lportal::Schema.version
           portal_info
         end
       end
@@ -362,31 +363,12 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Installs Rails-portlet JAR into the portlet container'
         task :install => :environment do
-          source = File.join(CATERPILLAR_LIBS,'java')
 
-          # detect (Liferay) container version
-          container_v = @config.container.version
-          unless container_v
-            info 'Unable to detect the version of the portlet container. Installing the latest version.'
-          end
-
-          # detect the version of the JAR to install
-          portlet_jar = nil
-          # XXX: since the filter name has changed, the old JAR does not work
-          #version = (
-          #  if container_v and container_v[/^5.1/]
-          #    '0.6.0' # FIXME: branch properly
-          #  else
-          #    '0.10.0'
-          #  end
-          #)
-          version = '0.10.1'
-          require 'find'
-          Find.find(source) do |file|
-            if File.basename(file) == "rails-portlet-#{version}.jar"
-              portlet_jar = file
-            end
-          end
+          # since rails-portlet jar version 0.12, Liferay5 and Liferay6 both work
+          # with the same version. version detection is unneeded.
+          # container_v = @config.container.version
+          version = '0.12.0'
+          portlet_jar = File.join(CATERPILLAR_LIBS,'java',"rails-portlet-#{version}.jar")
 
           # check if requirements match
           unless deployment_requirements_met?
@@ -672,10 +654,9 @@ module Caterpillar
     end
 
     def portal_info(config=@config)
-      msg = 'Caterpillar %s configured for %s version %s at %s' % [
+      msg = 'Caterpillar %s configured for %s at %s' % [
         Caterpillar::VERSION,
         config.container.name,
-        config.container.version,
         config.container.root
       ]
       info(msg)

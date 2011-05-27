@@ -60,10 +60,9 @@ module Caterpillar # :nodoc:
     attr_writer   :deploy_dir
 
     # Liferay version is given as a String, eg. '5.2.2'.
-    # Defaults to +Lportal::Schema.version+.
     def initialize(version=nil)
-      @version    = version || '5.2.3'
-      @root       = '/usr/local/liferay-portal-5.2.3/tomcat-6.0.18' # as described in setup guide, when unpacked to /usr/local
+      @version    = version || '6.0.6'
+      @root       = '/usr/local/liferay-portal-6.0.6/tomcat-6.0.29'
       @server     = 'Tomcat'
       @deploy_dir = nil
     end

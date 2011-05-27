@@ -5,7 +5,7 @@ Caterpillar::Config.new do |portlet|
   # By default only portlet.xml is created.
   # Currently only Liferay is supported. You may optionally define the version.
   portlet.container = Liferay
-  # portlet.container.version = '5.2.3'
+  # portlet.container.version = '6.0.6'
 
   # If you want to install the Rails-portlet JAR into the container, the container
   # WEB-INF will be used.
@@ -15,7 +15,7 @@ Caterpillar::Config.new do |portlet|
   #
   # No changes are made to any of the files in this directory while making XML,
   # only the deploy and install tasks make any changes.
-  # portlet.container.root = '/usr/local/liferay/tomcat/'
+  # portlet.container.root = '/usr/local/liferay-portal-6.0.6/tomcat-6.0.29'
 
   # The server that the container is running on.
   # Possible values:
