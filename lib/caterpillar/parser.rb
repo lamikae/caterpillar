@@ -121,11 +121,7 @@ module Caterpillar
         ### unless defined, use default javascripts
         portlet[:javascripts] ||= @config.javascripts
 
-        # fix path variables to be replaced by rails-portlet at runtime
         path = portlet[:path]
-        path.gsub!(/:uid/,'%UID%')
-        path.gsub!(/:gid/,'%GID%')
-        # TODO: notify user of unsupported variables
         portlet.update( :path => path )
       end
 
