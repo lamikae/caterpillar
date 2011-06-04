@@ -1,3 +1,15 @@
+= 1.6.0
+Tested with Rails 2 and Liferay 5 and 6.
+  - upgrade to Rails-portlet jar 0.12, which supports both Liferay5 and Liferay6
+  - use most recent Liferay version (6.0.6) in the default config template, although container version in configuration is now obsolete
+  - remove parsing of :uid and :gid path variables
+  - update portlet test bench to get Liferay UID and GID from a cookie, and move the helper methods to Caterpillar::Helpers::Liferay
+  - refactor shared secret to portlets.rb - requires config file update for existing installations - see the portlets.rb config template
+  - removed useless and broken link_to_liferay() method
+  - cleaned up some of the init process
+  - update test bench cookie actions
+  - change test bench css colors to human-readable
+
 = 1.5.0
 This version contains a number of changes over a long period of time.
 Tested to work on Rails 2.3.8 and 2.3.10.

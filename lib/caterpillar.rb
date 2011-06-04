@@ -8,7 +8,7 @@
 #++
 
 module Caterpillar
-  VERSION = '1.9.9' unless defined? Caterpillar::VERSION
+  VERSION = '1.6.0' unless defined? Caterpillar::VERSION
 end
 
 STDOUT.puts 'Caterpillar: version %s' % Caterpillar::VERSION
