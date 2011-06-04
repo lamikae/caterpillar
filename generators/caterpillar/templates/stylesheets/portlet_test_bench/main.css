@@ -1,7 +1,7 @@
 /* main.css */
 
 body {
-background-color: #FFFFCC;
+background-color: gray;
 }
 
 /* testing leading whitespaces */
@@ -38,7 +38,7 @@ font: 14px Times New Roman;
 
 /* used on css test page */
 #simple_content {
-margin: 25px; padding: 10px; border: 1px solid #000000; background: #93FFE4;
+margin: 25px; padding: 10px; border: 1px solid #000000; background: purple; color: white;
 }
 
 /* resource test page */

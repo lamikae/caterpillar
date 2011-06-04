@@ -10,7 +10,8 @@
       /* simple.html.erb */
       #head_ref {
       margin: 25px; padding: 10px; border: 1px solid #000000;
-      background: #6FFF3A;
+      background: blue;
+      color: white;
       }
     </style>
   </head>
@@ -20,34 +21,34 @@
     <style type="text/css" id="style_in_body">
       #body_ref {
       margin: 25px; padding: 10px; border: 1px solid #000000;
-      background: #FFB751;
+      background: green;
       }
     </style>
 
     Body<br />
-    <b>background-color: #FFFFFCC; font: 11px Arial,Helvetica;</b>
+    <b>background-color: gray; font: 11px Arial,Helvetica;</b>
     <p class="info">
       All the following divs should appear the same, with different background colors.<br />
       <b>margin: 25px; padding: 10px; border: 1px solid #000000;</b>
     </p>
-    <div style="margin: 25px; padding: 10px; border: 1px solid #000000; background: #FFFFFF;">
+    <div style="margin: 25px; padding: 10px; border: 1px solid #000000; background: orange;">
       This is a div with self-contained style parameters. <br />
-      <b>background: #FFEE31;</b>
+      <b>background: orange</b>
     </div>
 
     <div id="simple_content">
       This is a div with style definitions in <i>main.css</i>.<br />
-      <b>background: #93FFE4;</b>
+      <b>background: purple</b>
     </div>
 
     <div id="head_ref">
       This is a div with style definitions in <i>&lt;head&gt;</i>.<br />
-      <b>background: #6FFF3A;</b>
+      <b>background: blue</b>
     </div>
 
     <div id="body_ref">
       This is a div with style definitions in <i>&lt;body&gt;</i>.<br />
-      <b>background: #FFB751;</b>
+      <b>background: green</b>
     </div>
 
     <br />
