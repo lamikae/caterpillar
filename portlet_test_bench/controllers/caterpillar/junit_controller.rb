@@ -190,27 +190,33 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
     render :text => txt, :status => 200
   end
 
-  # test foobarcookies with Liferay UID cookie and authentication.
-  # 5 cookies altogether.  
-  def cookies_liferay_auth
-    txt =  "Liferay_UID: #{@uid}\n"
-    txt += "#{cookies[:foo]}#{cookies[:bar]}#{cookies[:baz]}"
-    render :inline => txt, :status => 200
-  end
-  before_filter :get_liferay_uid, :only => [:liferay_uid, :cookies_liferay_auth]
+  # include filters authorize_agent, authorize_request
+  include Caterpillar::Security::InstanceMethods
+  
+  # include filters get_liferay_uid, get_liferay_gid
+  include Caterpillar::Helpers::Liferay
 
   #
   # authenticate these actions
   #
   before_filter :authorize_request, :only => [
     :authorized,
-    :liferay_uid,
+    :liferay_uid_auth,
     :foobarcookies_auth,
     :foobarcookiestxt_auth,
     :cookies_liferay_auth
     ]
   alias :foobarcookies_auth :foobarcookies
   alias :foobarcookiestxt_auth :foobarcookiestxt
+
+  #
+  # collect Liferay UID cookie
+  #
+  before_filter :get_liferay_uid, :only => [
+    :liferay_uid,
+    :liferay_uid_auth,
+    :cookies_liferay_auth
+    ]
 
   # test session authorization
   def authorized
@@ -221,6 +227,20 @@ class Caterpillar::JunitController < Caterpillar::ApplicationController
   def liferay_uid
     @uid = 'nil' if @uid.nil?
     render :inline => @uid, :status => 200
+  end
+
+  # test Liferay UID cookie and authentication
+  def liferay_uid_auth
+    @uid = 'nil' if @uid.nil?
+    render :inline => @uid, :status => 200
+  end
+
+  # test foobarcookies with Liferay UID cookie and authentication.
+  # 5 cookies altogether.  
+  def cookies_liferay_auth
+    txt =  "Liferay_UID: #{@uid}\n"
+    txt += "#{cookies[:foo]}#{cookies[:bar]}#{cookies[:baz]}"
+    render :inline => txt, :status => 200
   end
 
   def target1
