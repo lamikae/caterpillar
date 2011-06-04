@@ -110,11 +110,11 @@ These are isolated test cases of the Rails-portlet, for manual testing in the br
 <div class="testBenchSuite">Liferay</div>
 <div class="testContainer">
 
-  <%= link_to 'Liferay session variables',
+  <%= link_to 'Liferay UID and GID',
         url_for(
           :controller => 'Caterpillar::Liferay',
           :action => :session_variables
-        )+'/uid/%UID%/gid/%GID%'
+        )
   -%><br />
 
   <%= link_to 'Liferay resource URL',

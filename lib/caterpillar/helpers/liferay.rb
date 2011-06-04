@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-# Copyright (c) 2007-2010 Mikael Lammmentausta
+# Copyright (c) 2007-2011 Mikael Lammmentausta
 #               2010 Tulio Ornelas dos Santos
 #
 # See the file MIT-LICENSE included with the distribution for
@@ -76,6 +76,28 @@ module Helpers # :nodoc:
     
     def preferences_cookie
       cookies[:Liferay_preferences]
+    end
+    
+    # Get the Liferay UID from cookie.
+    def get_liferay_uid
+      uid_key = 'Liferay_UID'
+      unless cookies.nil? or cookies[uid_key].nil?
+        @uid = cookies[uid_key]
+        logger.debug("Liferay UID %s" % @uid)
+      else
+        logger.debug("UID key is not present in cookies %s" % cookies.inspect)
+      end
+    end
+
+    # Get the Liferay GID from cookie.
+    def get_liferay_gid
+      gid_key = 'Liferay_GID'
+      unless cookies.nil? or cookies[gid_key].nil?
+        @gid = cookies[gid_key]
+        logger.debug("Liferay GID %s" % @gid)
+      else
+        logger.debug("GID key is not present in cookies %s" % cookies.inspect)
+      end
     end
     
     # Formulate resource URL for Liferay.

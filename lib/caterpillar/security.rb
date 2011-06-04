@@ -95,15 +95,10 @@ module Caterpillar # :nodoc:
     end
 
 
-    # Get the Liferay UID from cookie.
+    # MOVED to Caterpillar::Helpers::Liferay
     def get_liferay_uid
-      uid_key = 'Liferay_UID'
-      unless cookies.nil? or cookies[uid_key].nil?
-        @uid = cookies[uid_key]
-        logger.debug("Liferay UID %s" % @uid)
-      else
-        logger.debug("UID key is not present in cookies %s" % cookies.inspect)
-      end
+      logger.warn 'DEPRECATION WARNING: get_liferay_uid has been moved to Caterpillar::Helpers::Liferay'
+      Caterpillar::Helpers::Liferay.get_liferay_uid
     end
 
 

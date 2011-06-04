@@ -4,16 +4,13 @@ These tests check that Liferay session variables are available in Rails.
 </p>
 
 <p>
-These variables are accessible in Java JSR286 portlets from the Liferay API.
-When the Rails-portlet receives a request where the URL contains keywords %UID% or %GID%, these are replaced by the values received from the Liferay API. Rails receives a request with the actual UID number and GID numbers, respectively. The page (Layout in the database) where the portlet is has defined this Group.
+These variables are accessible in Java JSR286 portlets from the Liferay API. Rails-portlet includes these values into a cookie that is available in Rails.
 </p>
 
 <p>
-  <%#= link_to 'UID', url_for(:action => :session_variables)+'/uid/%UID%' -%><br/>
-  <%#= link_to 'UID debug', url_for(:action => :session_variables)+'/uid/10000' -%><br/>
   <% if @uid -%>
     <span style="font-size: 18px;">
-      Received UID: <%= @uid %>
+      Liferay UID: <%= @uid %>
     </span>
   <% else -%>
     No UID found!
@@ -21,18 +18,12 @@ When the Rails-portlet receives a request where the URL contains keywords %UID% 
 </p>
 
 <p>
-  <%#= link_to 'GID', url_for(:action => :session_variables)+'/gid/%GID%' -%><br/>
-  <%#= link_to 'GID debug', url_for(:action => :session_variables)+'/gid/20000' -%><br/>
   <% if @gid -%>
     <span style="font-size: 18px;">
-      Received GID: <%= @gid %>
+      Liferay GID: <%= @gid %>
     </span>
   <% else -%>
     No GID found!
   <% end -%>
-</p>
-
-<p style="font-size: 18px;">
-  <%#= link_to 'Reset', :action => :session_variables -%>
 </p>
 
